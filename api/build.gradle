@@ -4,14 +4,15 @@ buildscript {
     }
     dependencies {
         classpath 'org.flywaydb:flyway-gradle-plugin:3.2.1'
+        classpath 'org.akhikhl.gretty:gretty:+'
     }
 }
 
 apply plugin: 'war'
-apply plugin: 'jetty'
 apply plugin: 'org.flywaydb.flyway'
 apply plugin: "jacoco"
 apply plugin: 'checkstyle'
+apply plugin: 'org.akhikhl.gretty'
 
 test {
     beforeTest { descr ->
@@ -27,7 +28,6 @@ checkstyle {
     toolVersion = "6.14.1"
 }
 
-
 jacocoTestReport {
     reports {
         xml.enabled true
@@ -36,7 +36,6 @@ jacocoTestReport {
     }
 }
 
-
 checkstyleMain {
     reports {
         xml {
@@ -44,7 +43,6 @@ checkstyleMain {
         }
     }
 }
-
 
 dependencies {
     compile 'mysql:mysql-connector-java:5.1.37'
@@ -65,17 +63,8 @@ dependencies {
     testCompile 'org.flywaydb:flyway-core:3.2.1'
 }
 
-task(DBRecovery, dependsOn: 'classes', type: JavaExec) {
-    doFirst {
-        flywayClean.execute()
-        flywayMigrate.execute()
-    }
-    main = 'com.thoughtworks.twars.tasks.DBRecovery'
-    classpath = sourceSets.main.runtimeClasspath
-}
-
-[jettyRun, jettyRunWar, jettyStop]*.stopPort = 8081
-[jettyRun, jettyRunWar, jettyStop]*.stopKey = 'stopKey'
+//[jettyRun, jettyRunWar, jettyStop]*.stopPort = 8081
+//[jettyRun, jettyRunWar, jettyStop]*.stopKey = 'stopKey'
 
 task createCoberturaReport(type: Exec) {
     executable "bash"
