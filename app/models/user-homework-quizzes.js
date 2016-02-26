@@ -13,7 +13,8 @@ var userHomeworkQuizzesSchema = new Schema({
     userAnswerRepo: String,
     uri: String,
     branch: String,
-    commitSHA: String
+    commitSHA: String,
+    resultPath: String
   }]
 });
 

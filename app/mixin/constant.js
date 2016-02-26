@@ -23,7 +23,8 @@ var constant = {
     ERROR:5
   },
   changePassword: {
-    ERROR: '旧密码错误'
+    ERROR: '旧密码错误',
+    SERVERERROR: '服务器错误'
   }
 };
 

@@ -1,12 +1,12 @@
 'use strict';
 
 var ReactDom = require('react-dom');
-var DashBoard = require('./component/dashBoard.component');
-var Navigation = require('./component/navigation.component');
+var DashBoard = require('./component/dashboard/dashBoard.component');
+var Navigation = require('./component/navigation/navigation.component');
 require('../less/dashboard.less');
 var Row = require('react-bootstrap/lib/Row');
-var Alertcontent = require('./component/alert-content.component');
-var DashboardIcon = require('./component/dashboard-icon.component');
+var Alertcontent = require('./component/dashboard/alert-content.component');
+var DashboardIcon = require('./component/dashboard/dashboard-icon.component');
 
 ReactDom.render(
     <div>

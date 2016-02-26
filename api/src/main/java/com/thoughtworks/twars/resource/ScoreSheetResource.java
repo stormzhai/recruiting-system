@@ -2,8 +2,8 @@ package com.thoughtworks.twars.resource;
 
 import com.thoughtworks.twars.bean.ScoreSheet;
 import com.thoughtworks.twars.mapper.ScoreSheetMapper;
-import com.thoughtworks.twars.service.quiz.scoresheet.BlankQuizScoreSheetService;
-import com.thoughtworks.twars.service.quiz.scoresheet.HomeworkQuizScoreSheetService;
+import com.thoughtworks.twars.resource.quiz.scoresheet.BlankQuizScoreSheetService;
+import com.thoughtworks.twars.resource.quiz.scoresheet.HomeworkQuizScoreSheetService;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
@@ -58,30 +58,42 @@ public class ScoreSheetResource extends Resource {
         scoreSheet.setPaperId(paperId);
         scoreSheet.setExamerId(examerId);
 
-        ScoreSheet selectScoreSheet = scoreSheetMapper.selectScoreSheet(scoreSheet);
+        try {
+            ScoreSheet selectScoreSheet = scoreSheetMapper.selectScoreSheet(scoreSheet);
 
-        if (selectScoreSheet != null) {
-            scoreSheetId = selectScoreSheet.getId();
-        } else {
-            scoreSheetMapper.insertScoreSheet(scoreSheet);
-            scoreSheetId = scoreSheet.getId();
+            if (selectScoreSheet != null) {
+                scoreSheetId = selectScoreSheet.getId();
+            } else {
+                scoreSheetMapper.insertScoreSheet(scoreSheet);
+                scoreSheetId = scoreSheet.getId();
+            }
+
+            List<Map> blankQuizSubmits = (List<Map>) data.get("blankQuizSubmits");
+            List<Map> homeworkSubmits = (List<Map>) data.get("homeworkSubmits");
+
+            if (blankQuizSubmits != null) {
+                blankQuizScoreSheet.insertQuizScoreSheet(data, scoreSheetId);
+            }
+
+            if (homeworkSubmits != null) {
+                homeworkQuizScoreSheet.insertQuizScoreSheet(data, scoreSheetId);
+            }
+            session.commit();
+
+            Map result = new HashMap<>();
+            result.put("uri", "scoresheets/" + scoreSheetId);
+
+            return Response.status(Response.Status.CREATED).entity(result).build();
+
+
+        } catch (Exception e) {
+            if (session != null) {
+                System.out.println("事务回滚");
+                session.rollback();
+            }
         }
 
-        List<Map> blankQuizSubmits = (List<Map>) data.get("blankQuizSubmits");
-        List<Map> homeworkSubmits = (List<Map>) data.get("homeworkSubmits");
-
-        if (blankQuizSubmits != null) {
-            blankQuizScoreSheet.insertQuizScoreSheet(data, scoreSheetId);
-        }
-
-        if (homeworkSubmits != null) {
-            homeworkQuizScoreSheet.insertQuizScoreSheet(data, scoreSheetId);
-        }
-
-        Map result = new HashMap<>();
-        result.put("uri", "scoresheets/" + scoreSheetId);
-
-        return Response.status(Response.Status.CREATED).entity(result).build();
+        return Response.status(Response.Status.UNAUTHORIZED).build();
     }
 
 
@@ -105,8 +117,8 @@ public class ScoreSheetResource extends Resource {
         Map map = new HashMap<>();
         map.put("examer", examerUri);
         map.put("paper", paperUri);
-        map.put("blankQuizSubmit", blankQuizScoreSheet.getQuizScoreSheet(id));
-        map.put("homeworkQuizSubmit", homeworkQuizScoreSheet.getQuizScoreSheet(id));
+        map.put("blankQuizSubmits", blankQuizScoreSheet.getQuizScoreSheet(id));
+        map.put("homeworkSubmits", homeworkQuizScoreSheet.getQuizScoreSheet(id));
 
         return Response.status(Response.Status.OK).entity(map).build();
     }

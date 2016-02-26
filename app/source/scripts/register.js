@@ -5,12 +5,12 @@ var ReactDom = require('react-dom');
 
 require('bootstrap');
 require('../less/register.less');
-var RegisterApp = require('./component/register-app.component');
-var RegisterForm = require('./component/register-form.component');
-var LoginForm = require('./component/login-form.component');
-var LoginInfo = require('./component/login-info.component');
-var RegisterAgreement = require('./component/register-agreement.component');
-var RegisterPassword = require('./component/register-password.component');
+var RegisterApp = require('./component/register-page/register-app.component');
+var RegisterForm = require('./component/register-page/register-form.component');
+var LoginForm = require('./component/register-page/login-form.component');
+var LoginInfo = require('./component/register-page/login-info.component');
+var RegisterAgreement = require('./component/register-page/register-agreement.component');
+var RegisterPassword = require('./component/register-page/register-password.component');
 
 ReactDom.render(
     <RegisterApp>

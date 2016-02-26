@@ -62,13 +62,13 @@ UserInitializationController.prototype.initializeQuizzes = (req, res) => {
         paperId: paperId
       }, done);
 
-    }, (doc,done) => {
+    }, (doc, done) => {
 
-      userHomeworkQuizzes.initUserHomeworkQuizzes(userId, enrollment.sections[1].quizzes , done);
+      userHomeworkQuizzes.initUserHomeworkQuizzes(userId, enrollment.sections[1].quizzes, done);
 
     }
   ], (err) => {
-    if (err) {
+    if (err && err !== true) {
       res.status(constant.httpCode.INTERNAL_SERVER_ERROR);
       res.send({status: constant.httpCode.INTERNAL_SERVER_ERROR, message: err.message});
     } else {

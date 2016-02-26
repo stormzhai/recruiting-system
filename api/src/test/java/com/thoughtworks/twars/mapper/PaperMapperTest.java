@@ -1,5 +1,7 @@
 package com.thoughtworks.twars.mapper;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.thoughtworks.twars.bean.Paper;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,11 +31,13 @@ public class PaperMapperTest extends TestBase {
     @Test
     public void should_return_paper_with_data() throws Exception {
         Paper paper = paperMapper.getOnePaper(1);
+        Gson gson = new GsonBuilder().create();
+        String responseInfoStr = gson.toJson(paper.getResponseInfo());
 
         assertThat(paper.getId(), is(1));
         assertThat(paper.getMakerId(), is(1));
-        paper.getResponseInfo();
         assertThat(paper.getSections().size(), is(2));
+        assertThat(responseInfoStr, is("{\"id\":1,\"sections\":[{\"description\":\"这是描述\",\"id\":1,\"quizzes\":[{\"definition_uri\":\"blankQuizzes/1\",\"id\":1,\"items_uri\":\"blankQuizzes/1/items\"},{\"definition_uri\":\"blankQuizzes/2\",\"id\":2,\"items_uri\":\"blankQuizzes/2/items\"}],\"type\":\"blankQuizzes\"},{\"description\":\"这是描述\",\"id\":2,\"quizzes\":[{\"definition_uri\":\"homeworkQuizzes/1\",\"id\":1},{\"definition_uri\":\"homeworkQuizzes/2\",\"id\":2},{\"definition_uri\":\"homeworkQuizzes/3\",\"id\":3},{\"definition_uri\":\"homeworkQuizzes/4\",\"id\":4}],\"type\":\"homeworkQuizzes\"}]}"));
 
     }
 

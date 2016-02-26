@@ -3,13 +3,14 @@
 var getJumpControl = require('../mixin/get-jump-control');
 var logicPuzzle = require('../models/logic-puzzle');
 var superagent = require('superagent');
-var apiServer = require('../config/configuration').apiServer;
+var yamlConfig = require('node-yaml-config');
+var apiServer = yamlConfig.load('./config/config.yml').apiServer;
 var async = require('async');
 
-function pathControl (req, res, next, jumpControl) {
+function pathControl(req, res, next, jumpControl) {
   var arr = req.url.split('/');
 
-  arr.forEach(function(item, i){
+  arr.forEach(function (item, i) {
     arr[i] = item.split('?')[0];
   });
 
@@ -19,7 +20,7 @@ function pathControl (req, res, next, jumpControl) {
   var needRedirect = false;
 
   jumpControl.forEach((item) => {
-    if (~item.originPath.indexOf(lastElement) && item.condition){
+    if (~item.originPath.indexOf(lastElement) && item.condition) {
       redirectionAddress = item.targetPath;
       needRedirect = true;
     }
@@ -27,7 +28,7 @@ function pathControl (req, res, next, jumpControl) {
 
   if (needRedirect) {
     res.redirect(redirectionAddress);
-  }else {
+  } else {
     next();
   }
 }
@@ -35,7 +36,7 @@ function pathControl (req, res, next, jumpControl) {
 module.exports = function (req, res, next) {
   var userId;
 
-  if (Boolean(req.session.user)){
+  if (Boolean(req.session.user)) {
     userId = req.session.user.id;
   }
 
@@ -47,7 +48,7 @@ module.exports = function (req, res, next) {
     isPaperCommited: function (done) {
       if (!userId) {
         done(null, false);
-      }else{
+      } else {
         logicPuzzle.isPaperCommited(userId, (data) => {
           done(null, data);
         });
@@ -57,20 +58,27 @@ module.exports = function (req, res, next) {
     isDetailed: function (done) {
       if (!userId) {
         done(null, false);
-      }else {
+      } else {
         superagent.get(apiServer + 'users/' + userId + '/detail')
-          .set('Content-Type', 'application/json')
-          .end(function (err) {
-            if (err) {
-              done(null, false);
-            } else {
-              done(null, true);
-            }
-          });
+            .set('Content-Type', 'application/json')
+            .end(function (err) {
+              if (err) {
+                done(null, false);
+              } else {
+                done(null, true);
+              }
+            });
       }
+    },
+
+    isAgreed: function (done) {
+      logicPuzzle.isDealAgree(userId, (data) => {
+        done(null, data);
+      });
     }
+
   }, function (err, data) {
-    var jumpControl = getJumpControl(data.isLoged, data.isPaperCommited, data.isDetailed);
+    var jumpControl = getJumpControl(data);
 
     pathControl(req, res, next, jumpControl);
   });

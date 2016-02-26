@@ -8,7 +8,7 @@ var httpStatusCode = require('../../mixin/constant').httpCode;
 
 var testSession = null;
 
-describe('GET /LogicPuzzle', function(){
+describe('GET /initializeQuizzes', function(){
 
   it('can sign in', function(done){
 
@@ -24,7 +24,7 @@ describe('GET /LogicPuzzle', function(){
         },
         end: function(fn) {
           fn(null, {
-            body:{userInfo:{uri: 'user/2'}, id: 2},
+            body:{userInfo:{uri: 'user/93'}, id: 93},
             status:httpStatusCode.OK
           });
         }
@@ -34,8 +34,8 @@ describe('GET /LogicPuzzle', function(){
     testSession.get('/login')
         .set('Content-Type', 'application/json')
         .query({
-          account: 'test2@qq.com',
-          password: '12345678'
+          account: 'hahaha@haha.com',
+          password: '99999999'
         })
         .expect(httpStatusCode.OK)
         .end(function(err, res) {
@@ -47,14 +47,10 @@ describe('GET /LogicPuzzle', function(){
         });
   });
 
-  it('can get logic puzzle', function (done) {
-
+  it('can initialize quizzes', function (done) {
     testSession
-        .get('/logic-puzzle')
+        .get('/user-initialization/initializeQuizzes')
         .set('Content-Type', 'application/json')
-        .query({
-          orderId: 1
-        })
         .expect(httpStatusCode.OK)
         .end(function(err, res) {
           if (err) {
@@ -63,6 +59,7 @@ describe('GET /LogicPuzzle', function(){
             done();
           }
         });
+
   });
 
 });

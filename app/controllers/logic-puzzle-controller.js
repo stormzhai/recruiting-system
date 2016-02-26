@@ -80,6 +80,26 @@ LogicPuzzleController.prototype.submitPaper = (req, res) => {
 
 };
 
+LogicPuzzleController.prototype.dealAgree = (req, res) => {
+  var userId = req.session.user.id;
+  var isAgreed = req.body.dealAgree;
+
+  async.waterfall([
+    (done) => {
+      logicPuzzle.findOne({userId: userId}, done);
+    }, (data, done) => {
+      data.isAgreed = isAgreed;
+      data.save(done);
+    }
+  ], (err) => {
+    if (!err) {
+      res.send({status: constant.httpCode.OK});
+    } else {
+      res.send({status: constant.httpCode.INTERNAL_SERVER_ERROR});
+    }
+  });
+};
+
 LogicPuzzleController.setScoreSheet = (data, done) => {
   var scoreSheetUri = 'scoresheets';
   var itemPosts = [];

@@ -72,7 +72,6 @@ public class QuizItemResource extends Resource {
         map.put("question", quizItem.getQuestionZh());
         map.put("initializedBox", quizItem.getInitializedBox());
 
-        session.close();
 
         return Response.status(Response.Status.OK).entity(map).build();
     }

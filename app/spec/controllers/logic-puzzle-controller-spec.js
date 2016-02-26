@@ -144,18 +144,18 @@ describe('LogicPuzzleController', function () {
           },
           paperId: 1,
           blankQuizId: 1,
-          quizItems:[{id:3,userAnswer:'10'}]
+          quizItems: [{id: 3, userAnswer: '10'}]
         });
       });
 
-      spyOn(LogicPuzzleController, 'setScoreSheet').and.callFake(function(data,done){
-        done(null,'OK!');
+      spyOn(LogicPuzzleController, 'setScoreSheet').and.callFake(function (data, done) {
+        done(null, 'OK!');
       });
 
 
       controller.submitPaper({session: {user: {id: 1}}},
         {
-          sendStatus: function(data){
+          sendStatus: function (data) {
             expect(data).toEqual(constant.httpCode.OK);
             expect(doc.isCommited).toEqual(true);
             done();
@@ -168,13 +168,13 @@ describe('LogicPuzzleController', function () {
         done('error', {});
       });
 
-      spyOn(LogicPuzzleController, 'setScoreSheet').and.callFake(function(data,done){
-        done(null,'OK!');
+      spyOn(LogicPuzzleController, 'setScoreSheet').and.callFake(function (data, done) {
+        done(null, 'OK!');
       });
 
       controller.submitPaper({session: {user: {id: 1}}},
         {
-          sendStatus: function(data){
+          sendStatus: function (data) {
             expect(data).toEqual(constant.httpCode.INTERNAL_SERVER_ERROR);
             done();
           }
@@ -182,4 +182,32 @@ describe('LogicPuzzleController', function () {
     });
   });
 
+  describe('dealAgree', function () {
+    it('should save the information about agreeing deal', function (done) {
+
+      spyOn(logicPuzzle, 'findOne').and.callFake(function (id, done) {
+        done(null, {
+          save: function (done) {
+            done(null);
+          }
+        });
+      });
+
+      controller.dealAgree({
+        session: {
+          user: {
+            id: 1
+          }
+        },
+        body: {
+          dealAgree: true
+        }
+      }, {
+        send: function (data) {
+          expect(data).toEqual({status: constant.httpCode.OK});
+          done();
+        }
+      });
+    });
+  });
 });

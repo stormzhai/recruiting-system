@@ -12,4 +12,6 @@ router.post('/', logicPuzzleController.submitPaper);
 
 router.post('/save', logicPuzzleController.saveAnswer);
 
+router.put('/dealAgree', logicPuzzleController.dealAgree);
+
 module.exports = router;

@@ -29,7 +29,8 @@ var logicPuzzleSchema = new Schema({
   blankQuizId: Number,
   paperId: Number,
   isCommited: Boolean,
-  endTime: String
+  endTime: String,
+  isAgreed: Boolean
 });
 
 logicPuzzleSchema.statics.isPaperCommited = function (userId, callback) {
@@ -86,5 +87,19 @@ logicPuzzleSchema.statics.getLogicPuzzle = function (orderId, userId) {
       });
 };
 
+logicPuzzleSchema.statics.isDealAgree = function (userId, callback) {
+  var isDealAgree;
+
+  this.findOne({userId: userId}, (err, logicPuzzle) => {
+    if (err || !logicPuzzle || !logicPuzzle.isAgreed) {
+      isDealAgree = false;
+    } else {
+      isDealAgree = logicPuzzle.isAgreed;
+    }
+    callback(isDealAgree);
+  });
+
+
+};
 
 module.exports = mongoose.model('LogicPuzzle', logicPuzzleSchema);

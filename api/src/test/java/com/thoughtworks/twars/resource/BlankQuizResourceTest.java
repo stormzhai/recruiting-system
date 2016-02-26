@@ -62,6 +62,7 @@ public class BlankQuizResourceTest extends TestBase {
 
         Map map = response.readEntity(Map.class);
         assertThat(map.get("uri"), is("blankQuizzes/5"));
+        assertThat(map.get("id"), is(5));
     }
 
 

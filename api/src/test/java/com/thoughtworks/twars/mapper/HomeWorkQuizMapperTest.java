@@ -22,7 +22,7 @@ public class HomeWorkQuizMapperTest extends TestBase {
     @Test
     public void should_return_homework_list_when_by_section_id() {
         List<HomeworkQuiz> homeworkQuizList = homeworkQuizMapper.findBySectionId(2);
-
+        
         assertThat(homeworkQuizList.size(), is(4));
     }
 
@@ -30,9 +30,9 @@ public class HomeWorkQuizMapperTest extends TestBase {
     public void should_return_one_homework_quiz_when_by_id() {
         HomeworkQuiz homeworkQuiz = homeworkQuizMapper.findById(1);
 
-        assertThat(homeworkQuiz.getDescription(), is("这是一道比较简单的题目"));
+        assertThat(homeworkQuiz.getDescription(), is("创建一个文件,文件名为readme.md"));
         assertThat(homeworkQuiz.getEvaluateRepository(), is("test.com/homework/1"));
-        assertThat(homeworkQuiz.getEvaluateScript(), is("test.script.com/homework/1"));
+        assertThat(homeworkQuiz.getEvaluateScript(), is("./homework-script/check-readme.sh"));
         assertThat(homeworkQuiz.getTemplateRepository(), is("github.com/homework/1"));
     }
 

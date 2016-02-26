@@ -21,9 +21,27 @@ jenkins:
   environment:
     - LANG=C.UTF-8
     - TERM=dumb
-rabbitmq:
-  image: rabbitmq:3.6.0
+redis:
+  image: redis:3.0.7
+  ports:
+    - "6379:6379"
+  volumes:
+    - ./conf/redis.conf:/usr/local/etc/redis/redis.conf
+nginx:
+  build: ./nginx
+  ports:
+    - "80:80"
   environment:
-      - LANG=C.UTF-8
-      - TERM=dumb
+    - LANG=C.UTF-8
+    - TERM=dumb
+  volumes:
+    - ./nginx/conf.d:/etc/nginx/conf.d
+    - /Users/Thoughtworks/works/docker-cached/nginx_fs:/var/fs
 
+task-queue-node:
+  image: node:5.7.0-wheezy
+  ports:
+    - "4000:4000"
+  volumes:
+    - /Users/Thoughtworks/works/recruiting-system/task-queue:/var/task-queue
+  command: bash -c "cd /var/task-queue/ && npm install && node app"

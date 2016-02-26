@@ -56,6 +56,7 @@ public class BlankQuizResource {
         blankQuizMapper.insertBlankQuiz(blankQuiz);
 
         Map map = new HashMap<>();
+        map.put("id", blankQuiz.getId());
         map.put("uri", "blankQuizzes/" + blankQuiz.getId());
 
         return Response.status(Response.Status.CREATED).entity(map).build();

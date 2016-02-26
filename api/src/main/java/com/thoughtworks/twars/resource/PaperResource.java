@@ -3,8 +3,8 @@ package com.thoughtworks.twars.resource;
 import com.thoughtworks.twars.bean.Paper;
 import com.thoughtworks.twars.mapper.PaperMapper;
 import com.thoughtworks.twars.mapper.SectionMapper;
-import com.thoughtworks.twars.service.quiz.definition.BlankQuizDefinitionService;
-import com.thoughtworks.twars.service.quiz.definition.HomeworkQuizDefinitionService;
+import com.thoughtworks.twars.resource.quiz.definition.BlankQuizDefinitionService;
+import com.thoughtworks.twars.resource.quiz.definition.HomeworkQuizDefinitionService;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
@@ -58,21 +58,27 @@ public class PaperResource extends Resource {
         int makerId = (int) data.get("makerId");
         List<Map> sections = (List<Map>) data.get("sections");
 
-        Paper paper = new Paper();
-        paper.setMakerId(makerId);
+        try {
+            Paper paper = new Paper();
+            paper.setMakerId(makerId);
 
-        paperMapper.insertPaper(paper);
-        int paperId = paper.getId();
+            paperMapper.insertPaper(paper);
+            int paperId = paper.getId();
 
-        List<Map> result = sections.stream()
-                .map(item -> {
-                    Map map = new HashMap();
-                    map.put("uri", insertDefinitionByQuizType(item, paperId));
-                    return map;
-                })
-                .collect(Collectors.toList());
+            List<Map> result = sections.stream()
+                    .map(item -> {
+                        Map map = new HashMap();
+                        map.put("uri", insertDefinitionByQuizType(item, paperId));
+                        return map;
+                    })
+                    .collect(Collectors.toList());
+            session.commit();
 
-        return Response.status(Response.Status.OK).entity(result.get(0)).build();
+            return Response.status(Response.Status.OK).entity(result.get(0)).build();
+        } catch (Exception e) {
+            session.rollback();
+        }
+        return Response.status(Response.Status.UNSUPPORTED_MEDIA_TYPE).build();
     }
 
 
@@ -96,28 +102,13 @@ public class PaperResource extends Resource {
     @Path("/{param}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getOnePaper(@PathParam("param") int id) {
-
-        if (sectionMapper.getSectionsByPaperId(id) == null) {
+        Paper paper = paperMapper.getOnePaper(id);
+        if (paper == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
 
-        List<Map> sectionList = sectionMapper.getSectionsByPaperId(id)
-                .stream()
-                .map(item -> {
-                    Map<String, Object> map = new HashMap<>();
-                    map.put("id", item.getId());
-                    map.put("type", item.getType());
-                    map.put("quizzes", getQuizzesBySectionId(item.getId(),
-                            item.getType()));
-                    return map;
-                })
-                .collect(Collectors.toList());
-
-        Map<String, Object> result = new HashMap<>();
-        result.put("sections", sectionList);
-        result.put("id", id);
-
-        return Response.status(Response.Status.OK).entity(result).build();
+        return Response.status(Response.Status.OK)
+                .entity(paper.getResponseInfo()).build();
     }
 
 
@@ -126,17 +117,6 @@ public class PaperResource extends Resource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getEnrollmentPaper() {
         return getOnePaper(1);
-    }
-
-
-    private List<Map> getQuizzesBySectionId(int sectionId, String type) {
-
-        if ("blankQuizzes".equals(type)) {
-            return blankQuizDefinition.getQuizDefinition(sectionId);
-        } else if ("homeworkQuizzes".equals(type)) {
-            return homeworkQuizDefinition.getQuizDefinition(sectionId);
-        }
-        return null;
     }
 }
 

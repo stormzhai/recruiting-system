@@ -3,14 +3,16 @@
         PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
-    <environments default="development">
-        <environment id="development">
+    <properties resource="config.properties"/>
+    <environments default="default">
+        <environment id="default">
             <transactionManager type="JDBC"/>
             <dataSource type="POOLED">
                 <property name="driver" value="com.mysql.jdbc.Driver"/>
-                <property name="url" value="jdbc:mysql://localhost:3306/BronzeSword?useUnicode=true&amp;characterEncoding=UTF-8"/>
-                <property name="username" value="BronzeSword"/>
-                <property name="password" value="12345678"/>
+                <property name="url"
+                          value="${jdbc.url}"/>
+                <property name="username" value="${jdbc.user}"/>
+                <property name="password" value="${jdbc.password}"/>
             </dataSource>
         </environment>
     </environments>
@@ -27,5 +29,6 @@
         <mapper resource="mybatis/HomeworkQuizMapper.xml"></mapper>
         <mapper resource="mybatis/HomeworkSubmitMapper.xml"></mapper>
         <mapper resource="mybatis/HomeworkPostHistoryMapper.xml"></mapper>
+        <mapper resource="mybatis/LoginDetailMapper.xml"></mapper>
     </mappers>
 </configuration>

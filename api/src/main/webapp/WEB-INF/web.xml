@@ -9,6 +9,7 @@
             <param-name>javax.ws.rs.Application</param-name>
             <param-value>com.thoughtworks.twars.App</param-value>
         </init-param>
+
         <load-on-startup>1</load-on-startup>
     </servlet>
 
@@ -16,4 +17,5 @@
         <servlet-name>jersey-serlvet</servlet-name>
         <url-pattern>/*</url-pattern>
     </servlet-mapping>
+
 </web-app>

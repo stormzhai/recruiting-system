@@ -24,6 +24,7 @@ public class RegisterResource extends Resource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response createUser(User user) {
         userMapper.insertUser(user);
+        session.commit();
 
         Map<String, Object> map = new HashMap<>();
         Map<String, String> userInfo = new HashMap<>();

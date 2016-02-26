@@ -13,6 +13,7 @@ import static org.hamcrest.core.Is.is;
 import static org.mockito.Mockito.when;
 
 public class RegisterResourceTest extends TestBase {
+    String basePath = "/register";
 
     @Test
     public void should_create_user_when_register() throws Exception {
@@ -23,8 +24,6 @@ public class RegisterResourceTest extends TestBase {
         newUser.setMobilePhone("123");
         newUser.setId(108);
         newUser.setPassword("12345");
-
-        String basePath = "/register";
 
         Entity entity = Entity.entity(newUser, MediaType.APPLICATION_JSON);
         Response response = target(basePath).request().post(entity);

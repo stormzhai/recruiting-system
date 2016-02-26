@@ -1,17 +1,19 @@
 package com.thoughtworks.twars.resource;
 
-import com.thoughtworks.twars.util.DBUtil;
-import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.inject.Inject;
+
 public class Resource {
 
-    protected SqlSession session;
+    @Inject
+    protected SqlSessionManager session;
+
     protected Logger logger;
 
     public Resource() {
-        session = DBUtil.getSession();
         logger = LogManager.getRootLogger();
     }
 }

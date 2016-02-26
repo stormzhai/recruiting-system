@@ -5,7 +5,7 @@ var homeworkQuizzes = require('../models/homework-quizzes');
 var async = require('async');
 var constant = require('../mixin/constant');
 var apiRequest = require('../services/api-request');
-
+var request = require('superagent');
 
 function HomeworkController() {
 
@@ -54,10 +54,6 @@ HomeworkController.prototype.getQuiz = (req, res) => {
   var quiz;
   async.waterfall([
     (done) => {
-      userHomeworkQuizzes.unlockNext(userId, done);
-    },
-    (data, result, done) => {
-      done = typeof(result) === 'function' ? result : done;
       userHomeworkQuizzes.findOne({userId: userId}, done);
     },
     (result, done) => {
@@ -76,14 +72,14 @@ HomeworkController.prototype.getQuiz = (req, res) => {
         homeworkQuizzes.findOne({id: quiz.id}, done);
       }
     },
-    (doc,done) => {
-      if(doc){
-        done('break',doc);
+    (doc, done) => {
+      if (doc) {
+        done('break', doc);
       } else {
-        apiRequest.get(quiz.uri,done);
+        apiRequest.get(quiz.uri, done);
       }
     },
-    (res,done) => {
+    (res, done) => {
       homeworkQuizzes.create({
         id: res.body.id,
         desc: res.body.description,
@@ -119,6 +115,7 @@ HomeworkController.prototype.getQuiz = (req, res) => {
 HomeworkController.prototype.saveGithubUrl = (req, res) => {
   var userId = req.session.user.id;
   var orderId = req.body.orderId;
+  var quizId;
 
   async.waterfall([
     (done)=> {
@@ -128,17 +125,18 @@ HomeworkController.prototype.saveGithubUrl = (req, res) => {
         result.data.quizzes[orderId - 1].userAnswerRepo = req.body.userAnswerRepo;
         result.data.quizzes[orderId - 1].branch = req.body.branch;
         result.data.quizzes[orderId - 1].status = constant.homeworkQuizzesStatus.PROGRESS;
+        quizId = result.data.quizzes[orderId - 1].id;
         result.data.save(done);
       } else {
         done(true, result);
       }
+    }, function (product, numAffected, done) {
+      homeworkQuizzes.findOne({id: quizId}, done);
     }
   ], (err, data) => {
     if (err) {
       if (data.status === constant.httpCode.FORBIDDEN) {
-        res.send({
-          status: data.status
-        });
+        res.send({status: data.status});
       }
       if (data.status === constant.httpCode.NOT_FOUND) {
         res.send({status: data.status});
@@ -150,20 +148,22 @@ HomeworkController.prototype.saveGithubUrl = (req, res) => {
       });
     }
   });
-
 };
 
 HomeworkController.prototype.updateResult = (req, res)=> {
   var userId = req.body.userId;
   var orderId = req.body.orderId;
   var resultPath = req.body.resultPath;
-  var resultStatus = req.body.status;
+  var resultStatus = req.body.resultStatus;
 
   async.waterfall([
     (done)=> {
       userHomeworkQuizzes.checkDataForUpdate(userId, orderId, done);
     }, (result, done)=> {
       if (result.isValidate === true) {
+        if (resultStatus === constant.homeworkQuizzesStatus.SUCCESS && orderId < result.data.quizzes.length) {
+          result.data.quizzes[orderId].status = constant.homeworkQuizzesStatus.ACTIVE;
+        }
         result.data.quizzes[orderId - 1].status = resultStatus;
         result.data.quizzes[orderId - 1].resultPath = resultPath;
         result.data.save(done);

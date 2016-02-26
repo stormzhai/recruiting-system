@@ -1,7 +1,8 @@
 'use strict';
 
 var superAgent = require('superagent');
-var apiServer = require('../config/configuration').apiServer;
+var yamlConfig = require('node-yaml-config');
+var apiServer = yamlConfig.load('./config/config.yml').apiServer;
 
 var apiRequest = {
   get: function (url, query, callback) {
@@ -22,6 +23,14 @@ var apiRequest = {
     superAgent.post(apiServer + url)
         .set('Content-Type', 'application/json')
         .send(body)
+        .end(callback);
+  },
+
+  put: function (url, data ,callback) {
+
+    superAgent.put(apiServer + url)
+        .set('Content-Type', 'application/json')
+        .send(data)
         .end(callback);
   }
 };

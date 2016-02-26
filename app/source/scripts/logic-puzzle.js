@@ -5,17 +5,18 @@ var ReactDOM = require('react-dom');
 
 require('../less/logic-puzzle.less');
 require('bootstrap');
+require('lightbox');
 
-var LogicPuzzle = require('./component/logic-puzzle-app');
-var LogicPuzzleLeft = require('./component/logic-puzzle-left.component');
-var LogicPuzzleSidebar = require('./component/logic-puzzle-sidebar.component');
-var LogicPuzzleBoxes = require('./component/logic-puzzle-boxes.component');
-var LogicPuzzleChart = require('./component/logic-puzzle-chart.component');
-var LogicPuzzleDescription = require('./component/logic-puzzle-description.component');
-var LogicPuzzleAnswerSubmit = require('./component/logic-puzzle-answer-submit.component');
-var LogicPuzzleTimer = require('./component/logic-puzzle-timer.component');
-var LogicPuzzleActions = require('./actions/logic-puzzle-actions');
-var Navigation = require('./component/navigation.component');
+var LogicPuzzle = require('./component/logic-puzzle/logic-puzzle-app');
+var LogicPuzzleLeft = require('./component/logic-puzzle/logic-puzzle-left.component');
+var LogicPuzzleSidebar = require('./component/logic-puzzle/logic-puzzle-sidebar.component');
+var LogicPuzzleBoxes = require('./component/logic-puzzle/logic-puzzle-boxes.component');
+var LogicPuzzleChart = require('./component/logic-puzzle/logic-puzzle-chart.component');
+var LogicPuzzleDescription = require('./component/logic-puzzle/logic-puzzle-description.component');
+var LogicPuzzleAnswerSubmit = require('./component/logic-puzzle/logic-puzzle-answer-submit.component');
+var LogicPuzzleTimer = require('./component/logic-puzzle/logic-puzzle-timer.component');
+var LogicPuzzleActions = require('./actions/logic-puzzle/logic-puzzle-actions');
+var Navigation = require('./component/navigation/navigation.component');
 
 $('#submitModal').on('show.bs.modal', function () {
   $('.modal-content')

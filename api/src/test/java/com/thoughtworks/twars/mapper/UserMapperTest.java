@@ -112,6 +112,8 @@ public class UserMapperTest extends TestBase {
     @Test
     public void should_encrypt_password_when_create_new_user () throws Exception {
         User newUser = new User();
+        newUser.setEmail("jingjing@qq.com");
+        newUser.setMobilePhone("13576826262");
         newUser.setPassword("123");
         int result = userMapper.insertUser(newUser);
         int userId = newUser.getId();

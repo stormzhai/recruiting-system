@@ -39,7 +39,7 @@ module.exports = {
                 loader: "file-loader"
             },
             {
-                test: /\.(png|jpg)$/,
+                test: /\.(png|jpg|gif)$/,
                 loader: 'url-loader?limit=10000&name=build/[name].[ext]'
             }
         ]

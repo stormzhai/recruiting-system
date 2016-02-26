@@ -2,7 +2,8 @@
 
 var apiRequest = require('../../services/api-request');
 var superAgent = require('superagent');
-var apiServer = require('../../config/configuration').apiServer;
+var yamlConfig = require('node-yaml-config');
+var apiServer = yamlConfig.load('./config/config.yml').apiServer;
 
 describe('apiRequest', function () {
 

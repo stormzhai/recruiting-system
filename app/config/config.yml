@@ -1,0 +1,7 @@
+default:
+  port: 3000
+  database: 'mongodb://localhost/twars'
+  apiServer: 'http://localhost:8080/api/'
+  sessionTtl: 3600 # 60(MINUTE_PER_HOUR) * 60(SECONDS_PER_MINUTE)
+test:
+  port: 5000

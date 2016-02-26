@@ -8,7 +8,8 @@ var md5 = require('js-md5');
 var validate = require('validate.js');
 var constraint = require('../../mixin/login-constraint');
 var passport = require('passport');
-var apiServer = require('../../config/configuration').apiServer;
+var apiRequest = require('../../services/api-request');
+
 
 function checkLoginInfo(account, password) {
   var pass = true;
@@ -41,39 +42,18 @@ router.get('/', function (req, res) {
   } else {
     password = md5(password);
 
-    request
-        .post(apiServer + 'login')
-        .set('Content-Type', 'application/json')
-        .send({
-          email: account,
-          password: password
-        })
-        .end(function (err, result) {
-          if (result.body.id) {
-            req.session.user = {
-              id: result.body.id,
-              userInfo: result.body.userInfo
-            };
-          }
-          res.send({
-            status: result.status
-          });
-        });
+    apiRequest.post('login', {email: account, password: password}, function (err, result) {
+      if (result.body.id) {
+        req.session.user = {
+          id: result.body.id,
+          userInfo: result.body.userInfo
+        };
+      }
+      res.send({
+        status: result.status
+      });
+    });
   }
 });
-
-router.get('/github',
-    passport.authenticate('github'),
-    function (req, res) {
-      // The request will be redirected to GitHub for authentication, so this
-      // function will not be called.
-    });
-
-
-router.get('/github/callback',
-    passport.authenticate('github', {failureRedirect: '/'}),
-    function (req, res) {
-      res.redirect('/start');
-    });
 
 module.exports = router;

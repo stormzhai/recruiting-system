@@ -7,5 +7,6 @@
   "EXIST": "手机号或者邮箱已被注册",
   "LOGIN_FAILED": "登录失败" ,
   "SUCCESSFUL_STATUS": 200,
-  "FAILING_STATUS": 404
+  "FAILING_STATUS": 404,
+  "SERVER_ERROR":500
 }

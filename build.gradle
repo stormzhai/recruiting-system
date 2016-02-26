@@ -1,3 +1,8 @@
+import org.gradle.logging.StyledTextOutputFactory
+import static org.gradle.logging.StyledTextOutput.Style
+
+def out = services.get(StyledTextOutputFactory).create("blah")
+
 subprojects {
     apply plugin: 'java'
     repositories {
@@ -9,21 +14,31 @@ allprojects {
     apply plugin: "idea"
 }
 
-task(startServer) {
-    doFirst {
-        println "Starting jetty"
-        project(':api').flywayClean.execute()
-        project(':api').flywayMigrate.execute()
-//        project(':api').jettyRun.daemon = true
-        project(':api').jettyRun.execute()
-        println "Jetty started"
-
-        project(':app').mongoRefresh.execute()
-        project(':app').startNodemon.execute()
+task(startserver) {
+    doFirst{
+        out.withStyle(Style.Failure).println('The task \'startserver\' was deprecated')
+        out.withStyle(Style.Failure).println('please use new task \'startApp\' & \'startApi\'')
     }
 
-    doLast {
-        project(':api').jettyStop.execute()
-        println "Server stoped"
+}
+
+task(startApi) {
+    doFirst {
+        out.withStyle(Style.Info).println('migrating database...')
+        project(':api').flywayClean.execute()
+        project(':api').flywayMigrate.execute()
+        out.withStyle(Style.Info).println('starting jetty server...')
+        project(':api').jettyRun.execute()
+    }
+}
+
+task(startApp) {
+    doFirst {
+        out.withStyle(Style.Info).println "install npm dependencies"
+        project(':app').npmInstall.execute()
+        out.withStyle(Style.Info).println "refresh mongodb"
+        project(':app').mongoRefresh.execute()
+        out.withStyle(Style.Info).println "start nodemon"
+        project(':app').startNodemon.execute()
     }
 }

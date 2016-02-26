@@ -1,12 +1,14 @@
 package com.thoughtworks.twars;
 
+import com.thoughtworks.twars.filter.CloseSessionResponseFilter;
+import com.thoughtworks.twars.filter.OpenSessionRequestFilter;
 import com.thoughtworks.twars.mapper.*;
-import com.thoughtworks.twars.service.quiz.definition.BlankQuizDefinitionService;
-import com.thoughtworks.twars.service.quiz.definition.HomeworkQuizDefinitionService;
-import com.thoughtworks.twars.service.quiz.scoresheet.BlankQuizScoreSheetService;
-import com.thoughtworks.twars.service.quiz.scoresheet.HomeworkQuizScoreSheetService;
+import com.thoughtworks.twars.resource.quiz.definition.BlankQuizDefinitionService;
+import com.thoughtworks.twars.resource.quiz.definition.HomeworkQuizDefinitionService;
+import com.thoughtworks.twars.resource.quiz.scoresheet.BlankQuizScoreSheetService;
+import com.thoughtworks.twars.resource.quiz.scoresheet.HomeworkQuizScoreSheetService;
 import com.thoughtworks.twars.util.DBUtil;
-import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionManager;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
 
@@ -17,7 +19,7 @@ public class App extends ResourceConfig {
 
     public App() {
 
-        SqlSession session = DBUtil.getSession();
+        SqlSessionManager session = DBUtil.getSession();
 
         final UserMapper userMapper = session
                 .getMapper(UserMapper.class);
@@ -55,6 +57,9 @@ public class App extends ResourceConfig {
         final HomeworkPostHistoryMapper homeworkPostHistoryMapper = session
                 .getMapper(HomeworkPostHistoryMapper.class);
 
+        final LoginDetailMapper loginDetailMapper = session
+                .getMapper(LoginDetailMapper.class);
+
         final BlankQuizScoreSheetService blankQuizScoreSheet = new BlankQuizScoreSheetService();
         blankQuizScoreSheet.setBlankQuizSubmitMapper(blankQuizSubmitMapper);
         blankQuizScoreSheet.setItemPostMapper(itemPostMapper);
@@ -75,6 +80,8 @@ public class App extends ResourceConfig {
         blankQuizDefinition.setSectionMapper(sectionMapper);
         blankQuizDefinition.setSectionQuizMapper(sectionQuizMapper);
 
+        register(OpenSessionRequestFilter.class);
+        register(CloseSessionResponseFilter.class);
 
         packages("com.thoughtworks.twars.resource")
                 .register(new AbstractBinder() {
@@ -92,10 +99,12 @@ public class App extends ResourceConfig {
                         bind(homeworkQuizMapper).to(HomeworkQuizMapper.class);
                         bind(homeworkSubmitMapper).to(HomeworkSubmitMapper.class);
                         bind(homeworkPostHistoryMapper).to(HomeworkPostHistoryMapper.class);
+                        bind(loginDetailMapper).to(LoginDetailMapper.class);
                         bind(blankQuizScoreSheet).to(BlankQuizScoreSheetService.class);
                         bind(homeworkQuizScoreSheet).to(HomeworkQuizScoreSheetService.class);
                         bind(homeworkQuizDefinition).to(HomeworkQuizDefinitionService.class);
                         bind(blankQuizDefinition).to(BlankQuizDefinitionService.class);
+                        bind(session).to(SqlSessionManager.class);
                     }
                 });
     }
