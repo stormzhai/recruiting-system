@@ -21,6 +21,7 @@ var LogicPuzzleStore = Reflux.createStore({
       (callback) => {
         this.updateItem(callback);
       }, (res, callback) => {
+        console.log(res.body);
         _answer = res.body.userAnswer;
         this.trigger({
           item: res.body.item,

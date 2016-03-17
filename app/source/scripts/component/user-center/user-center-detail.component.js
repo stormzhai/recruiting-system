@@ -131,7 +131,7 @@ var UserDetail = React.createClass({
           <div className='content'>
             <form className='form-horizontal form-top-height'>
               <div id='account-info'>
-                <label htmlFor='inputSchool' className='col-sm-4 col-md-4 control-label'>学校</label>
+                <label htmlFor='inputSchool' className='col-sm-4 col-md-4 control-label'>学校<span className="error alert alert-danger">*</span></label>
                 <div className={'form-group has-' + (this.state.schoolError === '' ? '' : 'error')}>
                   <div className='col-sm-4 col-md-4'>
                     <input type='text' className='form-control' id='inputSchool' aria-describedby='helpBlock2'
@@ -146,7 +146,7 @@ var UserDetail = React.createClass({
                   </div>
                 </div>
 
-                <label htmlFor='inputName' className='col-sm-4 col-md-4 control-label'>姓名</label>
+                <label htmlFor='inputName' className='col-sm-4 col-md-4 control-label'>姓名<span className="error alert alert-danger">*</span></label>
                 <div className={'form-group has-' + (this.state.nameError === '' ? '' : 'error')}>
                   <div className='col-sm-4 col-md-4'>
                     <input type='text' className='form-control' id='inputName' aria-describedby='helpBlock2'
@@ -161,7 +161,7 @@ var UserDetail = React.createClass({
                   </div>
                 </div>
 
-                <label htmlFor='inputMobilePhone' className='col-sm-4 col-md-4 control-label'>手机</label>
+                <label htmlFor='inputMobilePhone' className='col-sm-4 col-md-4 control-label'>手机<span className="error alert alert-success">*</span></label>
                 <div className='form-group'>
                   <div className='col-sm-4 col-md-4'>
                     <input type='text' className='form-control' id='inputMobilePhone' placeholder='手机'
@@ -169,7 +169,7 @@ var UserDetail = React.createClass({
                   </div>
                 </div>
 
-                <label htmlFor='inputEmail' className='col-sm-4 col-md-4 control-label'>邮箱</label>
+                <label htmlFor='inputEmail' className='col-sm-4 col-md-4 control-label'>邮箱<span className="error alert alert-success">*</span></label>
                 <div className='form-group'>
                   <div className='col-sm-4 col-md-4'>
                     <input type='text' className='form-control' id='inputEmail' placeholder='邮箱'
@@ -177,17 +177,17 @@ var UserDetail = React.createClass({
                   </div>
                 </div>
 
-                <label htmlFor='inputGender' className='col-sm-4 col-md-4 control-label'>性别</label>
+                <label htmlFor='inputGender' className='col-sm-4 col-md-4 control-label'>性别<span className="error alert alert-danger">*</span></label>
                 <div className='form-group'>
                   {this.props.children[0]}
                 </div>
 
-                <label htmlFor='inputBirthday' className='col-sm-4 col-md-4 control-label'>生日</label>
+                <label htmlFor='inputBirthday' className='col-sm-4 col-md-4 control-label'>生日<span className="error alert alert-danger">*</span></label>
                 <div className='form-group'>
                   {this.props.children[1]}
                 </div>
 
-                <label htmlFor='inputMajor' className='col-sm-4 col-md-4 control-label'>专业</label>
+                <label htmlFor='inputMajor' className='col-sm-4 col-md-4 control-label'>专业<span className="error alert alert-danger">*</span></label>
                 <div className={'form-group has-' + (this.state.majorError === '' ? '' : 'error')}>
                   <div className='col-sm-4 col-md-4'>
                     <input type='text' className='form-control' id='inputMajor' aria-describedby='helpBlock2'
@@ -202,7 +202,7 @@ var UserDetail = React.createClass({
                   </div>
                 </div>
 
-                <label htmlFor='inputDegree' className='col-sm-4 col-md-4 control-label'>学历学位</label>
+                <label htmlFor='inputDegree' className='col-sm-4 col-md-4 control-label'>学历学位<span className="error alert alert-danger">*</span></label>
                 <div className='form-group'>
                   <div className='col-sm-4 col-md-4' onBlur={this.validate}>
                     <select ref='degree' placeholder='学历学位' name='degree' value={this.state.degree}

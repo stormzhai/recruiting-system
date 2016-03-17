@@ -8,8 +8,7 @@ var node_modules = path.resolve(__dirname, 'node_modules');
 var pathToJQuery = path.resolve(node_modules, 'jquery/dist/jquery.min.js');
 var pathToBootstarp = path.resolve(node_modules, 'bootstrap/dist/');
 
-
-module.exports = {
+var config = {
   entry: {
     "404": "./source/scripts/404.js",
     "index": "./source/scripts/index.js",
@@ -22,9 +21,8 @@ module.exports = {
     "password-retrieve": './source/scripts/password-retrieve.js',
     "password-reset": './source/scripts/password-reset.js',
     "homework-details": './source/scripts/homework-details.js',
-    "vendors": ['jquery','bootstrap.css','font-awesome','react','react-dom', 'bootstrap.js']
-
-
+    "vendors": ['bootstrap.css','font-awesome','jquery','react','react-dom', 'bootstrap.js']
+    //"vendor.css": ['bootstrap.css','font-awesome']
   },
   output: {
     path: __dirname + '/public/assets/',
@@ -77,167 +75,11 @@ module.exports = {
       ReactDom: 'react-dom',
       ReactDOM: 'react-dom'
     }),
-    new ExtractTextPlugin("[name].bundle.css"),
-    new webpack.optimize.CommonsChunkPlugin('vendors', 'vendors.js'),
+    new ExtractTextPlugin("[chunkhash:8].[name].css"),
+    //new webpack.optimize.CommonsChunkPlugin('vendors', 'vendors.js'),
     new webpack.optimize.UglifyJsPlugin({
       compress: {
         warnings: false
-      }
-    }),
-    new HtmlwebpackPlugin({
-      filename: 'register.html',
-      template: __dirname + '/public/register.html',
-      inject: true,
-      chunks: ['vendors', 'register'],
-
-      chunksSortMode: function (a, b) {
-        var index = {'vendors': 2, 'register': 1},
-            aI = index[a.origins[0].name],
-            bI = index[b.origins[0].name];
-        return aI && bI ? bI - aI : -1;
-      }
-    }),
-    new HtmlwebpackPlugin({
-      filename: 'index.html',
-      template: __dirname + '/public/index.html',
-      inject: true,
-      chunks: ['vendors', 'index'],
-
-      chunksSortMode: function (a, b) {
-        var index = {'vendors': 2, 'index': 1},
-            aI = index[a.origins[0].name],
-            bI = index[b.origins[0].name];
-        return aI && bI ? bI - aI : -1;
-      }
-    }),
-    new HtmlwebpackPlugin({
-      filename: 'user-center.html',
-      template: __dirname + '/public/user-center.html',
-      inject: true,
-      chunks: ['vendors', 'user-center'],
-
-      chunksSortMode: function (a, b) {
-        var index = {'vendors': 2, 'user-center': 1},
-            aI = index[a.origins[0].name],
-            bI = index[b.origins[0].name];
-        return aI && bI ? bI - aI : -1;
-      }
-    }),
-    new HtmlwebpackPlugin({
-      filename: 'user-center.html',
-      template: __dirname + '/public/user-center.html',
-      inject: true,
-      chunks: ['vendors', 'user-center'],
-
-      chunksSortMode: function (a, b) {
-        var index = {'vendors': 2, 'user-center': 1},
-            aI = index[a.origins[0].name],
-            bI = index[b.origins[0].name];
-        return aI && bI ? bI - aI : -1;
-      }
-    }),
-    new HtmlwebpackPlugin({
-      filename: 'start.html',
-      template: __dirname + '/public/start.html',
-      inject: true,
-      chunks: ['vendors', 'start'],
-
-      chunksSortMode: function (a, b) {
-        var index = {'vendors': 2, 'start': 1},
-            aI = index[a.origins[0].name],
-            bI = index[b.origins[0].name];
-        return aI && bI ? bI - aI : -1;
-      }
-    }),
-    new HtmlwebpackPlugin({
-      filename: 'password-retrieve.html',
-      template: __dirname + '/public/password-retrieve.html',
-      inject: true,
-      chunks: ['vendors', 'password-retrieve'],
-
-      chunksSortMode: function (a, b) {
-        var index = {'vendors': 2, 'password-retrieve': 1},
-            aI = index[a.origins[0].name],
-            bI = index[b.origins[0].name];
-        return aI && bI ? bI - aI : -1;
-      }
-    }),
-    new HtmlwebpackPlugin({
-      filename: 'password-reset.html',
-      template: __dirname + '/public/password-reset.html',
-      inject: true,
-      chunks: ['vendors', 'password-reset'],
-
-      chunksSortMode: function (a, b) {
-        var index = {'vendors': 2, 'password-reset': 1},
-            aI = index[a.origins[0].name],
-            bI = index[b.origins[0].name];
-        return aI && bI ? bI - aI : -1;
-      }
-    }),
-    new HtmlwebpackPlugin({
-      filename: 'logic-puzzle.html',
-      template: __dirname + '/public/logic-puzzle.html',
-      inject: true,
-      chunks: ['vendors', 'logic-puzzle'],
-
-      chunksSortMode: function (a, b) {
-        var index = {'vendors': 2, 'logic-puzzle': 1},
-            aI = index[a.origins[0].name],
-            bI = index[b.origins[0].name];
-        return aI && bI ? bI - aI : -1;
-      }
-    }),
-    new HtmlwebpackPlugin({
-      filename: 'homework-details.html',
-      template: __dirname + '/public/homework-details.html',
-      inject: true,
-      chunks: ['vendors', 'homework-details'],
-
-      chunksSortMode: function (a, b) {
-        var index = {'vendors': 2, 'homework-details': 1},
-            aI = index[a.origins[0].name],
-            bI = index[b.origins[0].name];
-        return aI && bI ? bI - aI : -1;
-      }
-    }),
-    new HtmlwebpackPlugin({
-      filename: 'homework.html',
-      template: __dirname + '/public/homework.html',
-      inject: true,
-      chunks: ['vendors', 'homework'],
-
-      chunksSortMode: function (a, b) {
-        var index = {'vendors': 2, 'homework': 1},
-            aI = index[a.origins[0].name],
-            bI = index[b.origins[0].name];
-        return aI && bI ? bI - aI : -1;
-      }
-    }),
-    new HtmlwebpackPlugin({
-      filename: 'dashboard.html',
-      template: __dirname + '/public/dashboard.html',
-      inject: true,
-      chunks: ['vendors', 'dashboard'],
-
-      chunksSortMode: function (a, b) {
-        var index = {'vendors': 2, 'dashboard': 1},
-            aI = index[a.origins[0].name],
-            bI = index[b.origins[0].name];
-        return aI && bI ? bI - aI : -1;
-      }
-    }),
-    new HtmlwebpackPlugin({
-      filename: '404.html',
-      template: __dirname + '/public/404.html',
-      inject: true,
-      chunks: ['vendors', '404'],
-
-      chunksSortMode: function (a, b) {
-        var index = {'vendors': 2, '404': 1},
-            aI = index[a.origins[0].name],
-            bI = index[b.origins[0].name];
-        return aI && bI ? bI - aI : -1;
       }
     })
   ],
@@ -251,3 +93,28 @@ module.exports = {
     }
   }
 };
+
+function htmlwebpackPluginBuilder(fileName, deps) {
+  return new HtmlwebpackPlugin ({
+    filename: fileName,
+    minify: {collapseWhitespace: true},
+    template: __dirname + '/source/' + fileName,
+    inject: true,
+    chunks: deps
+  })
+}
+
+config.plugins.push(htmlwebpackPluginBuilder('index.html', ['index.css', 'vendors', 'index']));
+config.plugins.push(htmlwebpackPluginBuilder('register.html', ['register.css', 'vendors', 'register']));
+config.plugins.push(htmlwebpackPluginBuilder('user-center.html', ['user-center.css', 'vendors', 'user-center']));
+config.plugins.push(htmlwebpackPluginBuilder('user-center.html', ['user-center.css', 'vendors', 'user-center']));
+config.plugins.push(htmlwebpackPluginBuilder('start.html', ['start.css', 'vendors', 'start']));
+config.plugins.push(htmlwebpackPluginBuilder('password-retrieve.html', ['password-retrieve.css', 'vendors', 'password-retrieve']));
+config.plugins.push(htmlwebpackPluginBuilder('password-reset.html', ['password-reset.css', 'vendors', 'password-reset']));
+config.plugins.push(htmlwebpackPluginBuilder('logic-puzzle.html', ['logic-puzzle.css', 'vendors', 'logic-puzzle']));
+config.plugins.push(htmlwebpackPluginBuilder('homework-details.html', ['homework-details.css', 'vendors', 'homework-details']));
+config.plugins.push(htmlwebpackPluginBuilder('homework.html', ['homework.css', 'vendors', 'homework']));
+config.plugins.push(htmlwebpackPluginBuilder('dashboard.html', ['dashboard.css', 'vendors', 'dashboard']));
+config.plugins.push(htmlwebpackPluginBuilder('404.html', ['404.css', 'vendors', '404']));
+
+module.exports = config;

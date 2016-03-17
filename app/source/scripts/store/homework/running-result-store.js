@@ -16,7 +16,7 @@ var RunningResultStore = Reflux.createStore({
   },
 
   onChangeOrderId: function (Number) {
-    superAgent.get('homework/getResult')
+    superAgent.get('homework/get-result')
         .set('Content-Type', 'application/json')
         .query({orderId: Number})
         .use(errorHandler)

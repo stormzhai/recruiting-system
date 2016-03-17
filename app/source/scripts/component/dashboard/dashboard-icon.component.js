@@ -35,13 +35,6 @@ var DashboardIcon = React.createClass({
     var homeworkDisable = (this.state.homeworkEnabled === true ? 'enable' : 'disable');
 
     var iconInfos = {
-      userCenter: {
-        title: '个人中心',
-        href: 'user-center.html',
-        isEnabled: 'enable',
-        name: 'userCenter',
-        glyphicon: 'glyphicon-user'
-      },
       logic: {
         title: '逻辑题',
         href: PuzzleHref,
@@ -58,7 +51,7 @@ var DashboardIcon = React.createClass({
       }
     };
     return (
-        <Col xs={12} sm={6} md={4} lg={4}>
+        <div className="col-md-4 col-sm-6 col-md-offset-4">
           <a href={iconInfos[this.props.name].href} className="icon-view"
              onMouseOver={this.showPrompt.bind(this, this.state.puzzleEnabled, this.state.homeworkEnabled)}
              onMouseOut={this.hidePrompt}>
@@ -73,7 +66,7 @@ var DashboardIcon = React.createClass({
               </div>
             </div>
           </a>
-        </Col>
+        </div>
     );
   }
 });

@@ -16,19 +16,36 @@ html, body {
     background-repeat: no-repeat;
     background-size: cover;
 
-    .head {
+    .head{
       padding: 0 10px;
       height: 80px;
       background: @white;
       overflow: hidden;
-
+      .logo {
+        height: 55px;
+        width: 170px;
+        float: left;
+        margin-top: 15px;
+        margin-left: -13px;
+        background-image: url(../images/Logo.jpg);
+        background-size: auto 100%;
+      }
       h1 {
         span {
           color: @blue;
+          margin-left: -10px;
         }
       }
     }
 
+    .head-right {
+      margin-top: 40px;
+      font-size: 18px;
+        a{
+          color: #19abb5;
+          text-decoration: none;
+        }
+    }
     @media only screen and (max-width: 767px) {
       .first-page {
         background-image: url(../images/bg-small.jpg);
@@ -136,7 +153,8 @@ html, body {
       color: @white;
       font-style: italic;
       font-size: 20px;
-      padding-top: 30px;
+      padding-top: 18px;
+      padding-bottom: 15px;
     }
 
     .my-name {

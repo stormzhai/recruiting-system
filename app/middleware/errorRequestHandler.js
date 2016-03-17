@@ -10,6 +10,6 @@ module.exports = function(req, res, next){
       message: 'Error Request !'
     });
   }else {
-    res.sendFile(path.join(__dirname, '../public', '404.html'));
+    res.sendFile(path.join(__dirname, '../public/assets', '404.html'));
   }
 };

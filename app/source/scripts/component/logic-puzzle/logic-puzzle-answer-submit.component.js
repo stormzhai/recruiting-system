@@ -11,7 +11,8 @@ var LogicPuzzleAnswerSubmit = React.createClass({
 
   getInitialState: function(){
     return {
-      submitLoad: false
+      submitLoad: false,
+      item: ''
     };
   },
 
@@ -40,6 +41,9 @@ var LogicPuzzleAnswerSubmit = React.createClass({
     return (
         <div>
           <div className="answer-submit">
+            <div className="row">
+              <label className="col-md-12 col-sm-12 question">{this.state.item.question}</label>
+            </div>
             <div className="row">
               <div className="col-md-4 col-sm-4 col-xs-4 result-text">
                 <label htmlFor="result">结果为:</label>

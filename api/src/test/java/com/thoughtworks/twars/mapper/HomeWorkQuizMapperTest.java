@@ -32,7 +32,7 @@ public class HomeWorkQuizMapperTest extends TestBase {
 
         assertThat(homeworkQuiz.getDescription(), is("这是一道比较简单的题目"));
         assertThat(homeworkQuiz.getEvaluateRepository(), is("test.com/homework/1"));
-        assertThat(homeworkQuiz.getEvaluateScript(), is("http://10.29.3.221:8888/fs/homework-script/check-readme.sh"));
+        assertThat(homeworkQuiz.getEvaluateScript(), is("http://nginx/fs/homework-script/check-readme.sh"));
         assertThat(homeworkQuiz.getTemplateRepository(), is("github.com/homework/1"));
     }
 
