@@ -3,7 +3,7 @@
 var Reflux = require('reflux');
 var LogicPuzzleActions = require('../../actions/logic-puzzle/logic-puzzle-actions');
 var LogicPuzzleStore = require('../../store/logic-puzzle/logic-puzzle-store');
-
+var _newOrderId;
 
 
 var LogicPuzzleAnswerSubmit = React.createClass({
@@ -12,7 +12,9 @@ var LogicPuzzleAnswerSubmit = React.createClass({
   getInitialState: function(){
     return {
       submitLoad: false,
-      item: ''
+      item: '',
+      lastLoad: false,
+      nextLoad: false
     };
   },
 
@@ -25,7 +27,7 @@ var LogicPuzzleAnswerSubmit = React.createClass({
       this.setState({
         submitLoad: true
       });
-      LogicPuzzleActions.submitAnswer( newOrderId );
+      LogicPuzzleActions.submitAnswer(newOrderId );
     } else {
       $('#warningModal').modal('show');
     }
@@ -36,28 +38,52 @@ var LogicPuzzleAnswerSubmit = React.createClass({
     LogicPuzzleActions.changeAnswer(val);
   },
 
+  previous: function () {
+    if(this.state.orderId > 0 ){
+      _newOrderId = this.state.orderId - 1;
+    }
+    this.setState({
+      lastLoad: true
+    });
+    LogicPuzzleActions.submitAnswer(_newOrderId);
+  },
+
+  next: function () {
+    if(this.state.orderId < this.state.itemsCount - 1 ){
+      _newOrderId = this.state.orderId + 1;
+    }
+    this.setState({
+      nextLoad: true
+    });
+    LogicPuzzleActions.submitAnswer(_newOrderId);
+  },
 
   render: function () {
+    var isFirst = this.state.orderId === 0;
+    var isLast = this.state.orderId === (this.state.itemsCount - 1);
+
     return (
         <div>
           <div className="answer-submit">
             <div className="row">
-              <label className="col-md-12 col-sm-12 question">{this.state.item.question}</label>
-            </div>
-            <div className="row">
-              <div className="col-md-4 col-sm-4 col-xs-4 result-text">
-                <label htmlFor="result">结果为:</label>
+              <div className="col-md-3 col-sm-3 col-xs-3 result-text">
+                <button type="button" className="btn btn-warning" name="button"
+                        disabled={isFirst || this.state.lastLoad ? 'disabled' : ''} onClick={isFirst? '' : this.previous}>上一题
+                  <i className={'fa fa-spinner fa-spin' + (this.state.lastLoad ? '' : ' hide')}/>
+                </button>
               </div>
-              <div className="col-md-4 col-sm-4 col-xs-4">
-                <input type="number" className="form-control" id="result" ref="answer"
+              <div className="col-md-1 col-sm-1 col-xs-1 result">
+                <label htmlFor="result">结果:</label>
+              </div>
+              <div className="col-md-5 col-sm-5 col-xs-5">
+                <input type="number" className="col-md-10 col-sm-10 col-xs-10 form-control" id="result" ref="answer"
                        disabled={this.state.isExample ? 'disabled' : ''}
                        value={this.state.userAnswer} onChange={this.handleAnswerChange}/>
               </div>
-              <div className="col-md-4 col-sm-4 col-xs-4">
-                <button type="text" className="btn btn-danger"
-                        disabled={this.state.isExample || this.state.submitLoad ? 'disabled' : ''}
-                        onClick={this.submitAnswer}>提交
-                  <i className={'fa fa-spinner fa-spin' + (this.state.submitLoad ? '' : ' hide')}/>
+              <div className="col-md-3 col-sm-3 col-xs-3">
+                <button type="button" className="btn btn-warning" name="button"
+                        disabled={isLast || this.state.nextLoad ? 'disabled' : ''} onClick={isLast ? '' : this.next}>下一题
+                  <i className={'fa fa-spinner fa-spin' + (this.state.nextLoad ? '' : ' hide')}/>
                 </button>
               </div>
             </div>

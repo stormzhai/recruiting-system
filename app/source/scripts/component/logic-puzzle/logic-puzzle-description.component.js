@@ -9,7 +9,8 @@ var LogicPuzzleDescription = React.createClass({
   getInitialState: function () {
     return {
       item: {
-        description: []
+        description: [],
+        question: ''
       }
     };
   },
@@ -28,6 +29,8 @@ var LogicPuzzleDescription = React.createClass({
               );
             })}
           </ol>
+
+          <div className="question">{this.state.item.question}</div>
           {
               this.state.isExample ?
                   <ul className="example">
