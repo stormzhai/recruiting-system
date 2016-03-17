@@ -1,6 +1,6 @@
 'use strict';
 
-var React = require('react');
+
 var registerAgreement = React.createClass({
 
   render: function () {

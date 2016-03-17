@@ -1,0 +1,6 @@
+assemble/jetty-api/*
+!assemble/jetty-api/.gitkeep
+assemble/node-app/*
+!assemble/node-app/.gitkeep
+assemble/task-queue/*
+!assemble/task-queue/.gitkeep

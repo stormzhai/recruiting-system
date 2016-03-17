@@ -1,9 +1,11 @@
 package com.thoughtworks.twars.resource;
 
+import com.thoughtworks.twars.bean.ThirdParty;
 import com.thoughtworks.twars.bean.LoginDetail;
 import com.thoughtworks.twars.bean.User;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import javax.ws.rs.client.Entity;
@@ -15,23 +17,29 @@ import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 
 @RunWith(MockitoJUnitRunner.class)
 public class LoginResourceTest extends TestBase {
     String basePath = "/login";
+    @Mock
+    User resultUser;
+
+    @Mock
+    ThirdParty githubUser;
 
     @Test
-    public void should_create_user_when_login() throws Exception {
+    public void should_create_user_when_login_with_email() throws Exception {
 
         User loginUser = new User();
         LoginDetail loginDetail = new LoginDetail();
 
         loginDetail.setId(1);
         loginDetail.setUserId(1);
-        loginDetail.setToken("123456");
 
         List<LoginDetail> loginDetails = new ArrayList<>();
         loginDetails.add(loginDetail);
@@ -51,11 +59,28 @@ public class LoginResourceTest extends TestBase {
 
         int userId = (int) result.get("id");
         String userInfoUri = (String) ((Map) result.get("userInfo")).get("uri");
-        String token = (String) result.get("token");
 
         assertThat(userId, is(1));
         assertThat(userInfoUri, is("users/1"));
-        assertThat(token, is("123456"));
+    }
+
+    @Test
+    public void should_create_user_when_login_with_mobilePhone() throws Exception {
+
+        User loginResult = new User();
+        User loginUser = new User();
+
+        loginUser.setMobilePhone("13572164226");
+        loginUser.setPassword("25d55ad283aa400af464c76d713c07ad");
+
+        when(userMapper.getUserByMobilePhoneAndPassWord(loginUser)).thenReturn(loginResult);
+
+        loginResult.setMobilePhone("13572164226");
+        loginResult.setEmail("test@163.com");
+        loginResult.setPassword("25d55ad283aa400af464c76d713c07ad");
+        loginResult.setId(1);
+
+
     }
 
     @Test
@@ -68,5 +93,4 @@ public class LoginResourceTest extends TestBase {
         Response response = target(basePath).request().post(entity);
         assertThat(response.getStatus(), is(401));
     }
-
 }

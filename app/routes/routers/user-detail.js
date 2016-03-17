@@ -2,74 +2,77 @@
 
 var express = require('express');
 var router = express.Router();
-var superAgent = require('superagent');
-var agent = require('superagent-promise')(superAgent, Promise);
+var async = require('async');
 var _ = require('lodash');
 var validate = require('validate.js');
 var userConstraint = require('../../mixin/user-detail-constraint');
 var passwordConstraint = require('../../mixin/password-constraint');
+var newPasswordConstraint = require('../../mixin/confirm-password-constraint');
 var md5 = require('js-md5');
-var yamlConfig = require('node-yaml-config');
-var apiServer = yamlConfig.load('./config/config.yml').apiServer;
 var constant = require('../../mixin/constant');
 var apiRequest = require('../../services/api-request');
-
-function checkInfo(info, constraint) {
-  var result = validate(info, constraint);
-
-  if (result === undefined) {
-  }
-  return true;
-}
+var moment = require('moment');
+var lang = require('../../mixin/lang-message/chinese');
 
 router.get('/', function (req, res) {
-  var userId = req.session.user.id;
-  var result;
+  if(req.session.user) {
+    var userId = req.session.user.id;
+    var result;
 
-  agent.get(apiServer + 'users/' + userId)
-      .set('Content-Type', 'application/json')
-      .end()
-      .then(function (resp) {
+    async.waterfall([
+      (done) => {
+        apiRequest.get('users/' + userId, done);
+      },
+      (resp, done) => {
         if (resp.status === constant.httpCode.OK) {
           result = _.assign(resp.body);
         } else {
           throw new Error();
         }
-        return result;
-      })
-      .then(function () {
-        return agent.get(apiServer + 'users/' + userId + '/detail')
-            .set('Content-Type', 'application/json')
-            .end();
-      })
-      .then(function (resp) {
+        done(null, result);
+      },
+      (result, done) => {
+        apiRequest.get('users/' + userId + '/detail', done);
+      },
+      (resp, done) => {
         result = _.assign(result, resp.body);
-        return result;
-      }, function () {
-        return result;
-      })
-      .then(function (result) {
+        result.birthday = moment.unix(result.birthday).format('MM-DD-YYYY');
+
+        done(null, result);
+      }
+    ], (err) => {
+      if (err && err.status !== constant.httpCode.NOT_FOUND) {
+        res.status(err.status);
+        res.send({
+          status: err.status
+        });
+      } else {
         res.send({
           status: constant.httpCode.OK,
           data: result
         });
-      })
-      .catch(function () {
-        res.status(constant.httpCode.NOT_FOUND);
-        res.send({
-          status: constant.httpCode.NOT_FOUND
-        });
-      });
+      }
+    });
+  }else {
+    res.send({status:constant.httpCode.ACCEPTED});
+  }
+
 });
 
 router.put('/update', function (req, res) {
   var userId = req.session.user.id;
   var userInfo = req.body.data;
+
+  var birthdayStamp = moment(new Date(userInfo.birthday)).unix();
+  if(birthdayStamp < parseInt(lang.MIN_DATESTAMP)) {
+    userInfo.birthday = lang.MIN_DATE;
+  }
+
+  userInfo.birthday = moment(new Date(userInfo.birthday)).unix();
   var result = _.assign({userId: userId}, userInfo);
 
-  if (checkInfo(result, userConstraint) && result.gender !== '') {
+  if (validate(result, userConstraint) === undefined && result.gender !== '') {
     var url = 'users/' + userId + '/detail';
-
     apiRequest.put(url, result, function (err, resp) {
       if (resp === undefined) {
         res.send({
@@ -95,15 +98,18 @@ router.put('/update', function (req, res) {
   }
 });
 
+
 router.put('/change-password', function (req, res) {
   var userId = req.session.user.id;
   var passwordInfo = req.body.data;
 
-  if (checkInfo(passwordInfo, passwordConstraint) && passwordInfo.password === passwordInfo.confirmPassword) {
+  if (validate(passwordInfo, passwordConstraint) === undefined
+      && validate(passwordInfo, newPasswordConstraint) === undefined
+      && passwordInfo.newPassword === passwordInfo.confirmPassword) {
     var partResult = {};
 
     partResult.oldPassword = md5(passwordInfo.oldPassword);
-    partResult.password = md5(passwordInfo.password);
+    partResult.password = md5(passwordInfo.newPassword);
     var url = 'users/' + userId + '/password';
 
     apiRequest.put(url, partResult, function (err, resp) {
@@ -129,7 +135,7 @@ router.put('/change-password', function (req, res) {
     });
   } else {
     res.send({
-      status: constant.httpCode.BAD_REQUEST
+      status: constant.httpCode.PRECONDITION_FAILED
     });
   }
 });

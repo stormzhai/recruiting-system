@@ -52,16 +52,12 @@ LogicPuzzleController.prototype.saveAnswer = (req, res) => {
 LogicPuzzleController.prototype.submitPaper = (req, res) => {
   var examerId = req.session.user.id;
   var endTime = Date.parse(new Date()) / constant.time.MILLISECOND_PER_SECONDS;
-  var data;
 
   async.waterfall([
     (done) => {
       logicPuzzle.findOne({userId: examerId}, done);
-    }, (doc, done) => {
-      data = doc;
-      LogicPuzzleController.setScoreSheet(data, done);
     },
-    (responds, done) => {
+    (data, done) => {
       if (data) {
         data.endTime = endTime;
         data.isCommited = true;
@@ -69,6 +65,9 @@ LogicPuzzleController.prototype.submitPaper = (req, res) => {
       data.save((err, doc)=> {
         done(err, doc);
       });
+    },
+    (data, done) => {
+      LogicPuzzleController.setScoreSheet(data, done);
     }
   ], (err) => {
     if (!err) {
@@ -88,8 +87,12 @@ LogicPuzzleController.prototype.dealAgree = (req, res) => {
     (done) => {
       logicPuzzle.findOne({userId: userId}, done);
     }, (data, done) => {
-      data.isAgreed = isAgreed;
-      data.save(done);
+      if(data){
+        data.isAgreed = isAgreed;
+        data.save(done);
+      } else {
+        done(true,null);
+      }
     }
   ], (err) => {
     if (!err) {
@@ -112,6 +115,8 @@ LogicPuzzleController.setScoreSheet = (data, done) => {
     examerId: data.userId,
     paperId: data.paperId,
     blankQuizSubmits: [{
+      startTime: data.startTime,
+      endTime: data.endTime,
       blankQuizId: data.blankQuizId,
       itemPosts: itemPosts
     }]

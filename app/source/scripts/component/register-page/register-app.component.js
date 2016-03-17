@@ -1,6 +1,5 @@
 'use strict';
 
-var React = require('react');
 
 var RegisterApp = React.createClass({
 

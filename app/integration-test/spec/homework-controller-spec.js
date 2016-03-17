@@ -3,42 +3,33 @@
 var express = require('express');
 var session = require('supertest-session');
 var app = require('../../app');
-var request = require('superagent');
+var request = require('../../services/api-request');
 var httpStatusCode = require('../../mixin/constant').httpCode;
 
 var testSession = null;
 
-describe('GET /quiz', function(){
+describe('GET /quiz', function () {
 
-  it('can sign in', function(done){
+  it('can sign in', function (done) {
 
     testSession = session(app);
 
-    spyOn(request, 'post').and.callFake(function() {
-      return {
-        set: function () {
-          return this;
-        },
-        send: function() {
-          return this;
-        },
-        end: function(fn) {
-          fn(null, {
-            body:{userInfo:{uri: 'user/1'}, id: 1},
-            status:httpStatusCode.OK
-          });
-        }
-      };
+    spyOn(request, 'post').and.callFake(function (url,body,callback) {
+      callback(null,{
+        body: {userInfo: {uri: 'user/1'}, id: 1},
+        status: httpStatusCode.OK,
+        headers:'yes'
+      });
     });
 
-    testSession.get('/login')
+    testSession.post('/login')
         .set('Content-Type', 'application/json')
-        .query({
+        .send({
           account: 'test@it.com',
           password: 'evanleesucks'
         })
         .expect(httpStatusCode.OK)
-        .end(function(err, res) {
+        .end(function (err, res) {
           if (err) {
             done.fail(err);
           } else {
@@ -64,7 +55,7 @@ describe('GET /quiz', function(){
             templateRepo: 'github.com/homework/1'
           }
         })
-        .end(function(err, res) {
+        .end(function (err, res) {
           if (err) {
             done.fail(err);
           } else {
@@ -91,7 +82,7 @@ describe('GET /quiz', function(){
             templateRepo: 'github.com/homework/1'
           }
         })
-        .end(function(err, res) {
+        .end(function (err, res) {
           if (err) {
             done.fail(err);
           } else {

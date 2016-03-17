@@ -21,18 +21,23 @@ public class LoginDetailMapperTest extends TestBase {
 
     @Test
     public void should_insert_login_detail() {
-        LoginDetail loginDetail = new LoginDetail();
-        loginDetail.setUserId(5);
+        int id = loginDetailMapper.insertLoginDetail(3);
 
-        loginDetailMapper.insertLoginDetail(loginDetail);
-
-        assertThat(loginDetail.getUserId(), is(5));
+        assertThat(id, is(1));
     }
 
     @Test
     public void should_update_login_detail_by_token() {
 
         int result = loginDetailMapper.updateLoginDetail("8c87895409e7e8c6f7d3f4a42ee0ae15");
+
+        assertThat(result, is(1));
+    }
+
+    @Test
+    public void should_update_login_detail_by_Id() {
+
+        int result = loginDetailMapper.updateLoginDetailById(2);
 
         assertThat(result, is(1));
     }

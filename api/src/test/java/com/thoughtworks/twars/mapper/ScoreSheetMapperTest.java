@@ -57,4 +57,24 @@ public class ScoreSheetMapperTest extends com.thoughtworks.twars.mapper.TestBase
         assertThat(scoreSheet.getExamerId(), is(2));
         assertThat(scoreSheet.getPaperId(), is(1));
     }
+
+    @Test
+    public void should_return_score_sheet_by_user_id(){
+        ScoreSheet scoreSheet = scoreSheetMapper.findOneByUserId(2);
+
+        assertThat(scoreSheet.getPaperId(),is(1));
+        assertThat(scoreSheet.getId(),is(2));
+    }
+
+    @Test
+    public void should_return_score_sheets_by_paper_id() {
+        List<ScoreSheet> scoreSheets = scoreSheetMapper.findByPaperId(1);
+
+        assertThat(scoreSheets.size(), is(2));
+    }
+    public void should_return_examerIds_by_paperId() {
+        List<Integer> users = scoreSheetMapper.findUserIdsByPaperId(1);
+
+        assertThat(users.size(), is(2));
+    }
 }

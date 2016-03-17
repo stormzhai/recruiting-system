@@ -4,7 +4,11 @@ var HomeworkController = require('../../controllers/homework-controller');
 var userHomeworkQuizzes = require('../../models/user-homework-quizzes');
 var homeworkQuizzes = require('../../models/homework-quizzes');
 var constant = require('../../mixin/constant');
+var apiRequest = require('../../services/api-request');
 var request = require('superagent');
+
+var noop = function () {
+};
 
 describe('HomeworkController', function () {
   describe('getList', () => {
@@ -138,12 +142,17 @@ describe('HomeworkController', function () {
       spyOn(userHomeworkQuizzes, 'findOne').and.callFake(function (id, done) {
         var data = {
           userId: 1,
+          save: function () {
+          },
           quizzes: [
             {
               id: 1,
               status: constant.homeworkQuizzesStatus.ACTIVE,
-              userAnswerRepo: 'w',
-              branch: 'dev'
+              homeworkSubmitPostHistory: [{
+                status: constant.homeworkQuizzesStatus.ACTIVE,
+                homeworkURL: 'w',
+                branch: 'dev'
+              }]
             }, {
               id: 2,
               status: constant.homeworkQuizzesStatus.LOCKED
@@ -172,7 +181,7 @@ describe('HomeworkController', function () {
     });
 
     it('should return quiz and statusCode: 200 when receive a request', (done) => {
-
+      
       controller.getQuiz({
         session: {user: {id: 1}},
         query: {orderId: 1}
@@ -189,7 +198,8 @@ describe('HomeworkController', function () {
             }
           });
           done();
-        }
+        },
+        status: noop
       });
     });
 
@@ -204,7 +214,9 @@ describe('HomeworkController', function () {
             status: constant.httpCode.FORBIDDEN
           });
           done();
-        }
+        },
+        status: noop
+
       });
     });
   });
@@ -411,7 +423,8 @@ describe('HomeworkController', function () {
               {
                 id: 1,
                 status: constant.homeworkQuizzesStatus.ACTIVE,
-                userAnswerRepo: 'www.repo.com'
+                userAnswerRepo: 'www.repo.com',
+                homeworkSubmitPostHistory: []
               }],
             save: (done) => {
               done(null, 1, true);
@@ -459,7 +472,8 @@ describe('HomeworkController', function () {
             status: constant.httpCode.OK
           });
           done();
-        }
+        },
+        status: noop
       });
     });
 
@@ -496,7 +510,8 @@ describe('HomeworkController', function () {
             status: constant.httpCode.NOT_FOUND
           });
           done();
-        }
+        },
+        status: noop
       });
 
     });
@@ -536,47 +551,51 @@ describe('HomeworkController', function () {
             status: constant.httpCode.FORBIDDEN
           });
           done();
-        }
+        },
+        status: noop
       });
     });
   });
 
-  describe('updateResult', ()=> {
+  describe('updateResult', () => {
     var controller;
 
     beforeEach(()=> {
       controller = new HomeworkController();
+
+      spyOn(apiRequest, 'post').and.callFake(function (url, data, callback) {
+        callback(null);
+      });
+
+      spyOn(userHomeworkQuizzes, 'checkDataForUpdate').and.callFake(function (userId, homeworkId, callback) {
+        callback(null, true);
+      });
+
+      spyOn(userHomeworkQuizzes, 'updateQuizzesStatus').and.callFake(function (data, callback) {
+        callback(null, true, true);
+      });
+
+      spyOn(userHomeworkQuizzes, 'unlockNext').and.callFake(function (userId, callback) {
+        callback(null, true, true);
+      });
     });
 
-    it('should return 200 when save the result success', (done)=> {
-
-      spyOn(userHomeworkQuizzes, 'checkDataForUpdate').and.callFake(function (userId, orderId, callback) {
-        var result = {
-          data: {
-            userId: 2,
-            quizzes: [
-              {
-                id: 1,
-                status: constant.homeworkQuizzesStatus.ACTIVE,
-                userAnswerRepo: 'www.repo.com'
-              }],
-            save: (done) => {
-              done(null, true);
-            }
-          },
-          isValidate: true,
-          status: constant.httpCode.OK
-
-        };
-        callback(null, result);
+    it('should return 200 when save the result success', (done) => {
+      spyOn(userHomeworkQuizzes, 'findOne').and.callFake(function (data, selecter, callback) {
+        callback(null, {
+          paperId: 1,
+          quizzes: [{
+            startTime: '11111111',
+            homeworkSubmitPostHistory: {}
+          }]
+        });
       });
 
       controller.updateResult({
         body: {
           userId: 2,
-          orderId: 1,
-          status: 5,
-          resultPath: 'error'
+          homeworkId: 1,
+          resultStatus: 5
         }
       }, {
         send: function (data) {
@@ -586,164 +605,28 @@ describe('HomeworkController', function () {
           done();
         }
       });
-
     });
 
-    it('should return 404 when the userId is not existed', (done)=> {
-
-      spyOn(userHomeworkQuizzes, 'checkDataForUpdate').and.callFake(function (userId, orderId, callback) {
-        var result = {
-          data: {
-            userId: 12,
-            quizzes: [
-              {
-                id: 1,
-                status: constant.homeworkQuizzesStatus.ACTIVE,
-                userAnswerRepo: 'www.repo.com'
-              }]
-          },
-          isValidate: false,
-          status: constant.httpCode.NOT_FOUND,
-          save: (done) => {
-            done(null, true);
-          }
-        };
-        callback(null, result);
-      });
-
-      controller.updateResult({
-        body: {
-          userId: 12,
-          orderId: 1,
-          status: 5,
-          resultPath: 'error'
-        }
-      }, {
-        send: function (data) {
-          expect(data).toEqual({
-            status: constant.httpCode.NOT_FOUND
-          });
-          done();
-        }
-      });
-    });
-
-    it('should return 404 when the specific homework\'s  orderId is illegal', (done)=> {
-      spyOn(userHomeworkQuizzes, 'checkDataForUpdate').and.callFake(function (userId, orderId, callback) {
-        var result = {
-          data: {
-            userId: 2,
-            quizzes: [
-              {
-                id: 1,
-                status: constant.homeworkQuizzesStatus.ACTIVE,
-                userAnswerRepo: 'www.repo.com'
-              }]
-          },
-          isValidate: false,
-          status: constant.httpCode.NOT_FOUND,
-          save: (done) => {
-            done(null, true);
-          }
-        };
-        callback(null, result);
+    it('should return 500 when something was wrong', (done) => {
+      spyOn(userHomeworkQuizzes, 'findOne').and.callFake(function (data, selecter, callback) {
+        callback(true, {
+          paperId: 1,
+          quizzes: [{
+            startTime: '11111111',
+            homeworkSubmitPostHistory: {}
+          }]
+        });
       });
 
       controller.updateResult({
         body: {
           userId: 2,
-          orderId: 112,
-          status: 5,
-          resultPath: 'error'
+          homeworkId: 1,
+          resultStatus: 5
         }
       }, {
-        send: function (data) {
-          expect(data).toEqual({
-            status: constant.httpCode.NOT_FOUND
-          });
-          done();
-        }
-      });
-    });
-
-    it('should return 400 and the real status when specific homework\'s status is  success', (done)=> {
-
-      spyOn(userHomeworkQuizzes, 'checkDataForUpdate').and.callFake(function (userId, orderId, callback) {
-        var result = {
-          data: {
-            userId: 2,
-            quizzes: [
-              {
-                id: 1,
-                status: constant.homeworkQuizzesStatus.SUCCESS,
-                userAnswerRepo: 'www.repo.com'
-              }]
-          },
-          isValidate: false,
-          homeworkStatus: constant.homeworkQuizzesStatus.SUCCESS,
-          status: constant.httpCode.BAD_REQUEST,
-          save: (done) => {
-            done(null, true);
-          }
-        };
-        callback(null, result);
-      });
-
-      controller.updateResult({
-        body: {
-          userId: 2,
-          orderId: 112,
-          status: 5,
-          resultPath: 'error'
-        }
-      }, {
-        send: function (data) {
-          expect(data).toEqual({
-            status: constant.httpCode.BAD_REQUEST,
-            homeworkStatus: constant.homeworkQuizzesStatus.SUCCESS
-          });
-          done();
-        }
-      });
-    });
-
-    it('should return 400 and the real status when specific homework\'s status is  active', (done)=> {
-
-      spyOn(userHomeworkQuizzes, 'checkDataForUpdate').and.callFake(function (userId, orderId, callback) {
-        var result = {
-          data: {
-            userId: 2,
-            quizzes: [
-              {
-                id: 1,
-                status: constant.homeworkQuizzesStatus.ACTIVE,
-                userAnswerRepo: 'www.repo.com'
-              }]
-          },
-          isValidate: false,
-          homeworkStatus: constant.homeworkQuizzesStatus.ACTIVE,
-          status: constant.httpCode.BAD_REQUEST,
-          save: (done) => {
-            done(null, true);
-            done(null, true);
-          }
-        };
-        callback(null, result);
-      });
-
-      controller.updateResult({
-        body: {
-          userId: 2,
-          orderId: 2,
-          status: 5,
-          resultPath: 'error'
-        }
-      }, {
-        send: function (data) {
-          expect(data).toEqual({
-            status: constant.httpCode.BAD_REQUEST,
-            homeworkStatus: constant.homeworkQuizzesStatus.ACTIVE
-          });
+        sendStatus: function (data) {
+          expect(data).toEqual(constant.httpCode.INTERNAL_SERVER_ERROR);
           done();
         }
       });

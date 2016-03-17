@@ -1,6 +1,4 @@
-@import "../../node_modules/bootstrap/less/bootstrap.less";
 @import "common/main";
-@import "../../node_modules/font-awesome/less/font-awesome.less";
 
 body {
   background-color: @pale-white;
@@ -11,6 +9,38 @@ body {
   header {
     margin-bottom: 14px;
   }
+
+  .flashing {
+    animation:flashing 2s infinite;
+    -webkit-animation: flashing 2s infinite;
+    -moz-animation: flashing 2s infinite;
+    -o-animation: flashing 2s infinite;
+  }
+
+  @keyframes flashing {
+    0% {opacity:0;}
+    50%  {opacity:1;}
+    100% {opacity:0;}
+  }
+
+  @-webkit-keyframes flashing {
+    0% {opacity:0;}
+    50%  {opacity:1;}
+    100% {opacity:0;}
+  }
+
+  @-moz-keyframes flashing {
+    0% {opacity:0;}
+    50%  {opacity:1;}
+    100% {opacity:0;}
+  }
+
+  @-o-keyframes flashing {
+    0% {opacity:0;}
+    50%  {opacity:1;}
+    100% {opacity:0;}
+  }
+
   .homework-nav-icon {
     font-size: 25px;
   }
@@ -64,6 +94,34 @@ body {
           border-radius: 2px;
           background: #eee;
         }
+      }
+      .runningResult {
+        text-align: left;
+        .prompt {
+          font-size: 20px;
+          font-family: sans-serif;
+          text-align: center;
+        }
+        .hide {
+          display: none;
+        }
+        .result{
+          padding-left: 20px;
+          margin-top: 10px;
+          .content{
+            text-align: left;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+            background: #f5f5f5;
+            border: 1px solid #e3e3e3;
+            padding: 20px;
+            margin-right: 20px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            max-height: 450px;
+          }
+        }
+
       }
     }
   }

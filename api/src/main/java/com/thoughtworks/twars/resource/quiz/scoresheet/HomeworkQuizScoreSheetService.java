@@ -38,6 +38,9 @@ public class HomeworkQuizScoreSheetService implements IScoreSheetService {
                     homeworkQuizSubmitUri.put("homeworkQuiz", homeworkQuizUri);
                     homeworkQuizSubmitUri.put("homeworkSubmitPostHistory",
                             findByHomeworkSubmitId(homeworkQuizSubmit.getId()));
+                    homeworkQuizSubmitUri.put("startTime", homeworkPostHistoryMapper
+                            .findByHomeworkSubmitId(homeworkQuizSubmit.getId())
+                            .get(0).getStartTime());
                     return homeworkQuizSubmitUri;
                 })
                 .collect(Collectors.toList());
@@ -51,8 +54,9 @@ public class HomeworkQuizScoreSheetService implements IScoreSheetService {
                     homeworkPostHistoryUri.put("homeworkURL", homeworkPostHistory.getHomeworkURL());
                     homeworkPostHistoryUri.put("branch", homeworkPostHistory.getBranch());
                     homeworkPostHistoryUri.put("version", homeworkPostHistory.getVersion());
-                    homeworkPostHistoryUri.put("timeStamp", homeworkPostHistory.getTimestamp());
+                    homeworkPostHistoryUri.put("commitTime", homeworkPostHistory.getCommitTime());
                     homeworkPostHistoryUri.put("status", homeworkPostHistory.getStatus());
+                    homeworkPostHistoryUri.put("resultURL", homeworkPostHistory.getResultURL());
                     return homeworkPostHistoryUri;
                 })
                 .collect(Collectors.toList());
@@ -65,6 +69,7 @@ public class HomeworkQuizScoreSheetService implements IScoreSheetService {
 
         homeworkSubmits.forEach(item -> {
             int homeworkQuizId = (int) item.get("homeworkQuizId");
+            int startTime = (int) item.get("startTime");
 
             HomeworkSubmit homeworkSubmit = new HomeworkSubmit();
             homeworkSubmit.setScoreSheetId(scoreSheetId);
@@ -72,22 +77,26 @@ public class HomeworkQuizScoreSheetService implements IScoreSheetService {
 
             homeworkSubmitMapper.insertHomeworkSubmit(homeworkSubmit);
 
-            Map homeworkSubmitPostHistory = (Map) item
-                    .get("homeworkSubmitPostHistory");
+            List<Map> homeworkSubmitPostHistoryList =
+                    (List<Map>) item.get("homeworkSubmitPostHistory");
 
-            HomeworkPostHistory homeworkPostHistory = new HomeworkPostHistory();
-            homeworkPostHistory.setBranch((String) homeworkSubmitPostHistory.get("branch"));
-            homeworkPostHistory.setVersion((String) homeworkSubmitPostHistory.get("version"));
-            homeworkPostHistory.setHomeworkURL((String) homeworkSubmitPostHistory
-                    .get("homeworkURL"));
-            homeworkPostHistory.setStatus((Integer) homeworkSubmitPostHistory.get("status"));
-            homeworkPostHistory.setHomeworkSubmitId(homeworkSubmit.getId());
+            homeworkSubmitPostHistoryList.forEach(h -> {
+                HomeworkPostHistory homeworkPostHistory = new HomeworkPostHistory();
 
-            homeworkPostHistoryMapper.insertHomeworkPostHistory(homeworkPostHistory);
+                homeworkPostHistory.setBranch((String) h.get("branch"));
+                homeworkPostHistory.setVersion((String) h.get("version"));
+                homeworkPostHistory.setHomeworkURL((String) h
+                        .get("homeworkURL"));
+                homeworkPostHistory.setStatus((Integer) h.get("status"));
+                homeworkPostHistory.setHomeworkSubmitId(homeworkSubmit.getId());
+                homeworkPostHistory.setStartTime(startTime);
+                homeworkPostHistory.setCommitTime(
+                        (Integer) h.get("commitTime"));
+                homeworkPostHistory.setResultURL((String) h.get("resultURL"));
+
+                homeworkPostHistoryMapper.insertHomeworkPostHistory(homeworkPostHistory);
+            });
         });
-
-
-
     }
 
 }

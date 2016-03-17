@@ -20,8 +20,8 @@ var DashboardStore = Reflux.createStore({
         });
   },
 
-  onShowPrompt: function (puzzleEnabled, homeworkEnabled, event) {
-    var iconName = event.target.parentNode.getAttribute('name');
+  onShowPrompt: function (puzzleEnabled, homeworkEnabled, iconName) {
+
     if (iconName === 'logic' && puzzleEnabled === false) {
       this.trigger({
         isTip: true,

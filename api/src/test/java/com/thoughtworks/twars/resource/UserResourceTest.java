@@ -1,24 +1,30 @@
 package com.thoughtworks.twars.resource;
 
-import com.thoughtworks.twars.bean.User;
-import com.thoughtworks.twars.bean.UserDetail;
+import com.thoughtworks.twars.bean.*;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class UserResourceTest extends TestBase {
+
     User user = mock(User.class);
+
     String basePath = "/users";
 
     @Test
@@ -75,7 +81,7 @@ public class UserResourceTest extends TestBase {
     }
 
     @Test
-    public void should_return_404_when_not_found() throws Exception {
+    public void should_200_when_get_user_by_email() {
         when(userMapper.getUserByEmail(anyString())).thenReturn(null);
 
         Response response = target(basePath)
@@ -83,23 +89,14 @@ public class UserResourceTest extends TestBase {
                 .queryParam("value", "abc@test.com")
                 .request().get();
 
-        assertThat(response.getStatus(), is(404));
+        Map result = response.readEntity(Map.class);
+
+        assertThat(response.getStatus(), is(200));
+        assertEquals(result.get("uri"), null);
     }
 
     @Test
-    public void should_404_when_get_user_by_email() {
-        when(userMapper.getUserByEmail(anyString())).thenReturn(null);
-
-        Response response = target(basePath)
-                .queryParam("field", "email")
-                .queryParam("value", "abc@test.com")
-                .request().get();
-
-        assertThat(response.getStatus(), is(404));
-    }
-
-    @Test
-    public void should_404_when_get_user_by_mobile_phone() {
+    public void should_200_when_get_user_by_mobile_phone() {
         when(userMapper.getUserByMobilePhone(anyString())).thenReturn(null);
 
         Response response = target(basePath)
@@ -107,7 +104,10 @@ public class UserResourceTest extends TestBase {
                 .queryParam("value", "4585295152")
                 .request().get();
 
-        assertThat(response.getStatus(), is(404));
+        Map result = response.readEntity(Map.class);
+
+        assertThat(response.getStatus(), is(200));
+        assertEquals(result.get("uri"), null);
     }
 
     @Test
@@ -116,6 +116,10 @@ public class UserResourceTest extends TestBase {
         UserDetail theDetail = mock(UserDetail.class);
 
         when(userMapper.getUserDetailById(1)).thenReturn(theDetail);
+        when(userMapper.getUserById(1)).thenReturn(user);
+        when(user.getMobilePhone()).thenReturn("123456");
+        when(user.getEmail()).thenReturn("11@qq.com");
+
         when(theDetail.getUserId()).thenReturn(1);
         when(theDetail.getSchool()).thenReturn("哈佛");
         when(theDetail.getMajor()).thenReturn("宗教");
@@ -135,6 +139,8 @@ public class UserResourceTest extends TestBase {
         assertThat(result.get("degree"), is("博士"));
         assertThat(result.get("name"), is("狗剩"));
         assertThat(result.get("gender"), is("男"));
+        assertThat(result.get("mobilePhone"), is("123456"));
+        assertThat(result.get("email"), is("11@qq.com"));
     }
 
     @Test
@@ -201,6 +207,51 @@ public class UserResourceTest extends TestBase {
 
         Response response = target(basePath + "/1/password").request().put(entity);
 
+        assertThat(response.getStatus(), is(200));
+    }
+
+    @Test
+    public void should_retrieve_password() throws Exception {
+
+        Response response = target(basePath + "/password/retrieve")
+                .queryParam("field", "email")
+                .queryParam("value", "test@163.com")
+                .request().get();
+
+        Map result = response.readEntity(Map.class);
+
+        assertThat(response.getStatus(), is(200));
+    }
+
+    @Test
+    public void should_return_logic_puzzle_result() throws Exception {
+
+        ScoreSheet scoreSheet = new ScoreSheet();
+        scoreSheet.setExamerId(1);
+        scoreSheet.setId(2);
+        when(scoreSheetMapper.findOneByUserId(1)).thenReturn(scoreSheet);
+
+        BlankQuizSubmit blankQuizSubmit = new BlankQuizSubmit();
+        blankQuizSubmit.setId(4);
+        blankQuizSubmit.setBlankQuizId(5);
+        blankQuizSubmit.setEndTime(123456);
+        blankQuizSubmit.setStartTime(123456);
+        blankQuizSubmit.setScoreSheetId(2);
+        when(blankQuizSubmitMapper.findByScoreSheetId(2)).thenReturn(Arrays.asList(blankQuizSubmit));
+
+        ItemPost itemPost = new ItemPost();
+        itemPost.setId(6);
+        itemPost.setBlankQuizSubmitsId(4);
+        itemPost.setAnswer("111");
+        itemPost.setQuizItemId(7);
+        when(itemPostMapper.findByBlankQuizSubmit(4)).thenReturn(Arrays.asList(itemPost));
+
+        QuizItem quizItem = new QuizItem();
+        quizItem.setId(7);
+        quizItem.setAnswer("111");
+        when(quizItemMapper.getQuizItemById(7)).thenReturn(quizItem);
+
+        Response response = target(basePath + "/1/logicPuzzle").request().get();
         assertThat(response.getStatus(), is(200));
     }
 }

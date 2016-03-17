@@ -1,9 +1,8 @@
 'use strict';
 
-var express = require('express');
 var session = require('supertest-session');
 var app = require('../../app');
-var request = require('superagent');
+var request = require('../../services/api-request');
 var httpStatusCode = require('../../mixin/constant').httpCode;
 
 var testSession = null;
@@ -14,26 +13,17 @@ describe('GET /initializeQuizzes', function(){
 
     testSession = session(app);
 
-    spyOn(request, 'post').and.callFake(function() {
-      return {
-        set: function () {
-          return this;
-        },
-        send: function() {
-          return this;
-        },
-        end: function(fn) {
-          fn(null, {
-            body:{userInfo:{uri: 'user/93'}, id: 93},
-            status:httpStatusCode.OK
-          });
-        }
-      };
+    spyOn(request, 'post').and.callFake(function(url,body,callback) {
+      callback(null,{
+        body: {userInfo: {uri: 'user/1'}, id: 1},
+        status: httpStatusCode.OK,
+        headers:'yes'
+      });
     });
 
-    testSession.get('/login')
+    testSession.post('/login')
         .set('Content-Type', 'application/json')
-        .query({
+        .send({
           account: 'hahaha@haha.com',
           password: '99999999'
         })

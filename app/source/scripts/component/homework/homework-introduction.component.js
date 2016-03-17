@@ -1,7 +1,6 @@
 'use strict';
 
 var Reflux = require('reflux');
-var React = require('react');
 var markdown = require('markdown').markdown;
 var HomeworkIntroductionStore = require('../../store/homework/homework-introduction-store');
 

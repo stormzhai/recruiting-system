@@ -1,11 +1,8 @@
 'use strict';
 
-var $ = global.jQuery = require('jquery');
-var ReactDOM = require('react-dom');
-
 require('../less/logic-puzzle.less');
-require('bootstrap');
-require('lightbox');
+require('lightbox2/dist/css/lightbox.min.css');
+require('lightbox2/dist/js/lightbox.min.js');
 
 var LogicPuzzle = require('./component/logic-puzzle/logic-puzzle-app');
 var LogicPuzzleLeft = require('./component/logic-puzzle/logic-puzzle-left.component');

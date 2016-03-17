@@ -1,7 +1,5 @@
 'use strict';
 
-var React = global.React = require('react');
-
 var Navigation = React.createClass({
   render: function () {
     return (

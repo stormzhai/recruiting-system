@@ -2,7 +2,7 @@
 
 'use strict';
 
-var React = require('react');
+
 var LoginStore = require('../../store/register-page/login-store');
 var RegisterStore = require('../../store/register-page/register-store');
 var RegisterActions = require('../../actions/register-page/register-actions');
@@ -11,11 +11,11 @@ var constraint = require('../../../../mixin/register-constraint');
 var validate = require('validate.js');
 
 var asyncContainersFunc = {
-  email: function (value, done){
+  email: function (value, done) {
     RegisterActions.checkEmail(value, done);
   },
-  mobilePhone: function (value, done){
-    RegisterActions.checkMobilePhone(value,done);
+  mobilePhone: function (value, done) {
+    RegisterActions.checkMobilePhone(value, done);
   }
 };
 
@@ -27,7 +27,7 @@ function getError(validateInfo, field) {
 }
 
 function passwordSafe(val) {
-  if (val === ''){
+  if (val === '') {
     return 0;
   }
   var safeRegex = [
@@ -37,7 +37,7 @@ function passwordSafe(val) {
   ];
 
   var result = 1;
-  safeRegex.forEach(function(reg, i){
+  safeRegex.forEach(function (reg, i) {
     result = reg.test(val) ? i + 1 : result;
   });
 
@@ -47,14 +47,14 @@ function passwordSafe(val) {
 function getPosition(level) {
   var levelNumber = [1, 2, 3];
 
-  for(var position = 0; position < levelNumber.length; position ++) {
-    if(level < levelNumber[position] + 1) {
+  for (var position = 0; position < levelNumber.length; position++) {
+    if (level < levelNumber[position] + 1) {
       return position;
     }
   }
 }
 var RegisterPassword = React.createClass({
-  mixins: [Reflux.connect(RegisterStore),Reflux.connect(LoginStore)],
+  mixins: [Reflux.connect(RegisterStore), Reflux.connect(LoginStore)],
 
   getInitialState: function () {
     return {
@@ -62,8 +62,21 @@ var RegisterPassword = React.createClass({
       passwordError: '',
       isShowToggle: false,
       passwordSafeLevel: '',
-      passwordSafeStyle: ''
+      passwordSafeStyle: '',
+      isLoginState: false
     };
+  },
+
+  componentDidUpdate: function (prevProps, prevState) {
+    if (!this.state.isLoginState && prevState.isLoginState) {
+      this.refs.password.value = '';
+      this.setState({
+        password: '',
+        passwordError: '',
+        passwordSafeLevel: '',
+        passwordSafeStyle: ''
+      });
+    }
   },
 
   toggleState: function () {
@@ -109,7 +122,7 @@ var RegisterPassword = React.createClass({
           <input className="form-control" type={(this.state.isShowToggle === false ? 'password' : 'text')}
                  placeholder="请输入8~16位密码" name="password" ref="password"
                  id="register-password" onBlur={this.validate} onChange={this.checkPasswordSafe}
-                 value={this.state.password}/>
+          />
           <div className={'lose' + (this.state.passwordError === '' ? ' hide' : '')}>{this.state.passwordError}
           </div>
           <ul className="passport-safely">

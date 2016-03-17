@@ -22,24 +22,7 @@ var HomeworkIntroductionStore = Reflux.createStore({
               quizStatus: homeworkQuizzesStatus.LOCKED,
               showRepo: false
             });
-          } else if (res.body.quiz.quizStatus === homeworkQuizzesStatus.PROGRESS) {
-            this.trigger({
-              quizStatus: homeworkQuizzesStatus.PROGRESS,
-              githubUrl: res.body.quiz.userAnswerRepo,
-              branches: [res.body.quiz.branch]
-            });
-          } else if (res.body.quiz.quizStatus === homeworkQuizzesStatus.SUCCESS) {
-            this.trigger({
-              quizStatus: homeworkQuizzesStatus.SUCCESS,
-              githubUrl: res.body.quiz.userAnswerRepo,
-              branches: [res.body.quiz.branch]
-            });
-          } else if (res.body.quiz.quizStatus === homeworkQuizzesStatus.ACTIVE) {
-            this.trigger({
-              quizStatus: homeworkQuizzesStatus.ACTIVE
-            });
-          }
-          if (res.body.status === constant.httpCode.OK) {
+          } else if (res.body.status === constant.httpCode.OK) {
             this.trigger({
               desc: res.body.quiz.desc,
               templateRepo: res.body.quiz.templateRepo,
@@ -47,6 +30,10 @@ var HomeworkIntroductionStore = Reflux.createStore({
             });
           }
         });
+  },
+
+  onReload: function (orderId) {
+    this.onChangeOrderId(orderId);
   }
 });
 

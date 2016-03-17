@@ -1,6 +1,5 @@
 'use strict';
 
-var React = require('react');
 var Reflux = require('reflux');
 var validate = require('validate.js');
 var constraint = require('../../../../mixin/url-constraint');
@@ -29,9 +28,14 @@ var SubmissionIntroduction = React.createClass({
       githubUrl: '',
       githubBranch: '',
       quizStatus: 0,
-      showIcon: false
+      showIcon: false,
+      branchesDetail: []
     };
   },
+  componentDidUpdate: function (prevProps, prevState) {
+    this.refs.githubUrl.value = this.state.githubUrl;
+  },
+
   clickBranch: function () {
     HomeworkActions.getBranches(this.state.githubUrl);
   },
@@ -39,7 +43,16 @@ var SubmissionIntroduction = React.createClass({
     if (!this.state.githubBranch) {
       this.state.githubBranch = this.state.defaultBranch;
     }
-    HomeworkActions.submitUrl(this.state.githubUrl, this.state.githubBranch, this.state.currentHomeworkNumber);
+
+    var commitSHA;
+
+    this.state.branchesDetail.forEach((item) => {
+      if(item.name === this.state.githubBranch) {
+        commitSHA = item.commit.sha;
+      }
+    });
+    this.props.startProgress();
+    HomeworkActions.submitUrl(this.state.githubUrl, this.state.githubBranch, commitSHA, this.state.currentHomeworkNumber);
   },
   onUrlBlur: function (event) {
     var target = event.target;
@@ -66,10 +79,7 @@ var SubmissionIntroduction = React.createClass({
   onBranchChange: function (event) {
     this.state.githubBranch = event.target.value;
   },
-  handleChange: function(event){
-    var val = event.target.value;
-    HomeworkActions.changeGithubUrl(val);
-  },
+
   render() {
     if (this.state.quizStatus === homeworkQuizzesStatus.PROGRESS) {
       HomeworkActions.submited(this.state.currentHomeworkNumber);
@@ -83,7 +93,6 @@ var SubmissionIntroduction = React.createClass({
         <div className="container-fluid">
           <div className={(this.state.showRepo ? '' : ' hide')}>
             <div className="row last-time">
-              <div className="col-md-12 ">你还有2天10小时完成题目</div>
             </div>
             <div className="form-horizontal">
               <div className="form-group">
@@ -96,7 +105,7 @@ var SubmissionIntroduction = React.createClass({
                 <label htmlFor="githubUrl" className="col-sm-2 control-label">github仓库地址</label>
                 <div className="col-sm-9">
                   <input type="text" className="form-control" id="githubUrl" name="githubUrl" ref="githubUrl"
-                         onChange={this.handleChange} value={this.state.githubUrl}
+
                          onBlur={this.onUrlBlur} placeholder="https://github.com/用户名/仓库名" disabled={isSubmitted ? 'disabled':''}/>
                   <div
                       className={'lose' + (this.state.githubUrlError === '' ? ' hide' : '')}>{this.state.githubUrlError}</div>

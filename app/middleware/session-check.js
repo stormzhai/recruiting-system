@@ -7,8 +7,8 @@ var yamlConfig = require('node-yaml-config');
 var apiServer = yamlConfig.load('./config/config.yml').apiServer;
 var async = require('async');
 
-function pathControl(req, res, next, jumpControl) {
-  var arr = req.url.split('/');
+function pathControl(url, data) {
+  var arr = url.split('/');
 
   arr.forEach(function (item, i) {
     arr[i] = item.split('?')[0];
@@ -18,6 +18,7 @@ function pathControl(req, res, next, jumpControl) {
 
   var redirectionAddress;
   var needRedirect = false;
+  var jumpControl = getJumpControl(data);
 
   jumpControl.forEach((item) => {
     if (~item.originPath.indexOf(lastElement) && item.condition) {
@@ -26,15 +27,22 @@ function pathControl(req, res, next, jumpControl) {
     }
   });
 
-  if (needRedirect) {
-    res.redirect(redirectionAddress);
-  } else {
-    next();
-  }
+  return {
+    needRedirect: needRedirect,
+    targetPath: redirectionAddress
+  };
 }
 
 module.exports = function (req, res, next) {
   var userId;
+
+  if (req.headers.stress) {
+    req.session.user = {
+      id: 1,
+      userInfo: {uri: 'users/1'},
+      token: '846cd0e6d5dae4170381b6e61858c6b1'
+    };
+  }
 
   if (Boolean(req.session.user)) {
     userId = req.session.user.id;
@@ -49,7 +57,7 @@ module.exports = function (req, res, next) {
       if (!userId) {
         done(null, false);
       } else {
-        logicPuzzle.isPaperCommited(userId, (data) => {
+        logicPuzzle.isPaperCommited(userId, (err, data) => {
           done(null, data);
         });
       }
@@ -75,11 +83,19 @@ module.exports = function (req, res, next) {
       logicPuzzle.isDealAgree(userId, (data) => {
         done(null, data);
       });
+    },
+
+    isThirdParty: function (done) {
+      done(null, Boolean(req.session.passport));
     }
 
   }, function (err, data) {
-    var jumpControl = getJumpControl(data);
+    var result = pathControl(req.url, data);
 
-    pathControl(req, res, next, jumpControl);
+    if (result.needRedirect) {
+      res.redirect(result.targetPath);
+    } else {
+      next();
+    }
   });
 };

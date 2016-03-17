@@ -4,24 +4,34 @@ import com.thoughtworks.twars.bean.User;
 import com.thoughtworks.twars.bean.UserDetail;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 public interface UserMapper {
 
-    public int insertUser(User user);
+    int insertUser(User user);
 
-    public User getUserById(int id);
+    User getUserById(int id);
 
-    public User getUserByEmail(String email);
+    User getUserByEmail(String email);
 
-    public User getUserByMobilePhone(String mobilePhone);
+    User getUserByMobilePhone(String mobilePhone);
 
-    public User getUserByEmailAndPassWord(User user);
+    User getUserByEmailAndPassWord(User user);
 
-    public UserDetail getUserDetailById(int userId);
+    User getUserByMobilePhoneAndPassWord(User user);
 
-    public int updateUserDetail(UserDetail detail);
+    UserDetail getUserDetailById(int userId);
 
-    public int updatePassword(
+    int updateUserDetail(UserDetail detail);
+
+    int updatePassword(
             @Param("id") int id,
             @Param("oldPassword") String oldPassword,
             @Param("password") String password);
+
+    int resetPassword(User user);
+
+    List<UserDetail> findUserDetailsByUserIds(List<Integer> userIds);
+
+    List<User> findUsersByUserIds(List<Integer> userIds);
 }

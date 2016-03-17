@@ -1,7 +1,6 @@
 'use strict';
 
 require('../less/homework.less');
-var ReactDom = require('react-dom');
 var Navigation = require('./component/navigation/navigation.component');
 var HomeworkSidebar = require('./component/homework/homework-sidebar.component');
 var HomeworkContent = require('./component/homework/homework-content.component');
@@ -9,6 +8,10 @@ var HomeworkIntroduction = require('./component/homework/homework-introduction.c
 var SubmissionIntroduction = require('./component/homework/submission-introduction.component');
 var RunningResult = require('./component/homework/running-result.component');
 var HomeworkAction = require('./actions/homework/homework-actions');
+var constant = require('../../mixin/constant');
+var request = require('superagent');
+var errorHandler = require('../../tools/error-handler');
+var homeworkQuizzesStatus = require('../../mixin/constant').homeworkQuizzesStatus;
 
 function changeId() {
   var orderId;
@@ -31,7 +34,32 @@ function onAction(number) {
   history.pushState(null, '', '#' + number);
 }
 
+var HALF_SECONDS_PER_MINUTE = 30;
+
 HomeworkAction.changeOrderId(changeId());
+
+function startProgress() {
+  var progress, goOn;
+
+  progress = setInterval(() => {
+    request.get('/homework/get-list')
+      .set('Content-Type', 'application/json')
+      .use(errorHandler)
+      .end((err, res) => {
+        goOn = res.body.homeworkQuizzes.some((element) => {
+          return element.status === homeworkQuizzesStatus.PROGRESS;
+        });
+
+        if(!goOn){
+          clearInterval(progress);
+        }
+      });
+
+    HomeworkAction.reload(changeId());
+  }, constant.time.MILLISECOND_PER_SECONDS * HALF_SECONDS_PER_MINUTE);
+}
+
+startProgress();
 
 ReactDom.render(
     <div>
@@ -42,8 +70,9 @@ ReactDom.render(
           <HomeworkSidebar onAction={onAction} orderId={changeId()}/>
           <HomeworkContent>
             <HomeworkIntroduction />
-            <SubmissionIntroduction orderId={changeId()}/>
-            <RunningResult />
+            <SubmissionIntroduction orderId={changeId()}
+                                    startProgress={startProgress}/>
+            <RunningResult orderId={changeId()}/>
           </HomeworkContent>
         </div>
     </div>,

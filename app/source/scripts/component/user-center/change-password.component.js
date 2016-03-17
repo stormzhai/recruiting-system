@@ -1,17 +1,17 @@
 'use strict';
 
-var React = require('react');
 var validate = require('validate.js');
 var constraint = require('../../../../mixin/password-constraint');
 var getError = require('../../../../mixin/get-error');
 var ChangePasswordActions = require('../../actions/user-center/change-password-actions');
+var PasswordActions = require('../../actions/reuse/password-actions');
 var ChangePasswordStore = require('../../store/user-center/change-password-store');
 var UserCenterStore = require('../../store/user-center/user-center-store');
+var PasswordStore = require('../../store/reuse/password-store');
 var Reflux = require('reflux');
-var _  = require('lodash');
 
 var ChangePassword = React.createClass({
-  mixins: [Reflux.connect(ChangePasswordStore),Reflux.connect(UserCenterStore)],
+  mixins: [Reflux.connect(ChangePasswordStore), Reflux.connect(UserCenterStore), Reflux.connect(PasswordStore)],
 
   getInitialState: function () {
     return {
@@ -27,16 +27,15 @@ var ChangePassword = React.createClass({
     };
   },
 
-  componentWillReceiveProps: function () {
-    this.setState({
-      oldPassword: '',
-      newPassword: '',
-      confirmPassword: '',
-      oldPasswordError: '',
-      newPasswordError: '',
-      confirmPasswordError: '',
-      success: false
-    });
+  componentDidUpdate: function (prevProps, prevState) {
+
+    if (prevState.currentState !== this.state.currentState) {
+      this.setState({
+        oldPassword: '',
+        oldPasswordError: '',
+        success: false
+      });
+    }
   },
 
   validate: function (evt) {
@@ -45,14 +44,7 @@ var ChangePassword = React.createClass({
     var value = target.value;
     var valObj = {};
 
-    if (name === 'confirmPassword') {
-      valObj = {
-        newPassword: this.state.newPassword,
-        confirmPassword: this.state.confirmPassword
-      };
-    } else {
-      valObj[name] = value;
-    }
+    valObj[name] = value;
     var result = validate(valObj, constraint);
     var error = getError(result, name);
     var stateObj = {};
@@ -70,109 +62,68 @@ var ChangePassword = React.createClass({
 
   checkInfo: function () {
     var oldPassword = {oldPassword: this.state.oldPassword};
-    var newPassword = {newPassword: this.state.newPassword};
-    var confirmPassword = {confirmPassword: this.state.confirmPassword};
-    var passwordInfo = [];
-    var pass = false;
-    var stateObj = {};
+    var result = validate(oldPassword, constraint);
+    var error = getError(result, 'oldPassword');
 
-    passwordInfo.push(oldPassword, newPassword, confirmPassword);
-    passwordInfo.forEach((item) => {
-      var confirmItem;
-      var result = validate(item, constraint);
+    if (result === undefined && this.state.newPasswordError === '' && this.state.confirmPasswordError === '') {
+      return true;
+    }
+    this.setState({oldPasswordError: error});
+    return false;
 
-      if(Object.keys(item).toString() === 'confirmPassword') {
-        confirmItem = _.assign(_.cloneDeep(item), newPassword);
-        result = validate(confirmItem, constraint);
-      }
-      var error = getError(result, Object.keys(item));
-      if (error !== '') {
-        pass = true;
-      }
-      stateObj[Object.keys(item) + 'Error'] = error;
-      this.setState(stateObj);
-    });
-    return pass;
   },
 
-  savePassword: function (evt) {
-    evt.preventDefault();
-
+  savePassword: function () {
     var passwordData = {
       oldPassword: this.state.oldPassword,
-      password: this.state.newPassword,
+      newPassword: this.state.newPassword,
       confirmPassword: this.state.confirmPassword
     };
+    PasswordActions.submitEvent('submit');
 
-    if (this.checkInfo()) {
+    if (!this.checkInfo()) {
       return;
     }
-
     ChangePasswordActions.changePassword(passwordData);
+    this.setState({isRespond: true});
   },
 
   render: function () {
     var classString = (this.state.currentState === 'password' ? '' : ' hide');
-
     return (
         <div className={'col-md-9 col-sm-9 col-xs-12' + classString}>
           <div className="content">
-            <form className="form-horizontal form-top-height">
-              <div className={this.state.success ? '' : 'hide'}>
-                <div className={"success-prompt alert alert-success"}>
+            <form className="form-horizontal form-top-height col-sm-8 col-md-8 col-sm-offset-3 col-md-offset-3">
+              <div className="col-sm-3 col-md-3 col-md-offset-4 col-sm-offset-4">
+                <div className={'success-prompt alert alert-success' + (this.state.success ? '' : ' visibility')}>
                   <span className="glyphicon glyphicon-exclamation-sign" aria-hidden="true"/>
                   修改成功
                 </div>
               </div>
 
               <div id="change-password">
-                <label htmlFor="oldPassword" className="col-sm-4 col-md-4 control-label">旧密码</label>
-                <div className={'form-group has-' + (this.state.oldPasswordError === '' ? '' : 'error')}>
-                  <div className="col-sm-4 col-md-4">
+                <div className="oldPassword col-sm-12 col-md-12">
+                  <label htmlFor="oldPassword" className="col-sm-3 col-md-3 control-label">旧密码</label>
+                  <div
+                      className={'form-group col-sm-6 col-md-6 has-' + (this.state.oldPasswordError === '' ? '' : 'error')}>
                     <input type="password" className="form-control" aria-describedby="helpBlock2"
-                           name="oldPassword" id="oldPassword" onChange={this.handleChange}
-                           placeholder="请输入旧密码" onBlur={this.validate} value={this.state.oldPassword}/>
+                           name="oldPassword" id="oldPassword"
+                           placeholder="请输入旧密码" onBlur={this.validate}
+                           onChange={this.handleChange} value={this.state.oldPassword}/>
                   </div>
-                  <div className={'error alert alert-danger' + (this.state.oldPasswordError === '' ? ' hide' : '')}
-                       role="alert">
-                    <span className="glyphicon glyphicon-exclamation-sign" aria-hidden="true"/>
+                  <span
+                      className={'col-sm-3 col-md-3 error alert alert-danger' + (this.state.oldPasswordError === '' ? ' hide' : '')}
+                      aria-hidden="true" role="alert">
+                    <i className="glyphicon glyphicon-exclamation-sign"/>
                     {this.state.oldPasswordError}
-                  </div>
+                  </span>
                 </div>
 
-                <label htmlFor="newPassword" className="col-sm-4 col-md-4 control-label">新密码</label>
-                <div className={'form-group has-' + (this.state.newPasswordError === '' ? '' : 'error')}>
-                  <div className="col-sm-4 col-md-4">
-                    <input type="password" className="form-control" aria-describedby="helpBlock2"
-                           name="newPassword" id="newPassword"
-                           placeholder="请输入新密码" onBlur={this.validate}
-                           onChange={this.handleChange} value={this.state.newPassword}/>
-                  </div>
-                  <div className={'error alert alert-danger' + (this.state.newPasswordError === '' ? ' hide' : '')}
-                       role="alert">
-                    <span className="glyphicon glyphicon-exclamation-sign" aria-hidden="true"/>
-                    {this.state.newPasswordError}
-                  </div>
-                </div>
-
-                <label htmlFor="confirmPassword" className="col-sm-4 col-md-4 control-label">确认密码</label>
-                <div className={'form-group has-' + (this.state.confirmPasswordError === '' ? '' : 'error')}>
-                  <div className="col-sm-4 col-md-4">
-                    <input type="password" className="form-control" aria-describedby="helpBlock2"
-                           name="confirmPassword" id="confirmPassword"
-                           placeholder="请再次确认新密码" onBlur={this.validate}
-                           onChange={this.handleChange} value={this.state.confirmPassword}/>
-                  </div>
-                  <div className={'error alert alert-danger' + (this.state.confirmPasswordError === '' ? ' hide' : '')}
-                       role="alert">
-                    <span className="glyphicon glyphicon-exclamation-sign" aria-hidden="true"/>
-                    {this.state.confirmPasswordError}
-                  </div>
-                </div>
+                {this.props.children}
 
                 <div className="form-group">
                   <div className="col-sm-offset-4 col-sm-4 col-md-offset-4 col-md-4">
-                    <button type="submit" className="btn btn-default" onClick={this.savePassword}
+                    <button type="button" className="btn btn-default" onClick={this.savePassword}
                             disabled={this.state.isRespond}>保存
                     </button>
                   </div>

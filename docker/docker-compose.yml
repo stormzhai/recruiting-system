@@ -1,7 +1,7 @@
 mysql:
   build: ./mysql
   ports:
-    - "13306:3306"
+    - "3306:3306"
   env_file: test.env
   environment:
     - LANG=C.UTF-8
@@ -45,3 +45,15 @@ task-queue-node:
   volumes:
     - /Users/Thoughtworks/works/recruiting-system/task-queue:/var/task-queue
   command: bash -c "cd /var/task-queue/ && npm install && node app"
+
+mongodb:
+  build: ./mongodb
+  ports:
+    - "27017:27017"
+    - "28017:28017"
+  environment:
+    - MONGODB_USER=tw
+    - MONGODB_DATABASE=twars
+    - MONGODB_PASS=hahahaha
+  volumes:
+    - /data:/data

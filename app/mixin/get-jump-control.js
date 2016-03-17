@@ -5,10 +5,10 @@ function jumpControl(data) {
   var isPaperCommited = data.isPaperCommited;
   var isDetailed = data.isDetailed;
   var isAgreed = data.isAgreed;
+  var isThirdParty = data.isThirdParty;
 
   return [{
     originPath: [
-      'user-center.html',
       'homework.html',
       'logic-puzzle.html',
       'progress.html',
@@ -52,6 +52,12 @@ function jumpControl(data) {
     ],
     targetPath: 'dashboard.html',
     condition: isAgreed
+  }, {
+    originPath: [
+      'user-center.html'
+    ],
+    targetPath: 'register.html',
+    condition: !(isLoged || isThirdParty)
   }
   ];
 }

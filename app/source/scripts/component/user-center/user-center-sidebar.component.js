@@ -1,6 +1,5 @@
 'use strict';
 
-var React = require('react');
 var Reflux = require('reflux');
 var Nav = require('react-bootstrap/lib/Nav');
 var NavItem = require('react-bootstrap/lib/NavItem');

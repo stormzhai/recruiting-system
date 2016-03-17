@@ -1,8 +1,5 @@
 'use strict';
 
-var React = require('react');
-
-
 var LogicPuzzleLeft = React.createClass({
   
   render: function () {

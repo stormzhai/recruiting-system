@@ -1,6 +1,5 @@
-@import "../../node_modules/font-awesome/less/font-awesome.less";
-@import "../../node_modules/bootstrap/less/bootstrap.less";
-@import "common/color.less";
+@import "common/main";
+
 body {
   background: @nice-white;
 }
@@ -58,6 +57,7 @@ body {
       .toggle {
         float:right;
         margin-top: 5px;
+        cursor: pointer;
       }
       li {
         margin: 0;
@@ -76,6 +76,9 @@ body {
     .register-form-container;
   }
   .register-form-right {
+    .password-retrieve{
+      margin-top: 20px;
+    }
     .link {
       margin-top: 80px;
     }

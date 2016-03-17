@@ -1,6 +1,5 @@
 'use strict';
 
-var React = require('react');
 var UserCenterApp = React.createClass({
 
   render() {

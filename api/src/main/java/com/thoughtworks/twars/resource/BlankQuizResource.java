@@ -4,6 +4,10 @@ import com.thoughtworks.twars.bean.BlankQuiz;
 import com.thoughtworks.twars.bean.QuizItem;
 import com.thoughtworks.twars.mapper.BlankQuizMapper;
 import com.thoughtworks.twars.mapper.QuizItemMapper;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
@@ -16,6 +20,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Path("/blankQuizzes")
+@Api
 
 public class BlankQuizResource {
     @Inject
@@ -25,6 +30,8 @@ public class BlankQuizResource {
     private QuizItemMapper quizItemMapper;
 
     @GET
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "get all blankQuizzes successful"),
+            @ApiResponse(code = 404, message = "get all blankQuizzes failed")})
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllBlankQuizzes() {
 
@@ -50,8 +57,11 @@ public class BlankQuizResource {
 
 
     @POST
+    @ApiResponses(value = {@ApiResponse(code = 201, message = "insert blankQuiz successful")})
     @Produces(MediaType.APPLICATION_JSON)
-    public Response insertBlankQuiz(BlankQuiz blankQuiz) {
+    public Response insertBlankQuiz(
+            @ApiParam(name = "blankQuiz", value = "BlankQuiz example",required = true)
+            BlankQuiz blankQuiz) {
 
         blankQuizMapper.insertBlankQuiz(blankQuiz);
 
@@ -64,11 +74,15 @@ public class BlankQuizResource {
 
 
     @GET
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "successful"),
+            @ApiResponse(code = 404, message = "blankQuiz not found")})
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/{param}")
     public Response getBlankQuizzesBySectionId(
+            @ApiParam(value = "sectionId",allowableValues = "int",required = true)
             @PathParam("param") int sectionId
     ) {
+
         List<BlankQuiz> blankQuizzes = blankQuizMapper
                 .findBySectionId(sectionId);
 
@@ -95,8 +109,12 @@ public class BlankQuizResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "successful"),
+            @ApiResponse(code = 404, message = "blankQuizItems not found")})
     @Path("/{param}/items")
-    public Response getItems(@PathParam("param") int blankQuizId) {
+    public Response getItems(
+            @ApiParam(value = "blankQuizId",allowableValues = "int",required = true)
+            @PathParam("param") int blankQuizId) {
 
         BlankQuiz blankQuiz = blankQuizMapper.findOne(blankQuizId);
 

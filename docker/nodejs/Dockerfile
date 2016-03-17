@@ -1,6 +1,6 @@
 FROM ubuntu:14.04
 
-COPY sources.list.trusty /etc/apt/sources.list
+# COPY sources.list.trusty /etc/apt/sources.list
 
 RUN apt-get update
 

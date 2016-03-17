@@ -1,6 +1,5 @@
 'use strict';
 
-var React = global.React = require('react');
 var Reflux = require('reflux');
 
 var DashboardActions = require('../../actions/dashboard/dashboard-actions');

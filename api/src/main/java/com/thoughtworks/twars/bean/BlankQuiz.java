@@ -6,6 +6,7 @@ public class BlankQuiz {
     private int normalCount;
     private int easyCount;
     private int exampleCount;
+    private String type;
 
     public void setExampleCount(int exampleCount) {
         this.exampleCount = exampleCount;
@@ -45,5 +46,13 @@ public class BlankQuiz {
 
     public int getEasyCount() {
         return easyCount;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

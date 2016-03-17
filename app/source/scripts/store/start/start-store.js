@@ -11,7 +11,7 @@ var StartStore = Reflux.createStore({
   listenables: [StartActions],
 
   onAgreeDeal:function(isAgreed) {
-    superAgent.put('/logic-puzzle/dealAgree')
+    superAgent.put('/logic-puzzle/deal-agree')
       .set('Content-type', 'application/json')
       .send({
         dealAgree: isAgreed

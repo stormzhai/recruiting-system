@@ -2,6 +2,10 @@ package com.thoughtworks.twars.resource;
 
 import com.thoughtworks.twars.bean.QuizItem;
 import com.thoughtworks.twars.mapper.QuizItemMapper;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
@@ -13,12 +17,15 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Path("/quizItems")
+@Api
 public class QuizItemResource extends Resource {
 
     @Inject
     private QuizItemMapper quizItemMapper;
 
     @GET
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "get all quizItems successful"),
+            @ApiResponse(code = 404, message = "all quizItems not found")})
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllQuizItems() {
         List<QuizItem> quizItems = quizItemMapper.getAllQuizItems();
@@ -42,8 +49,11 @@ public class QuizItemResource extends Resource {
 
 
     @POST
+    @ApiResponses(value = {@ApiResponse(code = 201, message = "insert quizItems successful")})
     @Produces(MediaType.APPLICATION_JSON)
-    public Response insertQuizItem(QuizItem quizItem) {
+    public Response insertQuizItem(
+            @ApiParam(name = "quizItem", value = "QuizItem example",required = true)
+            QuizItem quizItem) {
 
         quizItemMapper.insertQuizItem(quizItem);
 
@@ -56,8 +66,12 @@ public class QuizItemResource extends Resource {
 
     @GET
     @Path("/{param}")
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "successful"),
+            @ApiResponse(code = 404, message = "all blankQuizzes not found")})
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getQuizItem(@PathParam("param") int id) {
+    public Response getQuizItem(
+            @ApiParam(name = "quizItemId", value = "int",required = true)
+            @PathParam("param") int id) {
 
         QuizItem quizItem = quizItemMapper.getQuizItemById(id);
 

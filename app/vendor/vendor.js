@@ -2,7 +2,8 @@
 'use strict';
 
 var superAgent = require('superagent');
-var githubUser = require('../config/github-user.json');
+var yamlConfig = require('node-yaml-config');
+var gitHubToken = yamlConfig.load('./config/config.yml').gitHubToken;
 
 function Vendor() {
 
@@ -11,10 +12,12 @@ function Vendor() {
 Vendor.prototype.getBranches = function (req, res) {
   var originUrl = req.query.url;
   var list = originUrl.split('/');
-  var apiUrl = 'https://api.github.com/repos/' + list[3] + '/' + list[4] + '/branches';
+  var user = list[3];
+  var repo = list[4].replace(/.git/i,'');
+  var apiUrl = 'https://api.github.com/repos/' + user + '/' + repo + '/branches';
   superAgent.get(apiUrl)
       .set('Content-Type', 'application/json')
-      .set(githubUser.header, githubUser.value)
+      .set('Authorization', gitHubToken)
       .end((err, result) => {
         if (result.body.message === 'Not Found') {
           res.send({message: 'Not Found'});

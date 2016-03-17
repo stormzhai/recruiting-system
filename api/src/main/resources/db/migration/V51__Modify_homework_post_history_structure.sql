@@ -1,0 +1,1 @@
+ALTER TABLE homeworkPostHistory ADD COLUMN resultURL VARCHAR (512);

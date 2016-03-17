@@ -2,7 +2,6 @@
 
 'use strict';
 
-var React = require('react');
 var Reflux = require('reflux');
 var HomeworkActions = require('../../actions/homework/homework-actions');
 var HomeworkSidebarStore = require('../../store/homework/homework-sidebar-store');
@@ -16,8 +15,7 @@ var HomeworkSidebar = React.createClass({
     return {
       homeworkStatusList: list,
       currentHomeworkNumber: this.props.orderId,
-      clickNumber: this.props.orderId,
-      waitingNumber: null
+      clickNumber: this.props.orderId
     };
   },
 
@@ -51,6 +49,9 @@ var HomeworkSidebar = React.createClass({
     var list = this.state.homeworkStatusList;
     var itemHtml = list.map((item, index) => {
       var classStr = 'list-group-item ' + (this.state.clickNumber === index + 1 ? ' selected' : '');
+      var iTagClassStr = this.changeIcon(item.status);
+
+      iTagClassStr += ~iTagClassStr.indexOf('clock-o') ? ' flashing' : '';
 
       return (
           <button className={classStr} key={index}
@@ -58,7 +59,7 @@ var HomeworkSidebar = React.createClass({
             <div className="row">
               <div className="col-xs-9 h4 text-center ">{'第' + (index + 1) + '题'}</div>
               <div className='col-xs-3'>
-                <i className={index + 1 === this.state.waitingNumber ? this.changeIcon(homeworkQuizzesStatus.PROGRESS):this.changeIcon(item.status)}/></div>
+                <i className={iTagClassStr}/></div>
             </div>
           </button>
       );

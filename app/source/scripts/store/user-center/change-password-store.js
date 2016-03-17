@@ -6,6 +6,7 @@ var request = require('superagent');
 var page = require('page');
 var errorHandler = require('../../../../tools/error-handler');
 var constant = require('../../../../mixin/constant');
+var lang = require('../../../../mixin/lang-message/chinese');
 
 var ChangePasswordStore = Reflux.createStore({
   listenables: [ChangePasswordActions],
@@ -19,21 +20,23 @@ var ChangePasswordStore = Reflux.createStore({
         })
         .use(errorHandler)
         .end((err, res) => {
-          if(!res){
+          if (!res) {
             return;
           }
           if (res.body.status === constant.httpCode.OK) {
             this.trigger({
               success: true,
-              isRespond: false,
-              oldPassword: '',
-              newPassword: '',
-              confirmPassword: ''
+              isRespond: false
             });
           } else if (res.body.status === constant.httpCode.BAD_REQUEST) {
             this.trigger({
               isRespond: false,
-              oldPasswordError: constant.changePassword.ERROR
+              oldPasswordError: lang.ERROR
+            });
+          }else {
+            this.trigger({
+              isRespond: false,
+              confirmPasswordError: lang.CONFIRM_ERROR
             });
           }
         });

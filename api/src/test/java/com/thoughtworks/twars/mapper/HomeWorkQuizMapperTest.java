@@ -30,9 +30,9 @@ public class HomeWorkQuizMapperTest extends TestBase {
     public void should_return_one_homework_quiz_when_by_id() {
         HomeworkQuiz homeworkQuiz = homeworkQuizMapper.findById(1);
 
-        assertThat(homeworkQuiz.getDescription(), is("创建一个文件,文件名为readme.md"));
+        assertThat(homeworkQuiz.getDescription(), is("这是一道比较简单的题目"));
         assertThat(homeworkQuiz.getEvaluateRepository(), is("test.com/homework/1"));
-        assertThat(homeworkQuiz.getEvaluateScript(), is("./homework-script/check-readme.sh"));
+        assertThat(homeworkQuiz.getEvaluateScript(), is("http://10.29.3.221:8888/fs/homework-script/check-readme.sh"));
         assertThat(homeworkQuiz.getTemplateRepository(), is("github.com/homework/1"));
     }
 

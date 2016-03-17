@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.thoughtworks.twars.mapper.LoginDetailMapper">
 
-    <insert id="insertLoginDetail" parameterType="com.thoughtworks.twars.bean.LoginDetail" useGeneratedKeys="true"
+    <insert id="insertLoginDetail" parameterType="int" useGeneratedKeys="true"
             keyProperty="id">
         INSERT INTO loginDetail(userId,token,loginDate,logoutDate,flag)
         VALUES (#{userId}, MD5(RAND()), UNIX_TIMESTAMP(),NULL ,1);
@@ -14,10 +14,14 @@
         SELECT * FROM loginDetail WHERE userId = #{userId};
     </select>
 
-
     <update id="updateLoginDetail" parameterType="string" useGeneratedKeys="true"
             keyProperty="id">
         UPDATE loginDetail SET flag = 0, logoutDate =UNIX_TIMESTAMP()  WHERE token = #{token};
+    </update>
+
+    <update id="updateLoginDetailById" parameterType="int" useGeneratedKeys="true"
+            keyProperty="id">
+        UPDATE loginDetail SET flag = 0, logoutDate =UNIX_TIMESTAMP()  WHERE id = #{id};
     </update>
 
     <select id="getLoginDetailByToken" resultType="com.thoughtworks.twars.bean.LoginDetail">

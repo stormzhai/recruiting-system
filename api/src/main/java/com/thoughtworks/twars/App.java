@@ -1,5 +1,6 @@
 package com.thoughtworks.twars;
 
+import com.thoughtworks.twars.filter.CacheContorlFilter;
 import com.thoughtworks.twars.filter.CloseSessionResponseFilter;
 import com.thoughtworks.twars.filter.OpenSessionRequestFilter;
 import com.thoughtworks.twars.mapper.*;
@@ -60,6 +61,12 @@ public class App extends ResourceConfig {
         final LoginDetailMapper loginDetailMapper = session
                 .getMapper(LoginDetailMapper.class);
 
+        final PasswordRetrieveDetailMapper passwordRetrieveDetailMapper = session
+                .getMapper(PasswordRetrieveDetailMapper.class);
+
+        final GithubUserMapper githubUserMapper = session
+                .getMapper(GithubUserMapper.class);
+
         final BlankQuizScoreSheetService blankQuizScoreSheet = new BlankQuizScoreSheetService();
         blankQuizScoreSheet.setBlankQuizSubmitMapper(blankQuizSubmitMapper);
         blankQuizScoreSheet.setItemPostMapper(itemPostMapper);
@@ -82,6 +89,7 @@ public class App extends ResourceConfig {
 
         register(OpenSessionRequestFilter.class);
         register(CloseSessionResponseFilter.class);
+        register(CacheContorlFilter.class);
 
         packages("com.thoughtworks.twars.resource")
                 .register(new AbstractBinder() {
@@ -104,6 +112,8 @@ public class App extends ResourceConfig {
                         bind(homeworkQuizScoreSheet).to(HomeworkQuizScoreSheetService.class);
                         bind(homeworkQuizDefinition).to(HomeworkQuizDefinitionService.class);
                         bind(blankQuizDefinition).to(BlankQuizDefinitionService.class);
+                        bind(passwordRetrieveDetailMapper).to(PasswordRetrieveDetailMapper.class);
+                        bind(githubUserMapper).to(GithubUserMapper.class);
                         bind(session).to(SqlSessionManager.class);
                     }
                 });

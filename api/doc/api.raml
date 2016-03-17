@@ -23,12 +23,28 @@ baseUri: http://api.bronzesword.com/
               userInfo:
                 properties:
                   uri: string
+  /third-party:
+    post:
+      description: |
+        the third part register
+      body:
+        application/json:
+          properties:
+            thirdPartyId: integer
+            userId: integer
+      responses:
+        201:
+          body:
+            application/json:
+              properties:
+                userId: integer
+                thirdPartUserId: integer
 /login:
   post:
     body:
       application/x-www-form-urlencoded:
         properties:
-          email: string
+          email/mobilePhone: string
           password: string
     responses:
       200:
@@ -74,7 +90,17 @@ baseUri: http://api.bronzesword.com/
                 id: integer
                 email: string
                 mobilePhone: string
-
+    /logicPuzzle:
+      get:
+        responses:
+          200:
+            body:
+              application/json:
+                properties:
+                  correctNumber: integer
+                  itemNumber: integer
+                  startTime: integer
+                  endTime: integer
     /detail:
       get:
         description: 获取用户信息
@@ -87,6 +113,9 @@ baseUri: http://api.bronzesword.com/
               gender: string
               major: string
               degree: string
+              birthday: integer
+              email: string
+              mobilePhone: string
       put:
         description: 提交用户的详细信息
         body:
@@ -121,6 +150,32 @@ baseUri: http://api.bronzesword.com/
               application/json:
                 properties:
                   uri: string
+  /password:
+    /retrieve:
+      get:
+        queryParameters:
+          field: string
+          value: string
+        responses:
+          200:
+           body:
+             application/json:
+               properties:
+                 status: number
+                 token: string
+    /reset:
+      post:
+        body:
+          application/json:
+            properties:
+              newPassword: string
+              token: string
+        responses:
+          201:
+            body:
+              application/json:
+                properties:
+                  status: number
 
 /scoresheets:
   get:
@@ -140,9 +195,12 @@ baseUri: http://api.bronzesword.com/
           {
             "examerId": 1,
             "paperId": 2,
+
             "blankQuizSubmits": [
               {
                 "blankQuizId": 1,
+                "startTime": 140345676,
+                "endTime": 142345632,
                 "itemPosts": [
                   {
                     "answer": "10",
@@ -160,6 +218,8 @@ baseUri: http://api.bronzesword.com/
               []:
                 properties:
                   blankQuizId: integer
+                  startTime: integer
+                  endTime: integer
                   itemPosts:
                     properties:
                       []:
@@ -171,12 +231,16 @@ baseUri: http://api.bronzesword.com/
               []:
                 properties:
                   homeworkQuizId: integer
+                  startTime: integer
                   homeworkSubmitPostHistory:
                     properties:
-                      homeworkURL: string
-                      version: string
-                      branch: string
-                      status: number
+                      []:
+                        properties:
+                          commitTime: integer
+                          homeworkURL: string
+                          version: string
+                          branch: string
+                          status: number
 
     responses:
       201:
@@ -205,6 +269,8 @@ baseUri: http://api.bronzesword.com/
                     blankQuiz:
                       properties:
                        uri: string
+                    startTime: integer
+                    endTime: integer
                     itemPosts[]:
                       properties:
                         answer: string
@@ -216,13 +282,14 @@ baseUri: http://api.bronzesword.com/
                     homeworkQuiz:
                       properties:
                         uri: string
+                    startTime: integer
                     homeworkSubmitPostHistory[]:
                       properties:
                         homeworkURL: string
                         branch: string
                         version: string
                         status: number
-                        timestamp: integer
+                        commitTime: integer
 
 /papers:
   get:
@@ -271,6 +338,7 @@ baseUri: http://api.bronzesword.com/
                     {
                       "id": 1,
                       "description": "逻辑题",
+                      "type": "blankQuiz",
                       "quizzes": [
                         {
                           "id": 1,
@@ -291,6 +359,7 @@ baseUri: http://api.bronzesword.com/
                         id: integer
                         description: string
                           # description: Markdown String to discribe what happen in the future
+                        type: string
                         quizzes:
                           properties:
                             []:
@@ -299,6 +368,38 @@ baseUri: http://api.bronzesword.com/
                                 definition_uri: string
                                 [items_uri]: string
                         maker_uri: string
+    /logicPuzzle:
+        get:
+          responses:
+            200:
+              body:
+                application/json:
+                  properties:
+                    []:
+                      properties:
+                        userId: integer
+                        correctNumber: integer
+                        itemNumber: integer
+                        startTime: integer
+                        endTime: integer
+    /usersDetail:
+      get:
+        responses:
+          200:
+           body:
+             application/json:
+               properties:
+                 []:
+                   properties:
+                     userId: integer
+                     birthday: integer
+                     major: string
+                     gender: string
+                     mobilePhone: string
+                     degree: string
+                     name: string
+                     email: string
+
   /enrollment:
     description: 获取固定ID的考卷定义细节
     get:
@@ -315,6 +416,7 @@ baseUri: http://api.bronzesword.com/
                     {
                       "id": 1,
                       "description": "逻辑题",
+                      "type": "blankQuiz",
                       "quizzes": [
                         {
                           "id": 1,
@@ -327,6 +429,7 @@ baseUri: http://api.bronzesword.com/
                     {
                       "id": 2,
                       "description": "dojo",
+                      "type": "homeworkQuiz",
                       "quizzes" : [
                         {
                           "id": 1,
@@ -346,6 +449,7 @@ baseUri: http://api.bronzesword.com/
                         id: integer
                         description: string
                           # description: Markdown String to discribe what happen in the future
+                        type: string
                         quizzes:
                           properties:
                             []:
@@ -507,4 +611,4 @@ baseUri: http://api.bronzesword.com/
                 evaluateRepository: string
                   # description: git url, contain dockerFile in repository
                 templateRepository: string
-                  # description: git url, contain dockerFile in repository
+                  # description: git url, contain dockerFile in repositor

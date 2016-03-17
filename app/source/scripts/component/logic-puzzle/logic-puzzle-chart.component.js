@@ -1,6 +1,5 @@
 'use strict';
 
-var React = require('react');
 var Reflux = require('reflux');
 var LogicPuzzleStore = require('../../store/logic-puzzle/logic-puzzle-store');
 

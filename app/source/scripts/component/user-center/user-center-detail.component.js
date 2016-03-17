@@ -1,8 +1,8 @@
 'use strict';
 
-var React = global.React = require('react');
 var Input = require('react-bootstrap/lib/Input');
 var UserCenterActions = require('../../actions/user-center/user-center-actions');
+var RegisterActions = require('../../actions/register-page/register-actions');
 var UserCenterStore = require('../../store/user-center/user-center-store');
 var Reflux = require('reflux');
 var validate = require('validate.js');
@@ -18,30 +18,40 @@ var UserDetail = React.createClass({
       name: '',
       mobilePhone: '',
       email: '',
-      gender: '',
+      gender: 'M',
       major: '',
       degree: '',
       schoolError: '',
       nameError: '',
       majorError: '',
-      genderError: false,
       degreeError: '',
-      currentState: 'userDetail'
+      mobilePhoneError: '',
+      emailError: '',
+      currentState: 'userDetail',
+      birthday: ''
     };
+  },
+
+  componentDidUpdate: function (prevProps, prevState) {
+
+    if (prevState.currentState !== this.state.currentState) {
+      this.setState({
+        school: '',
+        schoolError: '',
+        name: '',
+        nameError: '',
+        major: '',
+        majorError: '',
+        gender: 'M',
+        degree: '',
+        degreeError: '',
+        birthday: ''
+      });
+    }
   },
 
   componentDidMount: function () {
     UserCenterActions.loadUserDetail();
-  },
-
-  componentWillReceiveProps: function() {
-    this.setState({
-      schoolError: '',
-      nameError: '',
-      majorError: '',
-      genderError: false,
-      degreeError: ''
-    });
   },
 
   handleChange: function (evt) {
@@ -58,7 +68,6 @@ var UserDetail = React.createClass({
     var valObj = {};
 
     valObj[name] = value;
-
     var result = validate(valObj, constraint);
     var error = getError(result, name);
     var stateObj = {};
@@ -72,9 +81,11 @@ var UserDetail = React.createClass({
     var name = {name: this.state.name};
     var major = {major: this.state.major};
     var degree = {degree: this.state.degree};
+    var birthday = {birthday: this.state.birthday};
+
     var userInfo = [];
 
-    userInfo.push(school, name, major, degree);
+    userInfo.push(school, name, major, degree, birthday);
     var pass = false;
     var stateObj = {};
 
@@ -93,19 +104,16 @@ var UserDetail = React.createClass({
 
   update: function (evt) {
     evt.preventDefault();
-
-    if (this.state.gender === '') {
-      this.setState({genderError: true});
-    } else {
-      this.setState({genderError: false});
-    }
+    UserCenterActions.checkBirthday(this.state.birthday);
+    UserCenterActions.checkGender(this.state.gender);
 
     var userData = {
       school: this.state.school,
       name: this.state.name,
       gender: this.state.gender,
       major: this.state.major,
-      degree: this.state.degree
+      degree: this.state.degree,
+      birthday: this.state.birthday
     };
 
     if (this.checkInfo()) {
@@ -118,7 +126,6 @@ var UserDetail = React.createClass({
 
   render: function () {
     var classString = (this.state.currentState === 'userDetail' ? '' : '  hide');
-
     return (
         <div className={'col-md-9 col-sm-9 col-xs-12' + classString}>
           <div className='content'>
@@ -158,21 +165,26 @@ var UserDetail = React.createClass({
                 <div className='form-group'>
                   <div className='col-sm-4 col-md-4'>
                     <input type='text' className='form-control' id='inputMobilePhone' placeholder='手机'
-                           disabled='disabled' value={this.state.mobilePhone}/>
+                           disabled="disabled" value={this.state.mobilePhone}/>
                   </div>
                 </div>
 
                 <label htmlFor='inputEmail' className='col-sm-4 col-md-4 control-label'>邮箱</label>
                 <div className='form-group'>
                   <div className='col-sm-4 col-md-4'>
-                    <input type='text' className='form-control' id='inputEmail' placeholder='邮箱' disabled='disabled'
-                           value={this.state.email}/>
+                    <input type='text' className='form-control' id='inputEmail' placeholder='邮箱'
+                           disabled="disabled" value={this.state.email}/>
                   </div>
                 </div>
 
                 <label htmlFor='inputGender' className='col-sm-4 col-md-4 control-label'>性别</label>
                 <div className='form-group'>
-                  {this.props.children}
+                  {this.props.children[0]}
+                </div>
+
+                <label htmlFor='inputBirthday' className='col-sm-4 col-md-4 control-label'>生日</label>
+                <div className='form-group'>
+                  {this.props.children[1]}
                 </div>
 
                 <label htmlFor='inputMajor' className='col-sm-4 col-md-4 control-label'>专业</label>
@@ -192,10 +204,10 @@ var UserDetail = React.createClass({
 
                 <label htmlFor='inputDegree' className='col-sm-4 col-md-4 control-label'>学历学位</label>
                 <div className='form-group'>
-                  <div className='col-sm-4 col-md-4 degree' onBlur={this.validate}>
+                  <div className='col-sm-4 col-md-4' onBlur={this.validate}>
                     <select ref='degree' placeholder='学历学位' name='degree' value={this.state.degree}
                             onChange={this.handleChange}
-                            className={'form-control size' + (this.state.degreeError === '' ? '' : ' select')}>
+                            className={'form-control' + (this.state.degreeError === '' ? '' : ' select')}>
                       <option value=''>请选择</option>
                       <option value='专科'>专科及以下</option>
                       <option value='本科'>本科</option>
@@ -213,7 +225,7 @@ var UserDetail = React.createClass({
 
                 <div className='form-group'>
                   <div className='col-sm-offset-4 col-sm-4 col-md-offset-4 col-md-4'>
-                    <button type='submit' className='btn btn-default' onClick={this.update}>保存</button>
+                    <button type='button' className='btn btn-default' onClick={this.update}>保存</button>
                   </div>
                 </div>
               </div>

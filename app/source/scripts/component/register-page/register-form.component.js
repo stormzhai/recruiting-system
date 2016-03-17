@@ -1,9 +1,6 @@
 'use strict';
 
-var React = global.React = require('react');
 var Reflux = require('reflux');
-var $ = require('jquery');
-var ReactDOM = require('react-dom');
 var validate = require('validate.js');
 var constraint = require('../../../../mixin/register-constraint');
 var page = require('page');
@@ -41,6 +38,18 @@ var RegisterForm = React.createClass({
       agree: false,
       clickable: false,
       password: ''
+    };
+  },
+
+  componentDidUpdate:function(prevProps, prevState){
+    if(!this.state.isLoginState && prevState.isLoginState) {
+      this.setState({
+        mobilePhoneError: '',
+        emailError: ''
+      });
+      this.refs.mobilePhone.value = '';
+      this.refs.email.value = '';
+
     };
   },
 
@@ -140,7 +149,7 @@ var RegisterForm = React.createClass({
           <form action="">
             <div className="form-group">
               <input className="form-control" type="text" placeholder="请输入手机号" name="mobilePhone" ref="mobilePhone"
-                     onBlur={this.validate} onChange={this.handleChange} value={this.state.mobilePhone}/>
+                     onBlur={this.validate} />
 
               <div
                   className={'lose' + (this.state.mobilePhoneError === '' ? ' hide' : '')}>{this.state.mobilePhoneError}</div>
@@ -148,7 +157,7 @@ var RegisterForm = React.createClass({
 
             <div className="form-group">
               <input className="form-control" type="text" placeholder="请输入邮箱" name="email" ref="email"
-                     onBlur={this.validate} onChange={this.handleChange} value={this.state.email}/>
+                     onBlur={this.validate} />
 
               <div
                   className={'lose' + (this.state.emailError === '' ? ' hide' : '')}>{this.state.emailError}</div>

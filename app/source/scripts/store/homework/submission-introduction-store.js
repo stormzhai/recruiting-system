@@ -6,11 +6,14 @@ var HomeworkActions = require('../../actions/homework/homework-actions');
 var superAgent = require('superagent');
 var constant = require('../../../../mixin/constant');
 var errorHandler = require('../../../../tools/error-handler');
+var homeworkQuizzesStatus = require('../../../../mixin/constant').homeworkQuizzesStatus;
+var request = require('superagent');
 
 var submissionIntroductionStore = Reflux.createStore({
   listenables: [HomeworkActions],
 
   onChangeOrderId: function (clickNumber) {
+    this.onReload(clickNumber);
     this.trigger({
       currentHomeworkNumber: clickNumber,
       githubUrlError: '',
@@ -24,10 +27,39 @@ var submissionIntroductionStore = Reflux.createStore({
     });
   },
 
-  onSubmitUrl: function (url, branch, orderId) {
+  onReload: function(orderId) {
+    request.get('homework/quiz')
+        .set('Content-Type', 'application/json')
+        .query({orderId: orderId})
+        .use(errorHandler)
+        .end((err, res) => {
+          if(!res.body.quiz) {
+            return;
+          }
+          if (res.body.quiz.quizStatus === homeworkQuizzesStatus.PROGRESS) {
+            this.trigger({
+              quizStatus: homeworkQuizzesStatus.PROGRESS,
+              githubUrl: res.body.quiz.userAnswerRepo,
+              branches: [res.body.quiz.branch]
+            });
+          } else if (res.body.quiz.quizStatus === homeworkQuizzesStatus.SUCCESS) {
+            this.trigger({
+              quizStatus: homeworkQuizzesStatus.SUCCESS,
+              githubUrl: res.body.quiz.userAnswerRepo,
+              branches: [res.body.quiz.branch]
+            });
+          } else {
+            this.trigger({
+              quizStatus: res.body.quiz.quizStatus
+            });
+          }
+        });
+  },
+
+  onSubmitUrl: function (url, branch, commitSHA, orderId) {
     superAgent.post('homework/save')
         .set('Content-Type', 'application/json')
-        .send({orderId: orderId, userAnswerRepo: url, branch: branch})
+        .send({orderId: orderId, userAnswerRepo: url, branch: branch, commitSHA: commitSHA})
         .use(errorHandler)
         .end((err, res) => {
           if (res.body.status === constant.httpCode.OK) {
@@ -47,8 +79,7 @@ var submissionIntroductionStore = Reflux.createStore({
         .use(errorHandler)
         .end((err, res)=> {
           if (res.body.message === 'Not Found') {
-            alert('repo or user not found! PLZ check ur url!');
-            this.trigger({branches: [],showIcon:false});
+            this.trigger({githubUrlError: '仓库不存在',branches: [],showIcon:false});
           } else {
             var branches = res.body.data.map((branch)=>{
               return branch.name;
@@ -61,14 +92,11 @@ var submissionIntroductionStore = Reflux.createStore({
             this.trigger({
               branches: branches,
               defaultBranch: branches[0],
-              showIcon:false
+              showIcon:false,
+              branchesDetail: res.body.data
             });
           }
         });
-  },
-
-  onChangeGithubUrl: function(val) {
-    this.trigger({githubUrl:val});
   }
 });
 

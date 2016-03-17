@@ -1,6 +1,5 @@
 'use strict';
 
-var React = require('react');
 var Reflux = require('reflux');
 var TimerStore = require('../../store/logic-puzzle/timer-store');
 var TimerActions = require('../../actions/logic-puzzle/timer-actions');

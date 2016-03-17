@@ -2,9 +2,10 @@
 
 var mongoose = require('mongoose');
 var constant = require('../mixin/constant');
+var yamlConfig = require('node-yaml-config');
+var config = yamlConfig.load('./config/config.yml');
 
 var _timeBase = 90;
-
 var Schema = mongoose.Schema;
 
 var logicPuzzleSchema = new Schema({
@@ -29,7 +30,7 @@ var logicPuzzleSchema = new Schema({
   blankQuizId: Number,
   paperId: Number,
   isCommited: Boolean,
-  endTime: String,
+  endTime: Number,
   isAgreed: Boolean
 });
 
@@ -50,7 +51,7 @@ logicPuzzleSchema.statics.isPaperCommited = function (userId, callback) {
       isPaperCommited = logicPuzzle.isCommited || parseInt(TOTAL_TIME - usedTime) <= 0 ? true : false;
     }
 
-    callback(isPaperCommited);
+    callback(err, isPaperCommited);
   });
 };
 
@@ -78,7 +79,7 @@ logicPuzzleSchema.statics.getLogicPuzzle = function (orderId, userId) {
             initializedBox: JSON.parse(quizAll[orderId].initializedBox),
             question: quizAll[orderId].question,
             description: JSON.parse(quizAll[orderId].description),
-            chartPath: quizAll[orderId].chartPath
+            chartPath: config.staticFileServer + quizAll[orderId].chartPath
           },
           userAnswer: userAnswer,
           itemsCount: itemsCount,

@@ -5,8 +5,8 @@ import com.thoughtworks.twars.bean.UserDetail;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -24,18 +24,18 @@ public class UserMapperTest extends TestBase {
     @Test
     public void should_return_user_by_id() throws Exception {
         User user = userMapper.getUserById(1);
-        assertThat(user.getMobilePhone(), is("12345678901"));
+        assertThat(user.getMobilePhone(), is("18798037893"));
     }
 
     @Test
     public void should_return_user_by_email() throws Exception {
         User user = userMapper.getUserByEmail("test@163.com");
-        assertThat(user.getMobilePhone(), is("12345678901"));
+        assertThat(user.getMobilePhone(), is("18798037893"));
     }
 
     @Test
     public void should_return_user_by_mobile_phone() throws Exception {
-        User user = userMapper.getUserByMobilePhone("12345678901");
+        User user = userMapper.getUserByMobilePhone("18798037893");
         assertThat(user.getEmail(), is("test@163.com"));
     }
 
@@ -46,7 +46,14 @@ public class UserMapperTest extends TestBase {
         user.setPassword("25d55ad283aa400af464c76d713c07ad");
 
         User resultUser = userMapper.getUserByEmailAndPassWord(user);
-        assertThat(resultUser.getMobilePhone(), is("12345678901"));
+        assertThat(resultUser.getMobilePhone(), is("18798037893"));
+    }
+
+    @Test
+    public void should_return_user_by_mobile_phone_and_password() throws Exception {
+        User user = new User();
+        user.setMobilePhone("12345678901");
+        user.setPassword("25d55ad283aa400af464c76d713c07ad");
     }
 
     @Test
@@ -128,8 +135,6 @@ public class UserMapperTest extends TestBase {
     @Test
     public void should_update_password() throws Exception {
 
-        Map<String, Object> passwordMap = new HashMap();
-
         int id = 1;
         String oldPassword = "25d55ad283aa400af464c76d713c07ad";
         String password = "123";
@@ -140,5 +145,47 @@ public class UserMapperTest extends TestBase {
 
         assertThat(result, is(1));
         assertThat(resultUser.getPassword(), is("202cb962ac59075b964b07152d234b70"));
+    }
+
+    @Test
+    public void should_reset_password() throws Exception {
+
+        User user = new User();
+        user.setPassword("1bbd886460827015e5d605ed44252251");
+        user.setEmail("test@163.com");
+
+        int result = userMapper.resetPassword(user);
+
+        User resultUser = userMapper.getUserById(1);
+
+        assertThat(result, is(1));
+        assertThat(resultUser.getPassword(), is("d0521106f6ba7f9ac0a7370fb28d0ec6"));
+    }
+
+    @Test
+    public void should_return_userDetails() {
+        List<Integer> userIds = new ArrayList<>();
+        userIds.add(1);
+        userIds.add(2);
+        userIds.add(3);
+
+        List<UserDetail> userDetails = userMapper.findUserDetailsByUserIds(userIds);
+
+        assertThat(userDetails.size(), is(2));
+        assertThat(userDetails.get(0).getUserId(), is(1));
+        assertThat(userDetails.get(0).getSchool(), is("思沃学院"));
+        assertThat(userDetails.get(1).getUserId(), is(2));
+    }
+
+    @Test
+    public void should_return_users() {
+        List<Integer> userIds = new ArrayList<>();
+        userIds.add(1);
+        userIds.add(2);
+        userIds.add(3);
+
+        List<User> users = userMapper.findUsersByUserIds(userIds);
+
+        assertThat(userIds.size(), is(3));
     }
 }

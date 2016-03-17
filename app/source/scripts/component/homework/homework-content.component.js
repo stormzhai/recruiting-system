@@ -1,6 +1,5 @@
 'use strict';
 
-var React = require('react');
 var Tabs = require('react-bootstrap/lib/Tabs');
 var Tab = require('react-bootstrap/lib/Tab');
 

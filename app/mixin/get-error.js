@@ -6,5 +6,4 @@ function getError(validateInfo, field) {
   }
   return '';
 }
-
 module.exports = getError;

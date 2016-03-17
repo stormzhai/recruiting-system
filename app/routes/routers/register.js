@@ -3,11 +3,13 @@
 var express = require('express');
 var router = express.Router();
 var request = require('superagent');
-var constant = require('../../mixin/back-constant');
+var lang = require('../../mixin/lang-message/chinese');
+var constant = require('../../mixin/constant').backConstant;
 var async = require('async');
 var validate = require('validate.js');
 var md5 = require('js-md5');
 var constraint = require('../../mixin/register-constraint');
+var httpStatus = require('../../mixin/constant').httpCode;
 var apiRequest = require('../../services/api-request');
 
 function checkRegisterInfo(registerInfo) {
@@ -43,21 +45,22 @@ router.post('/', function (req, res) {
     async.waterfall([
       (done)=> {
         apiRequest.get('users', {field: 'mobilePhone', value: registerInfo.mobilePhone}, function (err, resp) {
-          if (!err) {
+          if (resp.body.uri) {
             isMobilePhoneExist = true;
           }
-          done(null, resp);
+          done(err, resp);
         });
       },
       (data, done) => {
         apiRequest.get('users', {field: 'email', value: registerInfo.email}, function (err, resp) {
-          if (!err) {
+          if (resp.body.uri) {
             isEmailExist = true;
           }
           if (isMobilePhoneExist || isEmailExist) {
             done(true, resp);
+          } else {
+            done(err, resp);
           }
-          done(null, resp);
         });
       },
       (data, done)=> {
@@ -65,10 +68,14 @@ router.post('/', function (req, res) {
         apiRequest.post('register', registerInfo, done);
       },
       (data, done)=> {
-        if (data.body.id) {
+        apiRequest.post('login',{email:registerInfo.email,password:registerInfo.password},done);
+      },
+      (data, done)=> {
+        if (data.body.id && data.headers) {
           req.session.user = {
             id: data.body.id,
-            userInfo: data.body.userInfo
+            userInfo: data.body.userInfo,
+            token: data.headers.token
           };
         }
         done(null, data);
@@ -77,7 +84,7 @@ router.post('/', function (req, res) {
       if (err === true) {
         res.send({
           status: constant.FAILING_STATUS,
-          message: constant.EXIST,
+          message: lang.EXIST,
           data: {
             isEmailExist: isEmailExist,
             isMobilePhoneExist: isMobilePhoneExist
@@ -86,11 +93,12 @@ router.post('/', function (req, res) {
       } else if (!err) {
         res.send({
           status: data.status,
-          message: constant.REGISTER_SUCCESS
+          message: lang.REGISTER_SUCCESS
         });
       } else {
+        res.status(httpStatus.INTERNAL_SERVER_ERROR);
         res.send({
-          message: constant.REGISTER_FAILED,
+          message: lang.REGISTER_FAILED,
           status: constant.SERVER_ERROR
         });
       }
@@ -100,6 +108,11 @@ router.post('/', function (req, res) {
 
 router.get('/validate-mobile-phone', function (req, res) {
   apiRequest.get('users', {field: 'mobilePhone', value: req.query.mobilePhone}, function (err, result) {
+    if(!result){
+      res.status(httpStatus.INTERNAL_SERVER_ERROR);
+      res.send();
+      return;
+    }
     if (result.body.uri) {
       res.send({
         status: constant.SUCCESSFUL_STATUS
@@ -114,6 +127,11 @@ router.get('/validate-mobile-phone', function (req, res) {
 
 router.get('/validate-email', function (req, res) {
   apiRequest.get('users', {field: 'email', value: req.query.email}, function (err, result) {
+    if(!result){
+      res.status(httpStatus.INTERNAL_SERVER_ERROR);
+      res.send();
+      return;
+    }
     if (result.body.uri) {
       res.send({
         status: constant.SUCCESSFUL_STATUS

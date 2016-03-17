@@ -64,7 +64,7 @@ UserInitializationController.prototype.initializeQuizzes = (req, res) => {
 
     }, (doc, done) => {
 
-      userHomeworkQuizzes.initUserHomeworkQuizzes(userId, enrollment.sections[1].quizzes, done);
+      userHomeworkQuizzes.initUserHomeworkQuizzes(userId, enrollment.sections[1].quizzes, paperId, done);
 
     }
   ], (err) => {

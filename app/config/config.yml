@@ -2,6 +2,13 @@ default:
   port: 3000
   database: 'mongodb://localhost/twars'
   apiServer: 'http://localhost:8080/api/'
+  appServer: 'http://localhost:3000/'
+  taskServer: 'http://localhost:4000/'
   sessionTtl: 3600 # 60(MINUTE_PER_HOUR) * 60(SECONDS_PER_MINUTE)
+  staticFileServer: 'http://10.29.3.221:8888/fs/'
+  emailServer: 'localhost:3000'
+  emailAccount: 'twarss@163.com'
+  emailPassword: 'ssww123456'
+  gitHubToken: 'Basic dHdhcnM6c3cxMjM0NTY3OA=='
 test:
   port: 5000

@@ -209,5 +209,28 @@ describe('LogicPuzzleController', function () {
         }
       });
     });
+
+    it('should return 500 when not find the data', function(done) {
+
+      spyOn(logicPuzzle, 'findOne').and.callFake(function (id, done) {
+        done('not find');
+      });
+
+      controller.dealAgree({
+        session: {
+          user: {
+            id: 1
+          }
+        },
+        body: {
+          dealAgree: true
+        }
+      }, {
+        send: function(data) {
+          expect(data).toEqual({status: constant.httpCode.INTERNAL_SERVER_ERROR});
+          done();
+        }
+      });
+    });
   });
 });

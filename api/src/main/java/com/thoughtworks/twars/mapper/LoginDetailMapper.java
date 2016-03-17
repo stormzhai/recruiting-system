@@ -8,9 +8,11 @@ public interface LoginDetailMapper {
 
     List<LoginDetail> getLoginDetailByUserId(int userId);
 
-    int insertLoginDetail(LoginDetail loginDetail);
+    int insertLoginDetail(int userId);
 
     int updateLoginDetail(String token);
+
+    int updateLoginDetailById(int id);
 
     LoginDetail getLoginDetailByToken(String token);
 

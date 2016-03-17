@@ -1,9 +1,16 @@
 'use strict';
 
 var constraint = {
-  phoneEmail: {
-    presence: {message: '^请输入邮箱'},
-    email: {message: '^请输入正确的形式'}
+  email: {
+    presence: {message: '^请输入邮箱或手机号'},
+    email: {message: '^用户名为邮箱或手机号'}
+  },
+  mobilePhone: {
+    presence: {message: '^请输入邮箱或手机号'},
+    format: {
+      pattern: /^1[3|4|5|8][0-9]\d{8}$/,
+      message: '^用户名为邮箱或手机号'
+    }
   },
   loginPassword: {
     presence: {message: '^请输入密码'},

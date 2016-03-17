@@ -1,6 +1,5 @@
 'use strict';
 
-var React = global.React = require('react');
 var Reflux = require('reflux');
 var StartActions = require('../../actions/start/start-actions');
 var StartStore = require('../../store/start/start-store');
@@ -71,8 +70,8 @@ var StartInfo = React.createClass({
             </div>
           </section>
           <section className="start-button">
-            <a type="submit" className="btn btn-info btn-lg btn-block"
-               disabled={this.state.agree ? '' : 'disabled'} onClick={this.start}>开始</a>
+            <button type="submit" className="btn btn-info btn-lg btn-block"
+               disabled={this.state.agree ? '' : 'disabled'} onClick={this.start}>开始</button>
           </section>
         </div>
     );

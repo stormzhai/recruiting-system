@@ -6,6 +6,7 @@ var constant = require('../mixin/constant');
 
 var userHomeworkQuizzesSchema = new Schema({
   userId: Number,
+  paperId: Number,
   quizzes: [{
     id: Number,
     status: Number,
@@ -13,12 +14,18 @@ var userHomeworkQuizzesSchema = new Schema({
     userAnswerRepo: String,
     uri: String,
     branch: String,
-    commitSHA: String,
-    resultPath: String
+    homeworkSubmitPostHistory: [{
+      homeworkURL: String,
+      status: Number,
+      version: String,
+      branch: String,
+      commitTime: Number,
+      resultURL: String
+    }]
   }]
 });
 
-userHomeworkQuizzesSchema.statics.initUserHomeworkQuizzes = function (userId, quizzes, callback) {
+userHomeworkQuizzesSchema.statics.initUserHomeworkQuizzes = function (userId, quizzes, paperId, callback) {
   this.findOne({userId: userId}, (err, doc) => {
     if (doc) {
       callback(new Error('is exist'), null);
@@ -37,6 +44,7 @@ userHomeworkQuizzesSchema.statics.initUserHomeworkQuizzes = function (userId, qu
 
       this.create({
         userId: userId,
+        paperId: paperId,
         quizzes: _quizzes
       }, callback);
     }
@@ -59,7 +67,7 @@ userHomeworkQuizzesSchema.statics.unlockNext = function (userId, callback) {
         }
       });
 
-      if (data.quizzes.length === (locked + success)) {
+      if (data.quizzes.length === (locked + success) && success !== data.quizzes.length) {
         data.quizzes[success].status = constant.homeworkQuizzesStatus.ACTIVE;
         data.save(callback);
       } else {
@@ -124,31 +132,41 @@ userHomeworkQuizzesSchema.statics.checkDataForSubmit = function (userId, orderId
 };
 
 
-userHomeworkQuizzesSchema.statics.checkDataForUpdate = function (userId, orderId, callback) {
+userHomeworkQuizzesSchema.statics.checkDataForUpdate = function (userId, homeworkId, callback) {
   var result = {};
-  this.findOne({userId: userId}, (err, data) => {
-    var integer = (Number(orderId) === parseInt(orderId, 10));
-    if (err || !data) {
-      result.isValidate = false;
-      result.status = constant.httpCode.NOT_FOUND;
-      result.data = null;
-      callback(true, result);
-    } else if (!integer || orderId < 1 || orderId === undefined || orderId > data.quizzes.length) {
-      result.data = null;
-      result.status = constant.httpCode.NOT_FOUND;
-      result.isValidate = false;
-    } else if (data.quizzes[orderId - 1].status === constant.homeworkQuizzesStatus.PROGRESS || data.quizzes[orderId - 1].status === constant.homeworkQuizzesStatus.ERROR) {
-      result.data = data;
-      result.status = constant.httpCode.OK;
-      result.isValidate = true;
+  this.findOne({
+    userId: userId,
+    quizzes: {$elemMatch: {id: homeworkId}}
+  }, {
+    userId: 1,
+    paperId: 1,
+    quizzes: {$elemMatch: {id: homeworkId}}
+  }, (err, data) => {
+    if(err || !data) {
+      callback(true);
+    } else if(data.quizzes[0].status === constant.homeworkQuizzesStatus.PROGRESS ) {
+      callback(null, data);
     } else {
-      result.data = data;
-      result.status = constant.httpCode.BAD_REQUEST;
-      result.homeworkStatus = data.quizzes[orderId - 1].status;
-      result.isValidate = false;
+      callback(true);
     }
+  });
+};
 
-    callback(null, result);
+userHomeworkQuizzesSchema.statics.updateQuizzesStatus = function (data, callback) {
+  this.findOne({userId: data.userId}, (err, doc) => {
+    if (err || !doc) {
+      callback(true);
+    } else {
+      doc.quizzes.forEach((item, i) => {
+        if (item.id === data.homeworkId){
+          var status = data.resultStatus ? constant.homeworkQuizzesStatus.SUCCESS : constant.homeworkQuizzesStatus.ERROR;
+          doc.quizzes[i].status = status;
+          doc.quizzes[i].homeworkSubmitPostHistory[doc.quizzes[i].homeworkSubmitPostHistory.length - 1].status = status;
+          doc.quizzes[i].homeworkSubmitPostHistory[doc.quizzes[i].homeworkSubmitPostHistory.length - 1].resultURL = data.resultURL;
+        }
+      });
+      doc.save(callback);
+    }
   });
 };
 
