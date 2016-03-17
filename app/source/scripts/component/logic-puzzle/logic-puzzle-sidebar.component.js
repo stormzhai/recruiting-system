@@ -4,7 +4,6 @@ var Reflux = require('reflux');
 var LogicPuzzleStore = require('../../store/logic-puzzle/logic-puzzle-store');
 var LogicPuzzleActions = require('../../actions/logic-puzzle/logic-puzzle-actions');
 var Modal = require('react-bootstrap/lib/Modal');
-var _newOrderId;
 var constant = require('../../../../mixin/constant');
 var able = false;
 
@@ -13,8 +12,6 @@ var LogicPuzzleSidebar = React.createClass({
 
   getInitialState: function(){
     return {
-      lastLoad: false,
-      nextLoad: false,
       loading: false
     };
   },
@@ -26,29 +23,8 @@ var LogicPuzzleSidebar = React.createClass({
     LogicPuzzleActions.submitPaper();
   },
 
-  previous: function () {
-    if(this.state.orderId > 0 ){
-      _newOrderId = this.state.orderId - 1;
-    }
-    this.setState({
-      lastLoad: true
-    });
-    LogicPuzzleActions.submitAnswer(_newOrderId);
-  },
-
-  next: function () {
-    if(this.state.orderId < this.state.itemsCount - 1 ){
-      _newOrderId = this.state.orderId + 1;
-    }
-    this.setState({
-      nextLoad: true
-    });
-    LogicPuzzleActions.submitAnswer(_newOrderId);
-  },
 
   render: function () {
-
-    var isFirst = this.state.orderId === 0;
     var isLast = this.state.orderId === (this.state.itemsCount - 1);
     if(isLast){
       able=true;
@@ -73,23 +49,14 @@ var LogicPuzzleSidebar = React.createClass({
             </p>
           </div>
 
-          <div className="select">
-            <button type="button" className="btn btn-warning" name="button"
-                    disabled={isFirst || this.state.lastLoad ? 'disabled' : ''} onClick={isFirst? '' : this.previous}>上一题
-              <i className={'fa fa-spinner fa-spin' + (this.state.lastLoad ? '' : ' hide')}/>
-            </button>
-            <button type="button" className="btn btn-warning" name="button"
-                    disabled={isLast || this.state.nextLoad ? 'disabled' : ''} onClick={isLast ? '' : this.next}>下一题
-              <i className={'fa fa-spinner fa-spin' + (this.state.nextLoad ? '' : ' hide')}/>
-            </button>
-          </div>
           <hr/>
+
+          <div className={able ? "prompt" : "hint"}>
+            <span>{able ? '检查完毕后可以交卷': '只有在查看完所有题后才可以交卷'}</span>
+          </div>
           <div className="confirm">
             <a href="#" className="btn btn-lg btn-danger btn-block" data-toggle="modal"
                data-target={able ? '#submitModal': ''} disabled={able ? '' : 'disabled'}>交卷</a>
-          </div>
-          <div className="hint">
-            <span>{able ? '检查完毕后可以交卷': '只有在查看完所有题后才可以交卷'}</span>
           </div>
 
           <div className="modal fade bs-example-modal-sm" id="submitModal" tabIndex="-1" role="dialog">
