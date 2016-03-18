@@ -15,5 +15,5 @@ exports.setRoutes = function (app) {
   app.use('/password',require('./routers/password'));
   app.use('/user', require('./routers/user'));
   app.use('/paper', require('./routers/paper'));
-  app.use('/navigation', require('./routers/navigation'));
+  app.use('/reuse', require('./routers/reuse'));
 };

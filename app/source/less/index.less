@@ -11,22 +11,24 @@ html, body {
   }
 
   .first-page {
-    background-image: url(../images/bg-big.jpg);
-    background-position: center center;
-    background-repeat: no-repeat;
-    background-size: cover;
-
+    .content{
+      background-image: url(../images/bg-big.jpg);
+      background-position: center center;
+      background-repeat: no-repeat;
+      background-size: cover;
+    }
     .head{
       padding: 0 10px;
       height: 80px;
       background: @white;
-      overflow: hidden;
-      .logo {
+      .logo{
+        padding:0
+      }
+      .logo-img {
         height: 55px;
         width: 170px;
         float: left;
         margin-top: 15px;
-        margin-left: -13px;
         background-image: url(../images/Logo.jpg);
         background-size: auto 100%;
       }
@@ -44,6 +46,7 @@ html, body {
         a{
           color: #19abb5;
           text-decoration: none;
+          cursor: pointer;
         }
     }
     @media only screen and (max-width: 767px) {

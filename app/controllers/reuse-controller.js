@@ -3,14 +3,15 @@ var apiRequest = require('../services/api-request');
 var constant = require('../mixin/constant');
 
 
-function NavigationController() {
+function ReuseController() {
 
 }
 
-NavigationController.prototype.loadAccount = (req, res) => {
+ReuseController.prototype.loadAccount = (req, res) => {
   if (req.session.user) {
     var userId = req.session.user.id;
     var url = 'users/' + userId;
+
     apiRequest.get(url, function (err, resp) {
       if (resp === undefined) {
         res.send({
@@ -37,4 +38,4 @@ NavigationController.prototype.loadAccount = (req, res) => {
   }
 };
 
-module.exports = NavigationController;
+module.exports = ReuseController;

@@ -1,24 +1,26 @@
 'use strict';
 
 var Reflux = require('reflux');
-var NavigationActions = require('../../actions/navigation/navigation-actions');
+var GetAccountActions = require('../../actions/reuse/get-account-actions');
 var request = require('superagent');
 var errorHandler = require('../../../../tools/error-handler');
 var constant = require('../../../../mixin/constant');
 
 
-var NavigationStore = Reflux.createStore({
-  listenables: [NavigationActions],
+var GetAccountStore = Reflux.createStore({
+  listenables: [GetAccountActions],
 
   onLoadAccount:function() {
-    request.get('/navigation')
+    request.get('/reuse/account')
         .set('Content-Type', 'application/json')
         .use(errorHandler)
         .end((err, res) => {
           if (err) {
             return;
           } else if (res.body.status === constant.httpCode.OK) {
-            this.trigger({account: res.body.account});
+            this.trigger({account: res.body.account, isLoged: true});
+          } else if(res.body.status === constant.httpCode.ACCEPTED) {
+            this.trigger({account: '', isLoged: false});
           } else {
             return;
           }
@@ -26,4 +28,4 @@ var NavigationStore = Reflux.createStore({
   }
 });
 
-module.exports = NavigationStore;
+module.exports = GetAccountStore;

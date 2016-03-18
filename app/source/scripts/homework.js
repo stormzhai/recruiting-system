@@ -2,6 +2,7 @@
 
 require('../less/homework.less');
 var Navigation = require('./component/navigation/navigation.component');
+var Account = require('./component/reuse/get-account.component');
 var HomeworkSidebar = require('./component/homework/homework-sidebar.component');
 var HomeworkContent = require('./component/homework/homework-content.component');
 var HomeworkIntroduction = require('./component/homework/homework-introduction.component');
@@ -64,7 +65,9 @@ startProgress();
 ReactDom.render(
     <div>
       <header>
-        <Navigation />
+        <Navigation>
+          <Account />
+        </Navigation>
       </header>
         <div className="row">
           <HomeworkSidebar onAction={onAction} orderId={changeId()}/>

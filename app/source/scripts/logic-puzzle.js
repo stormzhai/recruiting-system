@@ -14,6 +14,8 @@ var LogicPuzzleAnswerSubmit = require('./component/logic-puzzle/logic-puzzle-ans
 var LogicPuzzleTimer = require('./component/logic-puzzle/logic-puzzle-timer.component');
 var LogicPuzzleActions = require('./actions/logic-puzzle/logic-puzzle-actions');
 var Navigation = require('./component/navigation/navigation.component');
+var Account = require('./component/reuse/get-account.component');
+
 
 $('#submitModal').on('show.bs.modal', function () {
   $('.modal-content')
@@ -27,7 +29,9 @@ function handleTimeOver(){
 ReactDOM.render(
     <div>
       <header>
-        <Navigation />
+        <Navigation>
+          <Account />
+        </Navigation>
       </header>
       <LogicPuzzle>
         <div className="col-md-9 col-sm-8">

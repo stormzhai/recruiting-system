@@ -12,11 +12,14 @@ var UserCenterGender = require('./component/user-center/user-center-gender.compo
 var UserCenterBirthday = require('./component/user-center/user-center-birthday.component');
 var NewPassword = require('./component/reuse/new-password.component');
 var FeedbackResult = require('./component/user-center/feedback-result.component');
+var Account = require('./component/reuse/get-account.component');
 
 ReactDom.render(
     <div>
       <header>
-        <Navigation />
+        <Navigation>
+          <Account />
+        </Navigation>
       </header>
       <UserCenterApp>
         <UserCenterSidebar/>
