@@ -51,7 +51,7 @@ var LogicPuzzleSidebar = React.createClass({
 
           <hr/>
 
-          <div className={able ? "prompt" : "hint"}>
+          <div className={able ? 'prompt' : 'hint'}>
             <span>{able ? '检查完毕后可以交卷': '只有在查看完所有题后才可以交卷'}</span>
           </div>
           <div className="confirm">
