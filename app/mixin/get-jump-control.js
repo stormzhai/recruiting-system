@@ -58,6 +58,12 @@ function jumpControl(data) {
     ],
     targetPath: 'register.html',
     condition: !(isLoged || isThirdParty)
+  }, {
+    originPath: [
+      'register.html'
+    ],
+    targetPath: 'dashboard.html',
+    condition: isLoged
   }
   ];
 }

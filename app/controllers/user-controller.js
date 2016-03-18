@@ -9,6 +9,13 @@ var yamlConfig = require('node-yaml-config');
 var config = yamlConfig.load('./config/config.yml');
 
 var percentage = 100;
+var hour = constant.time.HOURS_PER_DAY;
+var mintues = constant.time.MINUTE_PER_HOUR;
+var second = constant.time.SECONDS_PER_MINUTE;
+
+var dayToSecond = second * mintues * hour;
+var hourToSecond = second * mintues;
+var mintuesToSecond = mintues;
 
 function UserController() {
 
@@ -43,7 +50,6 @@ function createLogicPuzzle(data) {
 }
 
 function createHomework(data) {
-
   var sumTime = 0;
   var correctNumber = 0;
   var homework = {
@@ -157,6 +163,108 @@ UserController.prototype.exportHomeworkDetails = (req, res)=> {
   });
 };
 
+function createLogicPuzzleFeedback(data) {
+  var isCompleted = false;
+  var time = 0;
 
+  if (data.endTime !== 'undefined' && data.endTime !== 0) {
+
+    time = calcLogicPuzzleElapsedTime(data);
+
+    isCompleted = true;
+  }
+
+  return {
+    isCompleted: isCompleted,
+    time: time
+  };
+}
+
+function createHomeworkFeedback(data) {
+  var homework = [];
+
+  data.quizzes.forEach(function (result) {
+    var commitHistory = {};
+
+    commitHistory.commitedNumbers = result.homeworkSubmitPostHistory.length;
+
+
+    if (result.homeworkSubmitPostHistory.length !== 0) {
+      var time = result.homeworkSubmitPostHistory[result.homeworkSubmitPostHistory.length - 1].commitTime - result.startTime;
+      commitHistory.time = calcHomeworkElapsedTime(time);
+
+    } else {
+
+      commitHistory.time = 0;
+    }
+    commitHistory.isCompleted = result.status === constant.homeworkQuizzesStatus.SUCCESS;
+
+    homework.push(commitHistory);
+  });
+
+
+  return homework;
+}
+
+function creatFeedbackInfo(userId, callback) {
+
+  getUserDataByUserId(userId, function (userData) {
+    var userInfo = {};
+    userInfo.userId = userId;
+
+    if (userData.httpCode !== constant.httpCode.NOT_FOUND) {
+
+      userInfo.logicPuzzle = createLogicPuzzleFeedback(userData.result.logicPuzzle.body);
+      userInfo.homework = createHomeworkFeedback(userData.result.homework);
+      userInfo.httpCode = userData.httpCode;
+    } else {
+      userInfo.httpCode = constant.httpCode.NOT_FOUND;
+    }
+    callback(userInfo);
+  });
+}
+
+function calcLogicPuzzleElapsedTime(logicPuzzle) {
+
+  var startTime = logicPuzzle.startTime;
+  var endTime = logicPuzzle.endTime;
+  var time = endTime - startTime;
+
+  var elapsedHour = 0;
+  var elapsedMintues = 0;
+  var elapsedSeconds = 0;
+
+  elapsedHour = Math.floor(time / hourToSecond);
+  time -= hourToSecond * elapsedHour;
+  elapsedMintues = Math.floor(time / mintuesToSecond);
+  time -= mintuesToSecond * elapsedMintues;
+
+  return elapsedHour + '小时' + elapsedMintues + '分' + time + '秒';
+}
+
+function calcHomeworkElapsedTime(time) {
+
+  var elapsedDay = 0;
+  var elapsedHour = 0;
+  var elapsedMintues = 0;
+
+  elapsedDay = Math.floor(time / dayToSecond);
+  time -= elapsedDay * dayToSecond;
+  elapsedHour = Math.floor(time / hourToSecond);
+  time -= hourToSecond * elapsedHour;
+  elapsedMintues = Math.floor(time / mintuesToSecond);
+
+  return elapsedDay + '天' + elapsedHour + '小时' + elapsedMintues + '分';
+}
+
+
+UserController.prototype.getFeedback = (req, res)=> {
+  var userId = req.session.user.id;
+
+  creatFeedbackInfo(userId, function (feedbackInfo) {
+    res.send(feedbackInfo);
+  });
+
+};
 module.exports = UserController;
 

@@ -6,6 +6,6 @@ var router = express.Router();
 var PaperController = require('../../controllers/paper-controller');
 var paperController = new PaperController();
 
-router.get('/:paperId/scroesheet', paperController.exportCsv);
+router.get('/:paperId/scoresheet', paperController.exportCsv);
 
 module.exports = router;

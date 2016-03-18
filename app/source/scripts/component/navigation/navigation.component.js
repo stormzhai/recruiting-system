@@ -1,6 +1,21 @@
 'use strict';
+var NavigationActions = require('../../actions/navigation/navigation-actions');
+var NavigationStore = require('../../store/navigation/navigation-store');
+var Reflux = require('reflux');
 
 var Navigation = React.createClass({
+  mixins: [Reflux.connect(NavigationStore)],
+
+  getInitialState: function() {
+    return {
+      account: ''
+    };
+  },
+
+  componentDidMount: function () {
+    NavigationActions.loadAccount();
+  },
+
   render: function () {
     return (
         <nav>
@@ -9,7 +24,7 @@ var Navigation = React.createClass({
           </div>
           <div className="dropdown header-right">
             <a className="dropdown-style" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-              我的账户
+              {this.state.account}
               <span className="caret"></span>
             </a>
             <ul className="dropdown-menu" aria-labelledby="dropdownMenu1">

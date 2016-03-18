@@ -10,7 +10,7 @@ var fs = require('fs');
 
 var testSession = null;
 
-describe('GET paper/:paperId/scroesheet', function () {
+describe('GET paper/:paperId/scoresheet', function () {
 
   var paperController = new PaperController();
 
@@ -46,9 +46,8 @@ describe('GET paper/:paperId/scroesheet', function () {
 
     testSession = session(app);
 
-
     testSession
-        .get('/paper/1/scroesheet')
+        .get('/paper/1/scoresheet')
         .set('Content-Type', 'application/json')
         .expect({
           status: httpStatusCode.OK,

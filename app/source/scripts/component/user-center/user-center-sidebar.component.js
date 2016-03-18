@@ -20,12 +20,16 @@ var UserCenterSide = React.createClass({
     if(mark === 'userDetail') {
       UserCenterActions.loadUserDetail();
     }
+    if(mark === 'result') {
+      UserCenterActions.loadResult();
+    }
   },
 
   render() {
     var tags = [
       {mark: 'userDetail', value: '个人信息'},
-      {mark: 'password', value: '修改密码'}
+      {mark: 'password', value: '修改密码'},
+      {mark: 'result', value: '查看结果'}
     ];
 
     var itemHtml = tags.map((item, index) => {
