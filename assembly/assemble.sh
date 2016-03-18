@@ -29,7 +29,7 @@ cp -r app/* assembly/assemble/node-app
 # 写入配置文件
 cp assembly/conf/app-config.yml assembly/assemble/node-app/config/config.yml
 
-tar -zcf assembly/assemble/nodeapp.tar.gz assembly/assemble/nodeapp
+tar -zcf assembly/assemble/nodeapp.tar.gz assembly/assemble/node-app
 
 # task queue package
 cd task-queue
