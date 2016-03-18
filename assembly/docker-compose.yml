@@ -14,12 +14,8 @@ jetty-api:
     - ./assemble/jetty-api:/var/lib/jetty/webapps
   links:
     - mysql:mysql
-  ports:
-    - "8080:8080"
 mongodb:
   image: mongo:3.2
-  ports:
-    - "27017:27017"
 node-app:
   image: node:5.8
   ports:
@@ -36,14 +32,10 @@ node-app:
     - ./production.env
 redis:
   image: redis:3.0.7
-  ports:
-    - "6379:6379"
   volumes:
     - ./conf/redis.conf:/usr/local/etc/redis/redis.conf
 node-task-queue:
   image: node:5.8
-  ports:
-    - "4000:4000"
   volumes:
     - ./assemble/task-queue:/var/app
   command: bash -c "cd /var/app && node app.js"
@@ -62,8 +54,6 @@ nginx:
     - /home/ubuntu/works/docker-cached/nginx_fs:/var/fs
 jenkins-nodejs:
   build: ./jenkins-nodejs
-  ports:
-    - "8000:8080"
   links:
     - nginx:nginx
   env_file:
