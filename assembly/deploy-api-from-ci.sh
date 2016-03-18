@@ -7,8 +7,8 @@ cp $WORKDIRECTORY/assembly/conf/config.properties $WORKDIRECTORY/api/src/main/re
 cp $WORKDIRECTORY/assembly/conf/gradle.properties $WORKDIRECTORY/api/gradle.properties
 
 cd $WORKDIRECTORY/api
-gradle clean
-gradle war
+./gradlew clean
+./gradlew war
 cd -
 
 cp $WORKDIRECTORY/api/build/libs/api.war $WORKDIRECTORY/assembly/assemble/jetty-api/jetty-api.war
