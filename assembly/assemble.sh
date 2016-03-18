@@ -28,8 +28,9 @@ cp -r app/* assembly/assemble/node-app
 
 # 写入配置文件
 cp assembly/conf/app-config.yml assembly/assemble/node-app/config/config.yml
-
-zip -qr assembly/assemble/nodeapp.zip assembly/assemble/node-app
+cd assembly/assemble
+zip -qr node-app.zip node-app
+cd -
 
 # task queue package
 cd task-queue
@@ -44,4 +45,6 @@ cp -r task-queue/* assembly/assemble/task-queue
 # 写入配置文件
 cp assembly/conf/task-queue-config.yml assembly/assemble/task-queue/config/config.yml
 # 压缩
-zip -qr assembly/assemble/task-queue.zip assembly/assemble/task-queue
+cd assembly/assemble
+zip -qr task-queue.zip task-queue
+cd -
