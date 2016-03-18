@@ -18,7 +18,7 @@ var StartInfo = React.createClass({
     this.setState({agree: newState});
   },
 
-  start:function() {
+  start: function () {
     StartActions.agreeDeal(this.state.agree);
   },
 
@@ -36,10 +36,10 @@ var StartInfo = React.createClass({
               <div className="col-md-4 col-md-offset-4">
                 <ol>
                   <li>
-                    本套逻辑题共有12道小题,前两道为2条参考例题
+                    您共有90分钟时间，请认真答题
                   </li>
                   <li>
-                    您共有90分钟时间，请认真答题
+                    本套逻辑题共有12道小题，前2道参考例题
                   </li>
                   <li>
                     答题前，建议您先阅读例题
@@ -47,17 +47,18 @@ var StartInfo = React.createClass({
                   <li>
                     答题前，请确保网络条件畅通，无异常
                   </li>
-                  <li>答题前，请仔细阅读题目要求</li>
+                  <li>
+                    答题前，请仔细阅读题目要求
+                  </li>
                   <li>
                     请独立完成所有题目，禁止相互抄袭
                   </li>
-
                 </ol>
               </div>
             </div>
             <div className="row">
               <div className="col-md-4 col-md-offset-4">
-                二 答题前,请仔细阅读以下要求
+                二 请阅读并同意保密协议
               </div>
             </div>
             <div className="row">
@@ -71,7 +72,8 @@ var StartInfo = React.createClass({
           </section>
           <section className="start-button">
             <button type="submit" className="btn btn-info btn-lg btn-block"
-               disabled={this.state.agree ? '' : 'disabled'} onClick={this.start}>开始</button>
+                    disabled={this.state.agree ? '' : 'disabled'} onClick={this.start}>开始
+            </button>
           </section>
         </div>
     );
