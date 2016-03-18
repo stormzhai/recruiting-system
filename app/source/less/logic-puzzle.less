@@ -78,10 +78,21 @@ body {
     .left-chart {
       float: left;
       background-color: @white;
-      img {
-        margin: 0px 50px;
-        display: inline-block;
-        max-height: 500px;
+      .left-chart-image {
+        position: relative;
+        img {
+          margin: 0px 50px;
+          display: inline-block;
+          max-height: 500px;
+        }
+
+        .magnifying-glass {
+          font-size: 20px;
+          position: absolute;
+          right: 60px;
+          top: 230px;
+          color: gray;
+        }
       }
     }
 

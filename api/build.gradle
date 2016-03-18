@@ -19,7 +19,6 @@ apply plugin: "jacoco"
 apply plugin: 'checkstyle'
 apply plugin: 'org.akhikhl.gretty'
 
-
 test {
     beforeTest { descr ->
         logger.warn("Starting Test ${descr.className} : ${descr.name}")

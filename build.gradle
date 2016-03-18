@@ -28,6 +28,7 @@ task(startApi) {
         project(':api').flywayClean.execute()
         project(':api').flywayMigrate.execute()
         out.withStyle(Style.Info).println('starting jetty server...')
+//        project(':api').jettyRun.daemon = true
         project(':api').jettyRun.execute()
     }
 }
