@@ -1,4 +1,3 @@
-
 'use strict';
 
 var Reflux = require('reflux');
@@ -28,7 +27,7 @@ var FeedbackResult = React.createClass({
           <tr key={index}>
             <td>{index + 1}</td>
             <td>{item.commitedNumbers}</td>
-            <td>{item.isCompleted ? '已提交': '未提交'}</td>
+            <td>{item.isCompleted ? '已完成' : '未完成'}</td>
             <td>{item.time}</td>
           </tr>
       );
@@ -39,25 +38,31 @@ var FeedbackResult = React.createClass({
             <div className="logicPuzzle">
               <table className="table table-hover">
                 <caption>逻辑题</caption>
-                <thead><tr>
+                <thead>
+                <tr>
                   <th>花费时间</th>
                   <th>当前进度</th>
-                </tr></thead>
-                <tbody><tr>
-                  <td>{this.state.logicPuzzle.time ? this.state.logicPuzzle.time: 'N/A'}</td>
-                  <td>{this.state.logicPuzzle.isCompleted ? '已完成': '未完成'}</td>
-                </tr></tbody>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                  <td>{this.state.logicPuzzle.time ? this.state.logicPuzzle.time : 'N/A'}</td>
+                  <td>{this.state.logicPuzzle.isCompleted ? '已完成' : '未完成'}</td>
+                </tr>
+                </tbody>
               </table>
             </div>
             <div className="homework">
               <table className="table table-hover">
                 <caption>编程题</caption>
-                <thead><tr>
+                <thead>
+                <tr>
                   <th>题号</th>
                   <th>提交次数</th>
                   <th>当前进度</th>
                   <th>花费时间</th>
-                </tr></thead>
+                </tr>
+                </thead>
                 <tbody>
                 {homeworkResult}
                 </tbody>
