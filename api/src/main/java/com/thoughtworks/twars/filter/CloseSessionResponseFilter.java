@@ -12,28 +12,27 @@ import java.io.IOException;
 public class CloseSessionResponseFilter implements ContainerResponseFilter {
 
     @Inject
-    SqlSessionManager sqlSessionManager;
+    SqlSessionManager session;
 
     @Override
     public void filter(ContainerRequestContext requestContext,
                        ContainerResponseContext responseContext) throws IOException {
-
-        if (sqlSessionManager.isManagedSessionStarted()) {
-            try {
-                if (responseContext.getStatus() < Response.Status.BAD_REQUEST.getStatusCode()) {
-                    sqlSessionManager.commit(true);
+        try {
+            if (responseContext.getStatus() < Response.Status.BAD_REQUEST.getStatusCode()) {
+                session.commit(true);
+            } else {
+                Boolean skipRollback = (Boolean) requestContext.getProperty("skipRollback");
+                if (skipRollback != null && skipRollback) {
+                    session.commit(true);
                 } else {
-                    Boolean skipRollback = (Boolean) requestContext.getProperty("skipRollback");
-                    if (skipRollback != null && skipRollback) {
-                        sqlSessionManager.commit(true);
-                    } else {
-                        sqlSessionManager.rollback(true);
-                    }
+                    session.rollback(true);
                 }
-            } finally {
-                sqlSessionManager.close();
             }
+            session.close();
+        } catch (Exception e) {
+
         }
+
 
     }
 }

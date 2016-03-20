@@ -10,6 +10,7 @@ var pathToBootstarp = path.resolve(node_modules, 'bootstrap/dist/');
 
 var config = {
   entry: {
+    "deadline": './source/scripts/deadline.js',
     "404": "./source/scripts/404.js",
     "index": "./source/scripts/index.js",
     "logic-puzzle": "./source/scripts/logic-puzzle",
@@ -116,5 +117,6 @@ config.plugins.push(htmlwebpackPluginBuilder('homework-details.html', ['homework
 config.plugins.push(htmlwebpackPluginBuilder('homework.html', ['homework.css', 'vendors', 'homework']));
 config.plugins.push(htmlwebpackPluginBuilder('dashboard.html', ['dashboard.css', 'vendors', 'dashboard']));
 config.plugins.push(htmlwebpackPluginBuilder('404.html', ['404.css', 'vendors', '404']));
+config.plugins.push(htmlwebpackPluginBuilder('deadline.html', ['deadline.css', 'vendors', 'deadline']));
 
 module.exports = config;

@@ -4,33 +4,23 @@
 
 var Col = require('react-bootstrap/lib/Col');
 var Reflux = require('reflux');
-var DashboardActions = require('../../actions/dashboard/dashboard-actions');
 var DashboardStore = require('../../store/dashboard/dashboard-store');
-
 var DashboardIcon = React.createClass({
   mixins: [Reflux.connect(DashboardStore)],
 
   getInitialState: function () {
     return {
       puzzleEnabled: true,
-      homeworkEnabled: true
+      homeworkEnabled:false,
+      isOverTime: false,
+      isFinished: ''
     };
   },
 
-  showPrompt: function (puzzleEnabled, homeworkEnabled, event) {
-    var iconName = event.target.parentNode.getAttribute('name');
-    DashboardActions.showPrompt(puzzleEnabled, homeworkEnabled, iconName);
-  },
-
-  hidePrompt: function () {
-    DashboardActions.hidePrompt();
-  },
-
   render() {
-
     var PuzzleHref = (this.state.puzzleEnabled === true ? 'logic-puzzle.html' : '#');
     var homeworkHref = (this.state.homeworkEnabled === true ? 'homework.html' : '#');
-
+    homeworkHref = this.state.isOverTime || this.state.isFinished ? 'deadline.html': homeworkHref;
     var puzzleDisable = (this.state.puzzleEnabled === true ? 'enable' : 'disable');
     var homeworkDisable = (this.state.homeworkEnabled === true ? 'enable' : 'disable');
 
@@ -52,10 +42,7 @@ var DashboardIcon = React.createClass({
     };
     return (
         <div className="col-md-4 col-sm-6 col-md-offset-4">
-          <a href={iconInfos[this.props.name].href} className="icon-view"
-             onMouseOver={this.showPrompt.bind(this, this.state.puzzleEnabled, this.state.homeworkEnabled)}
-             onMouseOut={this.hidePrompt}>
-
+          <a href={iconInfos[this.props.name].href} className="icon-view">
             <div className={'icon-wrapper-'+iconInfos[this.props.name].isEnabled}
                  name={iconInfos[this.props.name].name}>
               <div className="icon-img" name={iconInfos[this.props.name].name}>

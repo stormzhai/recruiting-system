@@ -5,4 +5,4 @@ default:
   CIServer: 'http://jenkins-nodejs:8080'
   jobName: 'TASK-RUNNER'
   nginxServer: 'http://nginx/fs'
-  taskServer: 'http://172.17.0.8'
+  taskServer: 'http://node-task-queue'

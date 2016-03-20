@@ -16,4 +16,6 @@ exports.setRoutes = function (app) {
   app.use('/user', require('./routers/user'));
   app.use('/paper', require('./routers/paper'));
   app.use('/reuse', require('./routers/reuse'));
+  app.use('/deadline', require('./routers/deadline'));
+  app.use('/inspector', require('./routers/inspector'));
 };

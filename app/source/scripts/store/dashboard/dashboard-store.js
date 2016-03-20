@@ -13,35 +13,21 @@ var DashboardStore = Reflux.createStore({
         .set('Content-Type', 'application/json')
         .use(errorHandler)
         .end((err, res) => {
+          var status;
+          if(res.body.isOverTime){
+            status = 'overTime';
+            if(res.body.isLast){
+              status = 'isFinished';
+            }
+          }
           this.trigger({
             puzzleEnabled: res.body.isPaperCommited ? false : true,
-            homeworkEnabled: res.body.isPaperCommited
+            homeworkEnabled: res.body.isPaperCommited,
+            isOverTime: res.body.isOverTime,
+            isFinished: res.body.isFinished,
+            status: status
           });
         });
-  },
-
-  onShowPrompt: function (puzzleEnabled, homeworkEnabled, iconName) {
-
-    if (iconName === 'logic' && puzzleEnabled === false) {
-      this.trigger({
-        isTip: true,
-        tipContent: '您的逻辑题已经完成'
-      });
-    }
-
-    if (iconName === 'homework' && homeworkEnabled === false) {
-      this.trigger({
-        isTip: true,
-        tipContent: puzzleEnabled === true ? '请先完成逻辑题' : '您的编程题已完成'
-      });
-    }
-
-  },
-
-  onHidePrompt: function () {
-    this.trigger({
-      isTip: false
-    });
   }
 
 });

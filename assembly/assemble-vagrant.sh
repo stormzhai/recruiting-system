@@ -3,16 +3,17 @@
 # api package
 set -e
 rm -fr assembly/assemble/jetty-api/*
-cp assembly/conf/config.properties api/src/main/resources/config.properties
-cp assembly/conf/gradle.properties api/gradle.properties
+cp -r api/* assembly/assemble/jetty-api
 
-cd api
-gradle clean
-gradle war
+cp assembly/conf/config.properties assembly/assemble/jetty-api/src/main/resources/config.properties
+cp assembly/conf/gradle.properties assembly/assemble/jetty-api/gradle.properties
+
+cd assembly/assemble/jetty-api
+./gradlew clean
+./gradlew war
 cd -
 
-cp api/build/libs/api.war assembly/assemble/jetty-api.war
-
+cp assembly/assemble/jetty-api/build/libs/jetty-api.war assembly/assemble/jetty-api.war
 
 # app package
 cd app
@@ -29,7 +30,7 @@ cp -r app/* assembly/assemble/node-app
 # 写入配置文件
 cp assembly/conf/app-config.yml assembly/assemble/node-app/config/config.yml
 cd assembly/assemble
-zip -qr node-app.zip node-app
+# zip -qr node-app.zip node-app
 cd -
 
 # task queue package
@@ -46,5 +47,5 @@ cp -r task-queue/* assembly/assemble/task-queue
 cp assembly/conf/task-queue-config.yml assembly/assemble/task-queue/config/config.yml
 # 压缩
 cd assembly/assemble
-zip -qr task-queue.zip task-queue
+# zip -qr task-queue.zip task-queue
 cd -
