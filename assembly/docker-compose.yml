@@ -68,4 +68,5 @@ jenkins-nodejs:
     - ambassador:node-task-queue
   env_file:
     - ./production.env
-  ports: "18080:8080"
+  ports:
+    - "18080:8080"
