@@ -1,0 +1,11 @@
+TRUNCATE sectionQuiz;
+INSERT INTO sectionQuiz VALUES (NULL ,1,1);
+INSERT INTO sectionQuiz VALUES (NULL ,1,2);
+INSERT INTO sectionQuiz VALUES (NULL ,2,1);
+INSERT INTO sectionQuiz VALUES (NULL ,2,2);
+INSERT INTO sectionQuiz VALUES (NULL ,2,3);
+INSERT INTO sectionQuiz VALUES (NULL ,2,4);
+INSERT INTO sectionQuiz VALUES (NULL ,2,5);
+INSERT INTO sectionQuiz VALUES (NULL ,2,6);
+INSERT INTO sectionQuiz VALUES (NULL ,2,7);
+INSERT INTO sectionQuiz VALUES (NULL ,2,8);
