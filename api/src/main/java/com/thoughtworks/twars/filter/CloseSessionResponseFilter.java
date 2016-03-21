@@ -31,7 +31,11 @@ public class CloseSessionResponseFilter implements ContainerResponseFilter {
         } catch (Exception e) {
 
         } finally {
-//            session.close();
+            try {
+                session.close();
+            } catch (Exception e) {
+
+            }
         }
 
 
