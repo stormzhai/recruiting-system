@@ -14,6 +14,5 @@ public class OpenSessionRequestFilter  implements ContainerResponseFilter {
     @Override
     public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) {
         session.startManagedSession();
-        session.openSession();
     }
 }

@@ -89,7 +89,6 @@ public class ScoreSheetResource extends Resource {
             if (homeworkSubmits != null) {
                 homeworkQuizScoreSheet.insertQuizScoreSheet(data, scoreSheetId);
             }
-            session.commit();
 
             Map result = new HashMap<>();
             result.put("uri", "scoresheets/" + scoreSheetId);
@@ -137,4 +136,3 @@ public class ScoreSheetResource extends Resource {
     }
 
 }
-

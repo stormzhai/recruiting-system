@@ -1,6 +1,7 @@
 package com.thoughtworks.twars.util;
 
 import org.apache.ibatis.io.Resources;
+import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.apache.ibatis.session.SqlSessionManager;
 
@@ -18,13 +19,8 @@ public final class DBUtil {
         try {
             InputStream is = Resources.getResourceAsStream(resource);
             SqlSessionFactoryBuilder builder = new SqlSessionFactoryBuilder();
-//            SqlSessionFactory sqlSessionFactory = builder.build(is);
-//            sqlSessionFactory
-//            session.startManagedSession();
-            session = SqlSessionManager.newInstance(is);
-//            session = sqlSessionFactory.openSession();
-
-
+            SqlSessionFactory sqlSessionFactory = builder.build(is);
+            session = SqlSessionManager.newInstance(sqlSessionFactory);
         } catch (IOException e) {
             e.printStackTrace();
         }

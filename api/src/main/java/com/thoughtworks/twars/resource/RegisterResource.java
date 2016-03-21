@@ -38,7 +38,6 @@ public class RegisterResource extends Resource {
             @ApiParam(name = "user", value = "User example",required = true)
             User user) {
         userMapper.insertUser(user);
-        session.commit();
 
         Map<String, Object> map = new HashMap<>();
         Map<String, String> userInfo = new HashMap<>();

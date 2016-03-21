@@ -1,3 +1,4 @@
+
 package com.thoughtworks.twars.resource;
 
 import com.thoughtworks.twars.bean.*;
@@ -90,7 +91,6 @@ public class PaperResource extends Resource {
                         return map;
                     })
                     .collect(Collectors.toList());
-            session.commit();
 
             return Response.status(Response.Status.OK).entity(result.get(0)).build();
         } catch (Exception e) {
@@ -212,6 +212,3 @@ public class PaperResource extends Resource {
         return Response.status(Response.Status.OK).entity(result).build();
     }
 }
-
-
-
