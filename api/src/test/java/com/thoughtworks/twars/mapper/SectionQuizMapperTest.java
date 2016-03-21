@@ -34,6 +34,6 @@ public class SectionQuizMapperTest extends TestBase{
 
         sectionQuizMapper.insertSectionQuiz(sectionQuiz);
 
-        assertThat(sectionQuiz.getId(), is(7));
+        assertThat(sectionQuiz.getId(), is(11));
     }
 }

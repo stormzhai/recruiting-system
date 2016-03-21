@@ -23,7 +23,7 @@ public class HomeWorkQuizMapperTest extends TestBase {
     public void should_return_homework_list_when_by_section_id() {
         List<HomeworkQuiz> homeworkQuizList = homeworkQuizMapper.findBySectionId(2);
         
-        assertThat(homeworkQuizList.size(), is(4));
+        assertThat(homeworkQuizList.size(), is(6));
     }
 
     @Test
