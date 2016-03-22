@@ -41,12 +41,7 @@ var LoginStore = Reflux.createStore({
       agree: false,
       isShowToggle: false
     });
-  },
-
-  onChangeValue: function (name, value){
-    this.trigger({[name]: value});
   }
-
 });
 
 module.exports = LoginStore;

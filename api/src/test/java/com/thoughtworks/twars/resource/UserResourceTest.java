@@ -166,7 +166,6 @@ public class UserResourceTest extends TestBase {
         UserDetail insertUserDetail = new UserDetail();
 
         insertUserDetail.setUserId(18);
-        insertUserDetail.setBirthday(2);
         insertUserDetail.setDegree("benke");
         insertUserDetail.setGender("F");
         insertUserDetail.setMajor("cs");

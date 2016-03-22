@@ -12,7 +12,7 @@ var config = yamlConfig.load('./config/config.yml');
 function getInfoFromApi(done) {
   apiRequest.get('inspector', function (err, resp) {
     var data;
-    if(err) {
+    if (err) {
       data = {api: err};
     } else {
       data = resp.body;
@@ -28,11 +28,11 @@ function getMongoInfo(done) {
 function getTaskQueueInfo(done) {
   request.get(config.taskServer + 'inspector')
       .set('Content-Type', 'application/json')
-      .send()
+      .query({'hook': config.appServer})
       .end(function(err, resp) {
         var data;
-        if(err) {
-          data = {"task-queue": err};
+        if (err) {
+          data = {'task-queue': err};
         } else {
           data = resp.body;
         }
@@ -41,18 +41,18 @@ function getTaskQueueInfo(done) {
 }
 
 router.get('/', function (req, res) {
-  var data = {app: "connected"};
+  var data = {app: 'connected'};
 
   async.parallel([
     getInfoFromApi,
     getMongoInfo,
     getTaskQueueInfo
-  ], function(err, result) {
-    result.forEach(function(v, k) {
+  ], function (err, result) {
+    result.forEach(function (v, k) {
       data = Object.assign(data, v);
     });
     res.send(data);
-  })
+  });
 });
 
 module.exports = router;

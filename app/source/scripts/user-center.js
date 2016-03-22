@@ -9,7 +9,6 @@ var UserDetail = require('./component/user-center/user-center-detail.component')
 var ChangePassword = require('./component/user-center/change-password.component');
 var UserCenterSidebar = require('./component/user-center/user-center-sidebar.component');
 var UserCenterGender = require('./component/user-center/user-center-gender.component');
-var UserCenterBirthday = require('./component/user-center/user-center-birthday.component');
 var NewPassword = require('./component/reuse/new-password.component');
 var FeedbackResult = require('./component/user-center/feedback-result.component');
 var Account = require('./component/reuse/get-account.component');
@@ -25,7 +24,6 @@ ReactDom.render(
         <UserCenterSidebar/>
         <UserDetail>
           <UserCenterGender/>
-          <UserCenterBirthday/>
         </UserDetail>
         <ChangePassword>
           <NewPassword initialStatus="userDetail"/>

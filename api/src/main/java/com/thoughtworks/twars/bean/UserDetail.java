@@ -7,7 +7,6 @@ public class UserDetail {
     private String degree;
     private String gender;
     private int userId;
-    private int birthday;
 
     public void setSchool(String school) {
         this.school = school;
@@ -33,10 +32,6 @@ public class UserDetail {
         this.userId = userId;
     }
 
-    public void setBirthday(int birthday) {
-        this.birthday = birthday;
-    }
-
     public String getSchool() {
         return school;
     }
@@ -59,9 +54,5 @@ public class UserDetail {
 
     public int getUserId() {
         return userId;
-    }
-
-    public int getBirthday() {
-        return birthday;
     }
 }

@@ -16,20 +16,28 @@ function getRedisInfo(done) {
 }
 
 function getHookInfo(done) {
-  done(null, {
-    "hook-server": "unknown"
-  });
+  if(!this) {
+    done(null, {
+      "hook-server": "unknown"
+    })
+  } else {
+    request.options(this.hook + 'inspector')
+        .end(function(err, resp) {
+          var data = {"hook-server": "connected"};
+          if(err) {
+            data["hook-server"] = err
+          }
+          done(null, data);
+        })
+  }
 }
 
-var CIURL = config.CIServer + '/job/' + config.jobName + '/api/json';
+var ciServer = config.CIServer + '/job/' + config.jobName + '/api/json';
 
 function getCIInfo(done) {
-  console.log("+++++++++++");
-  request.get(CIURL)
+  request.get(ciServer)
       .timeout(1000)
       .end(function(err, resp) {
-        console.log("=================");
-        console.log(err);
         var data = {
           "ci-server": "connected"
         };
@@ -45,7 +53,7 @@ function getCIInfo(done) {
 router.get('/', function (req, res) {
   var data = {"task-queue": "connected"};
   async.parallel([
-    getHookInfo,
+    getHookInfo.bind(req.query),
     getRedisInfo,
     getCIInfo
   ], function(err, result) {

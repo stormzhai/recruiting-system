@@ -2,7 +2,6 @@
 
 var HomeworkController = require('../../controllers/homework-controller');
 var userHomeworkQuizzes = require('../../models/user-homework-quizzes');
-var homeworkQuizzes = require('../../models/homework-quizzes');
 var constant = require('../../mixin/constant');
 var apiRequest = require('../../services/api-request');
 var request = require('superagent');
@@ -170,18 +169,21 @@ describe('HomeworkController', function () {
         done(null, null);
       });
 
-      spyOn(homeworkQuizzes, 'findOne').and.callFake(function (id, callback) {
-        var data = {
-          id: 1,
-          desc: '这是一道简单的题',
-          templateRepo: 'www.github.com'
-        };
-        callback(null, data);
-      });
     });
 
     it('should return quiz and statusCode: 200 when receive a request', (done) => {
-      
+
+      spyOn(apiRequest, 'get').and.callFake(function (url, callback) {
+        var data = {
+          body: {
+            id: 1,
+            description: '这是一道简单的题',
+            templateRepository: 'www.github.com'
+          }
+        };
+        callback(null, data);
+      });
+
       controller.getQuiz({
         session: {user: {id: 1}},
         query: {orderId: 1}
@@ -435,6 +437,18 @@ describe('HomeworkController', function () {
         callback(null, result);
       });
 
+      spyOn(apiRequest, 'get').and.callFake(function (url, callback) {
+        var data = {
+          body: {
+            id: 1,
+            description: '这是一道简单的题',
+            templateRepository: 'www.github.com',
+            evaluateScript: 'www.github.com'
+          }
+        };
+        callback(null, data);
+      });
+
       spyOn(request, 'post').and.callFake(function () {
         return {
           set: function () {
@@ -449,14 +463,6 @@ describe('HomeworkController', function () {
             });
           }
         };
-      });
-
-      spyOn(homeworkQuizzes, 'findOne').and.callFake(function (useid, callback) {
-        var data = {
-          evaluateRepo: 'github.com/sialvsic',
-          evaluateScript: './index.js'
-        };
-        callback(null, data);
       });
 
       controller.saveGithubUrl({

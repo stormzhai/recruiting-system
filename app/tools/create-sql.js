@@ -1,3 +1,4 @@
+/*eslint no-magic-numbers: 0*/
 'use strict';
 
 var glob = require('glob');
@@ -9,7 +10,7 @@ glob('/Users/wjlin/works/coach/071-logic-exam-generate/workable_exam_after_verif
   var data, values;
 
   var result = files.filter(function(file) {
-    var filename = parseInt(file.split("/")[7].split('.')[0]);
+    var filename = parseInt(file.split('/')[7].split('.')[0]);
     return filename >= min && filename <= max;
   }).map(function(file) {
     data = require(file);

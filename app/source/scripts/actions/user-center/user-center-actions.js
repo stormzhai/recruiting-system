@@ -8,9 +8,7 @@ var UserCenterActions = Reflux.createActions([
   'changeState',
   'changeGender',
   'validateGender',
-  'changeBirthday',
   'checkGender',
-  'checkBirthday',
   'loadResult'
 ]);
 

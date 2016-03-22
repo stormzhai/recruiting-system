@@ -90,7 +90,7 @@ var RegisterStore = Reflux.createStore({
             });
       }
     }, function (err, data) {
-      if (data.initializeQuizzes) {
+      if(data.initializeQuizzes) {
         page('user-center.html');
       } else {
         console.log(err);
@@ -108,10 +108,6 @@ var RegisterStore = Reflux.createStore({
     this.trigger({
       password: password
     });
-  },
-
-  onChangeValue: function (name, value) {
-    this.trigger({[name]: value});
   },
 
   onCheckData: function (stateObj) {

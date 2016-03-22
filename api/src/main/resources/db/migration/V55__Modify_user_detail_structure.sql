@@ -1,0 +1,1 @@
+ALTER TABLE userDetail DROP COLUMN birthday;

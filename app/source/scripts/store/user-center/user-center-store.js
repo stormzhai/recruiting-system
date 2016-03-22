@@ -82,26 +82,12 @@ var UserDetailStore = Reflux.createStore({
     }
   },
 
-  onChangeBirthday: function (time) {
-    this.trigger({birthday: time});
-  },
-
   onCheckGender: function (gender) {
     if (gender === '') {
       this.trigger({genderError: true});
     } else {
       this.trigger({genderError: false});
     }
-  },
-
-  onCheckBirthday: function (birthday) {
-    if (birthday === '' || birthday === null) {
-      this.trigger({birthdayError: '请选择生日'});
-    } else {
-      this.trigger({birthdayError: ''});
-    }
   }
 });
-
-
 module.exports = UserDetailStore;

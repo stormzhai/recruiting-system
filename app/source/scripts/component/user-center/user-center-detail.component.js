@@ -28,7 +28,6 @@ var UserDetail = React.createClass({
       mobilePhoneError: '',
       emailError: '',
       currentState: 'userDetail',
-      birthday: ''
     };
   },
 
@@ -45,7 +44,6 @@ var UserDetail = React.createClass({
         gender: 'M',
         degree: '',
         degreeError: '',
-        birthday: ''
       });
     }
   },
@@ -81,11 +79,10 @@ var UserDetail = React.createClass({
     var name = {name: this.state.name};
     var major = {major: this.state.major};
     var degree = {degree: this.state.degree};
-    var birthday = {birthday: this.state.birthday};
 
     var userInfo = [];
 
-    userInfo.push(school, name, major, degree, birthday);
+    userInfo.push(school, name, major, degree);
     var pass = false;
     var stateObj = {};
 
@@ -104,7 +101,6 @@ var UserDetail = React.createClass({
 
   update: function (evt) {
     evt.preventDefault();
-    UserCenterActions.checkBirthday(this.state.birthday);
     UserCenterActions.checkGender(this.state.gender);
 
     var userData = {
@@ -113,7 +109,6 @@ var UserDetail = React.createClass({
       gender: this.state.gender,
       major: this.state.major,
       degree: this.state.degree,
-      birthday: this.state.birthday
     };
 
     if (this.checkInfo()) {
@@ -179,12 +174,7 @@ var UserDetail = React.createClass({
 
                 <label htmlFor='inputGender' className='col-sm-4 col-md-4 control-label'>性别<span className="error alert alert-danger">*</span></label>
                 <div className='form-group'>
-                  {this.props.children[0]}
-                </div>
-
-                <label htmlFor='inputBirthday' className='col-sm-4 col-md-4 control-label'>生日<span className="error alert alert-danger">*</span></label>
-                <div className='form-group'>
-                  {this.props.children[1]}
+                  {this.props.children}
                 </div>
 
                 <label htmlFor='inputMajor' className='col-sm-4 col-md-4 control-label'>专业<span className="error alert alert-danger">*</span></label>

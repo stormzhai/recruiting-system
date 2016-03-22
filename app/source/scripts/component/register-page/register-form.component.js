@@ -3,7 +3,6 @@
 var Reflux = require('reflux');
 var validate = require('validate.js');
 var constraint = require('../../../../mixin/register-constraint');
-var page = require('page');
 var constant = require('../../../../mixin/constant');
 var async = require('async');
 var RegisterActions = require('../../actions/register-page/register-actions');
@@ -49,19 +48,12 @@ var RegisterForm = React.createClass({
       });
       this.refs.mobilePhone.value = '';
       this.refs.email.value = '';
-
     };
-  },
-
-  handleChange: function (event) {
-    var value = event.target.value;
-    var name = event.target.name;
-    RegisterActions.changeValue(name, value);
   },
 
   validate: function (event) {
     var target = event.target;
-    var value = target.value;
+    var value = target.value.trim();
     var name = target.name;
     var valObj = {};
     valObj[name] = value;
@@ -97,7 +89,7 @@ var RegisterForm = React.createClass({
     registerInfo.forEach((item, i) => {
       var valObj = {};
 
-      var value = item.value;
+      var value = item.value.trim();
       var name = item.name;
 
       valObj[name] = value;
@@ -107,9 +99,7 @@ var RegisterForm = React.createClass({
       if (error !== '') {
         passCheck = false;
       }
-
       stateObj[name + 'Error'] = error;
-
     });
     RegisterActions.checkData(stateObj);
     return passCheck;
@@ -135,7 +125,7 @@ var RegisterForm = React.createClass({
       this.setState({
         clickable: true
       });
-      RegisterActions.register(mobilePhone.value, email.value, password.value);
+      RegisterActions.register(mobilePhone.value.trim(), email.value.trim(), password.value.trim());
     }
   },
 

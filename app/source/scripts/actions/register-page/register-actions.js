@@ -9,7 +9,6 @@ var RegisterActions = Reflux.createActions([
   'checkMobilePhone',
   'changeState',
   'inputPassword',
-  'changeValue',
   'checkData'
 ]);
 

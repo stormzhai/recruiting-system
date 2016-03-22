@@ -20,7 +20,8 @@ var userHomeworkQuizzesSchema = new Schema({
       version: String,
       branch: String,
       commitTime: Number,
-      resultURL: String
+      resultURL: String,
+      homeworkDetail: String
     }]
   }]
 });
@@ -163,6 +164,7 @@ userHomeworkQuizzesSchema.statics.updateQuizzesStatus = function (data, callback
           doc.quizzes[i].status = status;
           doc.quizzes[i].homeworkSubmitPostHistory[doc.quizzes[i].homeworkSubmitPostHistory.length - 1].status = status;
           doc.quizzes[i].homeworkSubmitPostHistory[doc.quizzes[i].homeworkSubmitPostHistory.length - 1].resultURL = data.resultURL;
+          doc.quizzes[i].homeworkSubmitPostHistory[doc.quizzes[i].homeworkSubmitPostHistory.length - 1].homeworkDetail = data.homeworkDetail;
         }
       });
       doc.save(callback);

@@ -46,7 +46,7 @@ var FeedbackResult = React.createClass({
                 </thead>
                 <tbody>
                 <tr>
-                  <td>{this.state.logicPuzzle.time ? this.state.logicPuzzle.time : 'N/A'}</td>
+                  <td>{this.state.logicPuzzle.time ? this.state.logicPuzzle.time : '--'}</td>
                   <td>{this.state.logicPuzzle.isCompleted ? '已完成' : '未完成'}</td>
                 </tr>
                 </tbody>

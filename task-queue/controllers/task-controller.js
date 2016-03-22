@@ -23,7 +23,7 @@ TaskController.prototype.createTask = (req, res) => {
       USER_REPO: req.body.userAnswerRepo,
       CALLBACK_URL: callbackURL,
       BRANCH: req.body.branch,
-      EVALUATE_SCRIPT_URL: req.body.evaluateScript
+      EVALUATE_SCRIPT_URL: config.nginxServer + req.body.evaluateScript
     })
     .end((err, response) => {
       if (err){
@@ -58,7 +58,8 @@ TaskController.prototype.result = (req, res) => {
           userId: userHomeworkQuiz.userId,
           homeworkId: userHomeworkQuiz.homeworkId,
           resultStatus: req.body.result,
-          resultURL: req.body.resultURL
+          resultURL: req.body.resultURL,
+          homeworkDetail:req.body.resultDetail
         })
         .end(done);
     }

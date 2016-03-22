@@ -6,10 +6,7 @@ var lang = {
   REGISTER_FAILED: '注册失败,注册信息有误。',
   EXIST: '手机号或者邮箱已被注册',
   LOGIN_FAILED: '登录失败',
-  MIN_DATE: '01-01-1970',
-  MIN_DATESTAMP: '-946800000',
   CONFIRM_ERROR:'两次密码不匹配'
 };
 
 module.exports = lang;
-

@@ -11,7 +11,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.lang.reflect.Array;
 import java.util.*;
 
 import static org.hamcrest.core.Is.is;
@@ -178,7 +177,6 @@ public class PaperResourceTest extends TestBase {
         when(scoreSheetMapper.findUserIdsByPaperId(1)).thenReturn(Arrays.asList(examerId));
         UserDetail userDetail = new UserDetail();
         userDetail.setMajor("computer");
-        userDetail.setBirthday(1);
         userDetail.setDegree("benke");
         userDetail.setGender("F");
         userDetail.setUserId(1);

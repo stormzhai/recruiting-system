@@ -147,7 +147,6 @@ public class PaperResource extends Resource {
             userMap.put("userId", users.get(i).getId());
             userMap.put("mobilePhone", users.get(i).getMobilePhone());
             userMap.put("email", users.get(i).getEmail());
-            userMap.put("birthday", userDetails.get(i).getBirthday());
             userMap.put("major", userDetails.get(i).getMajor());
             userMap.put("degree", userDetails.get(i).getDegree());
             userMap.put("gender", userDetails.get(i).getGender());

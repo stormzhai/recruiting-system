@@ -70,6 +70,10 @@ var passwordRetrieveForm = React.createClass({
     }
   },
 
+  back: function() {
+    page('register.html');
+  },
+
   render: function () {
 
     var retrieveClassName = 'password-retrieve-form-container ' + (this.state.showMessage ? 'hide' : '');
@@ -91,11 +95,21 @@ var passwordRetrieveForm = React.createClass({
                     className={'lose' + (this.state.emailError === '' ? ' hide' : '')}>{this.state.emailError}
                 </div>
               </div>
-              <button type="button" id="retrieve-btn" className="btn btn-lg btn-block btn-primary col-md-offset-4"
-                      onClick={this.retrieve}
-                      disabled={this.state.clickable}>确认
-                <i className={'fa fa-spinner fa-spin loading' + (this.state.clickable ? '' : ' hide')}/>
-              </button>
+              <div className="row">
+                <div className="col-md-6 col-sm-6">
+                  <button type="button" id="retrieve-btn"
+                   className="btn btn-lg btn-block btn-primary col-md-offset-5 col-sm-offset-5"
+                   onClick={this.retrieve} disabled={this.state.clickable}>确认
+                    <i className={'fa fa-spinner fa-spin loading' + (this.state.clickable ? '' : ' hide')}/>
+                  </button>
+                </div>
+                <div className="col-md-6 col-sm-6">
+                  <button type="button" id="retrieve-btn"
+                  className="btn btn-lg btn-block btn-default col-md-offset-2 col-sm-offset-2"
+                  onClick={this.back}>返回
+                  </button>
+                </div>
+              </div>
             </form>
           </div>
           <div id="message" className={messageClassName}>

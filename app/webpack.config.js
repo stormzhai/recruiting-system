@@ -22,7 +22,7 @@ var config = {
     "password-retrieve": './source/scripts/password-retrieve.js',
     "password-reset": './source/scripts/password-reset.js',
     "homework-details": './source/scripts/homework-details.js',
-    "vendors": ['bootstrap.css','font-awesome','jquery','react','react-dom', 'bootstrap.js']
+    "vendors": ['jquery', 'bootstrap.css', 'font-awesome', 'react', 'react-dom', 'bootstrap.js']
     //"vendor.css": ['bootstrap.css','font-awesome']
   },
   output: {
@@ -46,7 +46,7 @@ var config = {
       },
       {
         test: /\.css$/,
-        loader: ExtractTextPlugin.extract('style-loader','css-loader')
+        loader: ExtractTextPlugin.extract('style-loader', 'css-loader')
       },
       {
         test: /\.less$/,
@@ -65,7 +65,7 @@ var config = {
         loader: 'url-loader?limit=10000&name=build/[name].[ext]'
       }
     ],
-    noParse: [pathToJQuery,pathToBootstarp]
+    noParse: [pathToJQuery, pathToBootstarp]
   },
   plugins: [
     new webpack.ProvidePlugin({
@@ -77,7 +77,7 @@ var config = {
       ReactDOM: 'react-dom'
     }),
     new ExtractTextPlugin("[chunkhash:8].[name].css"),
-    //new webpack.optimize.CommonsChunkPlugin('vendors', 'vendors.js'),
+    new webpack.optimize.CommonsChunkPlugin('vendors', 'vendors.js'),
     new webpack.optimize.UglifyJsPlugin({
       compress: {
         warnings: false
@@ -87,16 +87,16 @@ var config = {
   //devtool: '#inline-source-map',
   resolve: {
     alias: {
+      'jquery': 'jquery/dist/jquery.min.js',
       'bootstrap.css': 'bootstrap/dist/css/bootstrap.min.css',
       'font-awesome': 'font-awesome/css/font-awesome.min.css',
-      'bootstrap.js': 'bootstrap/dist/js/bootstrap.min.js',
-      'jquery': 'jquery/dist/jquery.min.js'
+      'bootstrap.js': 'bootstrap/dist/js/bootstrap.min.js'
     }
   }
 };
 
 function htmlwebpackPluginBuilder(fileName, deps) {
-  return new HtmlwebpackPlugin ({
+  return new HtmlwebpackPlugin({
     filename: fileName,
     minify: {collapseWhitespace: true},
     template: __dirname + '/source/' + fileName,

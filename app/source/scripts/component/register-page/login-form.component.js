@@ -6,7 +6,6 @@ var LoginActions = require('../../actions/register-page/login-actions');
 var LoginStore = require('../../store/register-page/login-store');
 var Reflux = require('reflux');
 var constraint = require('../../../../mixin/login-constraint');
-var page = require('page');
 var constant = require('../../../../mixin/constant');
 
 function getError(validateInfo, field) {
@@ -31,15 +30,9 @@ var LoginForm = React.createClass({
     };
   },
 
-  handleChange: function (event) {
-    var value = event.target.value;
-    var name = event.target.name;
-    LoginActions.changeValue(name, value);
-  },
-
   validate: function (event) {
     var target = event.target;
-    var value = target.value;
+    var value = target.value.trim();
     var name = target.name;
     var valObj = {};
     var result;
@@ -80,8 +73,8 @@ var LoginForm = React.createClass({
       clickable: true
     });
 
-    var email = ReactDOM.findDOMNode(this.refs.email).value;
-    var loginPassword = ReactDOM.findDOMNode(this.refs.loginPassword).value;
+    var email = ReactDOM.findDOMNode(this.refs.email).value.trim();
+    var loginPassword = ReactDOM.findDOMNode(this.refs.loginPassword).value.trim();
     LoginActions.login(email, loginPassword);
   },
 

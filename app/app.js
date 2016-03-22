@@ -11,7 +11,6 @@ var session = require('express-session');
 var sessionCheck = require('./middleware/session-check');
 var errRequestHandler = require('./middleware/errorRequestHandler');
 var util = require('util');
-// var mongoose = require('mongoose');
 var mongoConn = require('./services/mongo-conn');
 var MongoStore = require('connect-mongo')(session);
 var constant = require('./mixin/constant');

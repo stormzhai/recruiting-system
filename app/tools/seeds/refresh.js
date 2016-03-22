@@ -4,7 +4,6 @@ var mongoose = require('mongoose');
 var logicPuzzle = require('../../models/logic-puzzle');
 
 var UserHomeworkQuizzes = require('../../models/user-homework-quizzes');
-var homeworkQuizzes = require('../../models/homework-quizzes');
 
 var async = require('async');
 
@@ -598,12 +597,6 @@ db.once('open', () => {
           console.log('mongo refresh end.');
           done(null);
         });
-      });
-    },
-    (done) => {
-      homeworkQuizzes.remove({}, () => {
-        console.log('remove homeworkQuizzes success');
-        done(null);
       });
     },
     (done) => {

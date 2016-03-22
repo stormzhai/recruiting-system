@@ -20,7 +20,7 @@ var LogicPuzzleChart = React.createClass({
   componentDidUpdate: function() {
     if('' !== this.state.item.chartPath) {
       $('.zoomContainer').remove();
-      $(ReactDOM.findDOMNode(this.refs.logicPuzzleImg))
+      $(this.refs.logicPuzzleImg)
           .removeData('zoomImage')
           .elevateZoom({
             zoomWindowFadeIn: 500,

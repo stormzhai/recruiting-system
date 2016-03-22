@@ -7,7 +7,6 @@ var PasswordResetStore = require('../../store/password-retrieve/password-reset-s
 var Reflux = require('reflux');
 var PasswordStore = require('../../store/reuse/password-store');
 var constraint = require('../../../../mixin/confirm-password-constraint');
-var page = require('page');
 var constant = require('../../../../mixin/constant');
 var lang = require('../../../../mixin/lang-message/chinese');
 var getError = require('../../../../mixin/get-error');

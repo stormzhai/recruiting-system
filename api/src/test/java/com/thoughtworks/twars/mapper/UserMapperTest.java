@@ -79,7 +79,6 @@ public class UserMapperTest extends TestBase {
         userDetail.setMajor("cs");
         userDetail.setSchool("xi'an");
         userDetail.setName("purple");
-        userDetail.setBirthday(2);
 
         userMapper.updateUserDetail(userDetail);
 
@@ -90,7 +89,6 @@ public class UserMapperTest extends TestBase {
     public void should_insert_user_detail() throws Exception {
         UserDetail userDetail = new UserDetail();
 
-        userDetail.setBirthday(3);
         userDetail.setGender("F");
         userDetail.setDegree("benke");
         userDetail.setSchool("shannxi");
@@ -113,7 +111,6 @@ public class UserMapperTest extends TestBase {
         assertThat(detail.getMajor(), is("计算机"));
         assertThat(detail.getDegree(), is("本科"));
         assertThat(detail.getGender(), is("F"));
-        assertThat(detail.getBirthday(), is(0));
     }
 
     @Test
