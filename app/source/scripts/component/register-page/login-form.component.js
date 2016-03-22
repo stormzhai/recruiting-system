@@ -67,22 +67,60 @@ var LoginForm = React.createClass({
     }
   },
 
+  checkLoginData:function(loginData) {
+    var passCheck = true;
+
+    var stateObj = {};
+    loginData.forEach((data) => {
+      var valObj = {};
+      var name = data.name;
+      var value = data.value.trim();
+      var result;
+      var error;
+
+      if (name === 'email') {
+        valObj.email = value;
+        valObj.mobilePhone = value;
+        result = validate(valObj, constraint);
+        error = getError(result, 'email');
+        if (error) {
+          error = getError(result, 'mobilePhone');
+        }
+      } else {
+        valObj[name] = value;
+        result = validate(valObj, constraint);
+        error = getError(result, name);
+      }
+      if(error !== '') {
+        passCheck = false;
+      }
+      stateObj[name + 'Error'] = error;
+      this.setState(stateObj);
+    });
+    return passCheck;
+  },
 
   login: function () {
-    this.setState({
-      clickable: true
-    });
+    var email = ReactDOM.findDOMNode(this.refs.email);
+    var loginPassword = ReactDOM.findDOMNode(this.refs.loginPassword);
+    var data = [];
+    data.push(email, loginPassword);
 
-    var email = ReactDOM.findDOMNode(this.refs.email).value.trim();
-    var loginPassword = ReactDOM.findDOMNode(this.refs.loginPassword).value.trim();
-    LoginActions.login(email, loginPassword);
+    if(!this.checkLoginData(data)) {
+      return false;
+    }else {
+      this.setState({
+        clickable: true
+      });
+      LoginActions.login(email.value.trim(), loginPassword.value.trim());
+    }
   },
 
   render: function () {
     var classString = 'col-md-7 logon-form-container' + (this.state.isLoginState ? '' : ' hide');
     return (
         <div id="logon" className={classString}>
-          <h4 className="welcome">欢迎登陆思沃学院</h4>
+          <h4 className="welcome">欢迎登录思沃学院</h4>
           <div className={'lose' + (this.state.loginFailed === false ? ' hide' : '')} name="loginFailed">用户名或密码错误</div>
           <form action="">
             <div className="form-group">
@@ -100,8 +138,8 @@ var LoginForm = React.createClass({
                   className={'lose' + (this.state.loginPasswordError === '' ? ' hide' : '')}>{this.state.loginPasswordError}
               </div>
             </div>
-            <button type="button" id="login-btn" className="btn btn-lg btn-block btn-primary" onClick={this.login}
-                    disabled={this.state.clickable}>登陆
+            <button type="button" id="login-btn" onClick={this.login}
+                  className="btn btn-lg btn-block btn-primary">登录
               <i className={'fa fa-spinner fa-spin loading' + (this.state.clickable ? '' : ' hide')}/>
             </button>
           </form>

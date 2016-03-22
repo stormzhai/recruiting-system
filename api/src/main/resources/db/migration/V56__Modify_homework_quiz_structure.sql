@@ -1,0 +1,1 @@
+ALTER TABLE homeworkQuiz MODIFY COLUMN description TEXT NOT NULL ;

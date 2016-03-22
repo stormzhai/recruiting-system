@@ -164,8 +164,8 @@ var RegisterForm = React.createClass({
               <a id="agreement" data-toggle="modal" data-target="#agreementModal">协议</a>
             </div>
 
-            <button type="button" id="register-btn" disabled={this.state.clickable}
-                    className="btn btn-lg btn-block btn-primary" ref="register" onClick={this.register}>注册
+            <button type="button" id="register-btn" ref="register"
+             className="btn btn-lg btn-block btn-primary" onClick={this.register}>注册
               <i className={'fa fa-spinner fa-spin' + (this.state.clickable ? '' : ' hide')}/>
             </button>
           </form>

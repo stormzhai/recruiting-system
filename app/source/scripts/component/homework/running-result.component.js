@@ -19,19 +19,13 @@ var RunningResult = React.createClass({
   },
 
   render() {
-
+    if(this.state.isSubmited){
+      if(!this.state.resultText){
+        this.state.resultText = '正在进行测试,请稍候 ... ...';
+      }
+    }
     return (
-        <div className="runningResult">
-          {
-              this.state.isSubmited ?
-                  <div className={'prompt ' + (this.state.resultText ? 'hide': '')}>
-                    <strong>正在进行测试,请稍候 ... ...</strong>
-                  </div>
-                :
-                  <div className="prompt">
-                    <strong>快点开始答题吧!</strong>
-                  </div>
-          }
+        <div className="runningResult tab">
           <div className="result">
             <label>运行结果为:</label>
             <div className="content">

@@ -1,10 +1,15 @@
 #!/usr/bin/env bash
 
+set -eo pipefail
+
+if [ -z "$CONFIG_FILE_DIR" ]; then
+	echo >&2 'You need to specify CONFIG_FILE_DIR'
+	exit 1
+fi
+
 # api package
-set -e
 rm -fr assembly/assemble/jetty-api/*
-cp assembly/conf/config.properties api/src/main/resources/config.properties
-cp assembly/conf/gradle.properties api/gradle.properties
+cp $CONFIG_FILE_DIR/config.properties api/src/main/resources/config.properties
 
 cd api
 gradle clean

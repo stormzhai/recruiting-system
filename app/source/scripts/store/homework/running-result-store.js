@@ -21,10 +21,17 @@ var RunningResultStore = Reflux.createStore({
         .query({orderId: Number})
         .use(errorHandler)
         .end((err,res) => {
-          this.trigger({
-            isSubmited: res.body.isSubmited,
-            resultText: res.body.resultText
-          });
+          if(res.body){
+            this.trigger({
+              isSubmited: res.body.isSubmited,
+              resultText: res.body.resultText
+            });
+          } else {
+            this.trigger({
+              resultText: ''
+            });
+          }
+
         });
   },
 

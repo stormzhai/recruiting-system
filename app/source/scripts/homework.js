@@ -69,7 +69,7 @@ ReactDom.render(
           <Account />
         </Navigation>
       </header>
-        <div className="row">
+        <div>
           <HomeworkSidebar onAction={onAction} orderId={changeId()}/>
           <HomeworkContent>
             <HomeworkIntroduction />

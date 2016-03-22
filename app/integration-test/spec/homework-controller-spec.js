@@ -52,7 +52,7 @@ describe('GET /quiz', function () {
           quiz: {
             quizStatus: 2,
             desc: '这是一道比较简单的题目',
-            templateRepo: 'github.com/homework/1'
+            templateRepo: 'https://github.com/homework/1'
           }
         })
         .end(function (err, res) {
@@ -79,7 +79,7 @@ describe('GET /quiz', function () {
           quiz: {
             quizStatus: 2,
             desc: '这是一道比较简单的题目',
-            templateRepo: 'github.com/homework/1'
+            templateRepo: 'https://github.com/homework/1'
           }
         })
         .end(function (err, res) {

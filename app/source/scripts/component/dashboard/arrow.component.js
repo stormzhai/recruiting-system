@@ -4,7 +4,7 @@ var Arrow = React.createClass({
 
   render() {
     return (
-        <div className="col-md-12 col-sm-12">
+        <div className="dashboard-icon">
           <i className="fa fa-arrow-circle-down fa-5x" />
         </div>
     );

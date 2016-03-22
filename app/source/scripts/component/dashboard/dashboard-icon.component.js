@@ -41,7 +41,7 @@ var DashboardIcon = React.createClass({
       }
     };
     return (
-        <div className="col-md-4 col-sm-6 col-md-offset-4">
+        <div className="dashboard-icon">
           <a href={iconInfos[this.props.name].href} className="icon-view">
             <div className={'icon-wrapper-'+iconInfos[this.props.name].isEnabled}
                  name={iconInfos[this.props.name].name}>

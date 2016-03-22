@@ -242,6 +242,7 @@ HomeworkController.prototype.getResult = (req, res) => {
       isSubmited = history.length > 0;
       if (isSubmited && history[history.length - 1].resultURL) {
         resultText = history[history.length - 1].homeworkDetail;
+        resultText = new Buffer(resultText, 'base64').toString('utf8');
         res.send({
           isSubmited: isSubmited,
           resultText: resultText

@@ -30,10 +30,10 @@ var StartInfo = React.createClass({
           </section>
           <section className="content">
             <div className="row">
-              <div className="col-md-4 col-md-offset-4">一 答题需知</div>
+              <div>一 答题需知</div>
             </div>
             <div className="row">
-              <div className="col-md-4 col-md-offset-4">
+              <div>
                 <ol>
                   <li>
                     您共有90分钟时间，请认真答题
@@ -57,12 +57,12 @@ var StartInfo = React.createClass({
               </div>
             </div>
             <div className="row">
-              <div className="col-md-4 col-md-offset-4">
+              <div>
                 二 请阅读并同意保密协议
               </div>
             </div>
             <div className="row">
-              <div className="checkbox col-md-4 col-md-offset-4">
+              <div className="checkbox">
                 <label>
                   <input type="checkbox" onClick={this.changeAgreeState}/> 同意
                 </label>

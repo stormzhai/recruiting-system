@@ -66,17 +66,17 @@ body {
     color: @white;
     opacity: 0.6;
   }
+
   button.list-group-item {
     outline: none;
   }
   .content {
     background-color: @white;
-    height: 600px;
-    overflow-y: scroll;
+    overflow: hidden;
     .nav-tabs > li > a {
       outline: none;
+      margin-right: 0px;
     }
-    text-align: center;
     border-radius: 4px 0 0 0;
     .row {
       margin-top: 30px;
@@ -85,9 +85,6 @@ body {
     .tab-content {
       .templateRepo {
         margin: 55px auto;
-        span {
-          margin: 0 10px;
-        }
         em {
           padding: 2px 10px;
           border: none;
@@ -95,30 +92,33 @@ body {
           background: #eee;
         }
       }
+      .content{
+        text-align: left;
+        word-wrap: break-word;
+        white-space: pre-wrap;
+        padding: 20px;
+        margin-right: 20px;
+        margin-bottom: 20px;
+        border-radius: 4px;
+        max-height: 450px;
+        overflow-y: auto;
+      }
+      .tab {
+        padding: 20px;
+        height: 600px;
+        border:1px solid #ddd;
+        border-top: none;
+
+      }
       .runningResult {
         text-align: left;
-        .prompt {
-          font-size: 20px;
-          font-family: sans-serif;
-          text-align: center;
-        }
-        .hide {
-          display: none;
-        }
         .result{
           padding-left: 20px;
           margin-top: 10px;
           .content{
-            text-align: left;
-            word-wrap: break-word;
-            white-space: pre-wrap;
             background: #f5f5f5;
             border: 1px solid #e3e3e3;
-            padding: 20px;
-            margin-right: 20px;
-            margin-bottom: 20px;
-            border-radius: 4px;
-            max-height: 450px;
+            height: 450px;
           }
         }
 

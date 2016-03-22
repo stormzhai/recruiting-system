@@ -98,15 +98,15 @@ var passwordRetrieveForm = React.createClass({
               <div className="row">
                 <div className="col-md-6 col-sm-6">
                   <button type="button" id="retrieve-btn"
-                   className="btn btn-lg btn-block btn-primary col-md-offset-5 col-sm-offset-5"
+                   className="btn btn-block btn-primary col-md-offset-6 col-xs-offset-4"
                    onClick={this.retrieve} disabled={this.state.clickable}>确认
                     <i className={'fa fa-spinner fa-spin loading' + (this.state.clickable ? '' : ' hide')}/>
                   </button>
                 </div>
                 <div className="col-md-6 col-sm-6">
                   <button type="button" id="retrieve-btn"
-                  className="btn btn-lg btn-block btn-default col-md-offset-2 col-sm-offset-2"
-                  onClick={this.back}>返回
+                  className="btn btn-block btn-default col-md-offset-2 col-xs-offset-4"
+                  onClick={this.back}>返回登录
                   </button>
                 </div>
               </div>
