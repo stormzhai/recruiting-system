@@ -28,12 +28,6 @@ var passwordRetrieveForm = React.createClass({
     };
   },
 
-  handleChange: function (event) {
-    var value = event.target.value;
-    var name = event.target.name;
-    passwordRetrieveActions.changeValue(name, value);
-  },
-
   validate: function (event) {
     var target = event.target;
     var value = target.value;
@@ -50,12 +44,13 @@ var passwordRetrieveForm = React.createClass({
   },
 
   retrieve: function () {
-    if (!this.state.email || this.state.emailError) {
+
+    if (!this.refs.email.value || this.state.emailError) {
 
       var valObj = {};
       var stateObj = {};
 
-      valObj.email = ReactDOM.findDOMNode(this.refs.email).value;
+      valObj.email = this.refs.email.value;
       stateObj.emailError = getError(validate(valObj, constraint), 'email');
 
       this.setState(stateObj);
@@ -64,10 +59,13 @@ var passwordRetrieveForm = React.createClass({
       this.setState({
         clickable: true
       });
-
-      var email = ReactDOM.findDOMNode(this.refs.email).value;
+      var email = this.refs.email.value;
       passwordRetrieveActions.retrieve(email);
     }
+  },
+
+  handler: function (evt) {
+    this.setState({email: evt.target.value});
   },
 
   back: function() {
@@ -90,7 +88,7 @@ var passwordRetrieveForm = React.createClass({
               <div className="form-group">
                 <input className="form-control" type="text" placeholder="请输入注册时填写的邮箱" name="email"
                        onBlur={this.validate} onkeypress="if(event.keyCode==13||event.which==13){return false;}"
-                       ref="email" autoComplete="off" onChange={this.handleChange} value={this.state.email}/>
+                       ref="email" autoComplete="off" onChange={this.handler}/>
                 <div
                     className={'lose' + (this.state.emailError === '' ? ' hide' : '')}>{this.state.emailError}
                 </div>

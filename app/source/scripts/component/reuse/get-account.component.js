@@ -24,11 +24,11 @@ var GetAccount = React.createClass({
             <a href='register.html'>登录/注册</a>
           </div>
           <div className={this.state.isLoged ? 'dropdown' : 'hide'}>
-            <a className="dropdown-style" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true"
+            <div className="dropdown-style" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true"
                aria-expanded="true">
               {this.state.account}
               <span className="caret"></span>
-            </a>
+            </div>
             <ul className="dropdown-menu" aria-labelledby="dropdownMenu1">
               <li><a href="user-center.html">个人中心</a></li>
               <li><a href="dashboard.html">控制台</a></li>

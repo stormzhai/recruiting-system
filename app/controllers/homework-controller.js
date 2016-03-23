@@ -231,7 +231,7 @@ HomeworkController.prototype.updateResult = (req, res)=> {
 HomeworkController.prototype.getResult = (req, res) => {
   var userId = req.session.user ? req.session.user.id : 'invalid';
   var orderId = req.query.orderId;
-  var history, isSubmited, resultURL, resultText;
+  var history, isSubmited, resultText;
 
   userHomeworkQuizzes.findOne({userId: userId}, function(err, data) {
     var integer = (Number(orderId) === parseInt(orderId, 10));
@@ -243,13 +243,11 @@ HomeworkController.prototype.getResult = (req, res) => {
       if (isSubmited && history[history.length - 1].resultURL) {
         resultText = history[history.length - 1].homeworkDetail;
         resultText = new Buffer(resultText, 'base64').toString('utf8');
-        res.send({
-          isSubmited: isSubmited,
-          resultText: resultText
-        });
-      } else {
-        res.send();
       }
+      res.send({
+        isSubmited: isSubmited,
+        resultText: resultText
+      });
     }
   });
 };

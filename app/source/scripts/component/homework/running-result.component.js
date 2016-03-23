@@ -19,8 +19,9 @@ var RunningResult = React.createClass({
   },
 
   render() {
+
     if(this.state.isSubmited){
-      if(!this.state.resultText){
+      if(this.state.resultText === undefined){
         this.state.resultText = '正在进行测试,请稍候 ... ...';
       }
     }

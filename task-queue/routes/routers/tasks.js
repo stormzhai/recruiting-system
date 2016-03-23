@@ -11,6 +11,6 @@ router.post('/', taskController.createTask);
 
 router.post('/:homeworkName/completion', taskController.result);
 
-router.post('/status', taskController.status);
+router.get('/status', taskController.status);
 
 module.exports = router;

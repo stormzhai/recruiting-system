@@ -34,10 +34,6 @@ var passwordRetrieveStore = Reflux.createStore({
             });
           }
         });
-  },
-
-  onChangeValue: function (name, value) {
-    this.trigger({[name]: value});
   }
 
 });

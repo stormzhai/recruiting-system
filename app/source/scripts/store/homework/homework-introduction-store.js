@@ -18,7 +18,7 @@ var HomeworkIntroductionStore = Reflux.createStore({
         .end((err, res) => {
           if (res.body.status === constant.httpCode.FORBIDDEN) {
             this.trigger({
-              desc: '##当前题目处于锁定状态!',
+              desc: '## 当前题目处于锁定状态!',
               quizStatus: homeworkQuizzesStatus.LOCKED,
               showRepo: false
             });

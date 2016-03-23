@@ -10,7 +10,7 @@ var RunningResultStore = Reflux.createStore({
 
   onSubmitUrl: function () {
     this.trigger({
-      resultText: '',
+      resultText: undefined,
       isSubmited: true
     });
   },
@@ -26,12 +26,7 @@ var RunningResultStore = Reflux.createStore({
               isSubmited: res.body.isSubmited,
               resultText: res.body.resultText
             });
-          } else {
-            this.trigger({
-              resultText: ''
-            });
           }
-
         });
   },
 
