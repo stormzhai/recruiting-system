@@ -30,8 +30,7 @@ var logicPuzzleSchema = new Schema({
   blankQuizId: Number,
   paperId: Number,
   isCommited: Boolean,
-  endTime: Number,
-  isAgreed: Boolean
+  endTime: Number
 });
 
 logicPuzzleSchema.statics.isPaperCommited = function (userId, callback) {

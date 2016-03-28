@@ -17,10 +17,6 @@ window.onpopstate = function () {
   listener();
 };
 
-window.onload = function() {
-  listener();
-};
-
 var LoginInfo = React.createClass({
   mixins: [Reflux.connect(LoginStore)],
 
@@ -29,7 +25,9 @@ var LoginInfo = React.createClass({
       isLoginState: false
     };
   },
-
+  componentWillMount: function() {
+    listener();
+  },
   toggleState: function () {
     LoginActions.changeState(this.state.isLoginState);
   },

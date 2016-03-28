@@ -124,7 +124,7 @@ var UserDetail = React.createClass({
     return (
         <div className={'col-md-9 col-sm-9 col-xs-12' + classString}>
           <div className='content'>
-            <form className='form-horizontal form-top-height'>
+            <form className='form-horizontal form-top-height' onSubmit={this.update} action='user-center.html'>
               <div id='account-info'>
                 <label htmlFor='inputSchool' className='col-sm-4 col-md-4 control-label'>学校<span className="error alert alert-danger">*</span></label>
                 <div className={'form-group has-' + (this.state.schoolError === '' ? '' : 'error')}>
@@ -215,7 +215,7 @@ var UserDetail = React.createClass({
 
                 <div className='form-group'>
                   <div className='col-sm-offset-4 col-sm-4 col-md-offset-4 col-md-4'>
-                    <button type='button' className='btn btn-default' onClick={this.update}>保存</button>
+                    <button type='submit' className='btn btn-default'>保存</button>
                   </div>
                 </div>
               </div>

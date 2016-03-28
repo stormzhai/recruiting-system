@@ -5,7 +5,8 @@ var registerAgreement = React.createClass({
 
   render: function () {
     return (
-        <div className="modal fade" id="agreementModal" tabIndex="-1" role="dialog" aria-labelledby="agreementLabel">
+      <div>
+        <div className="modal fade" id="registerAgreement" tabIndex="-1" role="dialog" aria-labelledby="agreementLabel">
           <div className="modal-dialog" role="document" aria-hidden="true">
             <div className="modal-content">
               <div className="modal-header">
@@ -40,13 +41,33 @@ var registerAgreement = React.createClass({
                   第十九条 兹有以上网站法律声明即日起公布并生效，访问者须仔细阅读并同意本声明。访问者对本网站包括但不限于的访问浏览，利用，转载，宣传，链接等，均视为访问者同意本网站免责声明。
                 </div>
               </div>
-
               <div className="modal-footer">
                 <button type="button" className="btn btn-default" data-dismiss="modal">关闭</button>
               </div>
             </div>
           </div>
         </div>
+        <div className="modal fade" id="securityAgreement" tabIndex="-1" role="dialog" aria-labelledby="agreementLabel">
+          <div className="modal-dialog" role="document" aria-hidden="true">
+            <div className="modal-content">
+              <div className="modal-header">
+                <button type="button" className="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h3 className="modal-title" id="myModalLabel">保密协议</h3>
+              </div>
+              <div className="modal-body">
+                <b>在答题之前，请务必仔细阅读本条款并同意本协议</b><br/><br/>
+                第一条 除我们另有明确说明或者中国法律有强制性规定外，本网站题目属于原创的作品，本网站及作者共同享有版权，其他网站及传统媒体如需使用，须取得本网站的书面授权，未经授权严禁转载或用于其它商业用途<br/><br/>
+                第二条 未经本站和作者共同同意，其他任何机构不得以任何形式侵犯其作品著作权，包括但不限于，擅自复制，链接，非法使用或转载，或以任何方式建立作品镜像,一旦发现会追究当事人的责任<br/><br/>
+
+                <div className="modal-footer">
+                  <button type="button" className="btn btn-default" data-dismiss="modal">确认</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     );
   }
 });

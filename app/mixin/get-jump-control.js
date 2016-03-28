@@ -42,12 +42,6 @@ function jumpControl(data) {
     condition: !isPaperCommited
   }, {
     originPath: [
-      'logic-puzzle.html'
-    ],
-    targetPath: 'start.html',
-    condition: !isAgreed
-  }, {
-    originPath: [
       'start.html'
     ],
     targetPath: 'dashboard.html',

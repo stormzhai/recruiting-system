@@ -43,8 +43,8 @@ var passwordRetrieveForm = React.createClass({
     this.setState(stateObj);
   },
 
-  retrieve: function () {
-
+  retrieve: function (evt) {
+    evt.preventDefault();
     if (!this.refs.email.value || this.state.emailError) {
 
       var valObj = {};
@@ -84,7 +84,7 @@ var passwordRetrieveForm = React.createClass({
             <div className={'lose' + (this.state.retrieveFailed === false ? ' hide' : '')} name="retrieveFailed">
               该邮箱并不存在
             </div>
-            <form action="">
+            <form action="" onSubmit={this.retrieve}>
               <div className="form-group">
                 <input className="form-control" type="text" placeholder="请输入注册时填写的邮箱" name="email"
                        onBlur={this.validate} onkeypress="if(event.keyCode==13||event.which==13){return false;}"
@@ -95,9 +95,9 @@ var passwordRetrieveForm = React.createClass({
               </div>
               <div className="row">
                 <div className="col-md-6 col-sm-6">
-                  <button type="button" id="retrieve-btn"
+                  <button type="submit" id="retrieve-btn"
                    className="btn btn-block btn-primary col-md-offset-6 col-xs-offset-4"
-                   onClick={this.retrieve} disabled={this.state.clickable}>确认
+                   disabled={this.state.clickable}>确认
                     <i className={'fa fa-spinner fa-spin loading' + (this.state.clickable ? '' : ' hide')}/>
                   </button>
                 </div>

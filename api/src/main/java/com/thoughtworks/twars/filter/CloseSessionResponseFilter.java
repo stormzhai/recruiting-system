@@ -32,7 +32,7 @@ public class CloseSessionResponseFilter implements ContainerResponseFilter {
 
         } finally {
             try {
-//                session.close();
+                session.close();
             } catch (Exception e) {
 
             }

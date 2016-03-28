@@ -100,7 +100,9 @@ var LoginForm = React.createClass({
     return passCheck;
   },
 
-  login: function () {
+  login: function (evt) {
+    evt.preventDefault();
+
     var email = ReactDOM.findDOMNode(this.refs.email);
     var loginPassword = ReactDOM.findDOMNode(this.refs.loginPassword);
     var data = [];
@@ -122,7 +124,7 @@ var LoginForm = React.createClass({
         <div id="logon" className={classString}>
           <h4 className="welcome">欢迎登录思沃学院</h4>
           <div className={'lose' + (this.state.loginFailed === false ? ' hide' : '')} name="loginFailed">用户名或密码错误</div>
-          <form action="">
+          <form action="dashboard.html"  onSubmit={this.login}>
             <div className="form-group">
               <input className="form-control" type="text" placeholder="请输入邮箱或手机号" name="email"
                      onBlur={this.validate}
@@ -138,7 +140,7 @@ var LoginForm = React.createClass({
                   className={'lose' + (this.state.loginPasswordError === '' ? ' hide' : '')}>{this.state.loginPasswordError}
               </div>
             </div>
-            <button type="button" id="login-btn" onClick={this.login}
+            <button type="submit" id="login-btn"
                   className="btn btn-lg btn-block btn-primary">登录
               <i className={'fa fa-spinner fa-spin loading' + (this.state.clickable ? '' : ' hide')}/>
             </button>

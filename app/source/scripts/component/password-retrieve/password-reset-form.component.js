@@ -50,7 +50,8 @@ var passwordResetForm = React.createClass({
     }
   },
 
-  reset: function () {
+  reset: function (evt) {
+    evt.preventDefault();
     PasswordActions.submitEvent('submit');
 
     if(!this.checkInfo()) {
@@ -81,12 +82,11 @@ var passwordResetForm = React.createClass({
             <div className={'lose' + (this.state.resetFailed === 'timeOut' ? '' : ' hide')} name="resetFailed">
               你的链接已过期!
             </div>
-            <form action="">
+            <form action="" onSubmit={this.reset}>
               <div className="form-group">
                 {this.props.children}
               </div>
-              <button type="button" id="reset-btn" className="btn btn-lg btn-block btn-primary col-md-offset-4"
-                      onClick={this.reset}
+              <button type="submit" id="reset-btn" className="btn btn-lg btn-block btn-primary col-md-offset-4"
                       disabled={this.state.clickable}>确认
                 <i className={'fa fa-spinner fa-spin loading' + (this.state.clickable ? '' : ' hide')}/>
               </button>

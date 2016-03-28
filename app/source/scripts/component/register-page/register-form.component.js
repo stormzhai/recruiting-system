@@ -105,7 +105,9 @@ var RegisterForm = React.createClass({
     return passCheck;
   },
 
-  register: function () {
+  register: function (evt) {
+    evt.preventDefault();
+
     if (this.state.mobilePhoneError !== '' || this.state.emailError !== '') {
       return false;
     }
@@ -136,7 +138,7 @@ var RegisterForm = React.createClass({
         <div id="register" className={classString}>
           <h4 className="welcome">欢迎注册思沃学院</h4>
 
-          <form action="">
+          <form action='user-center.html' onSubmit={this.register}>
             <div className="form-group">
               <input className="form-control" type="text" placeholder="请输入手机号" name="mobilePhone" ref="mobilePhone"
                      onBlur={this.validate} />
@@ -161,11 +163,13 @@ var RegisterForm = React.createClass({
               <label>
                 <input type="checkbox" className="agree-check" onClick={this.changeAgreeState}/> 同意
               </label>
-              <a id="agreement" data-toggle="modal" data-target="#agreementModal">协议</a>
+              <a id="agreement" data-toggle="modal" data-target="#registerAgreement">注册协议</a>
+              <span>和</span>
+              <a id="agreement" data-toggle="modal" data-target="#securityAgreement">保密协议</a>
             </div>
 
-            <button type="button" id="register-btn" ref="register"
-             className="btn btn-lg btn-block btn-primary" onClick={this.register}>注册
+            <button type="submit" id="register-btn" ref="register"
+             className="btn btn-lg btn-block btn-primary">注册
               <i className={'fa fa-spinner fa-spin' + (this.state.clickable ? '' : ' hide')}/>
             </button>
           </form>

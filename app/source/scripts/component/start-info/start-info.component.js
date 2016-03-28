@@ -1,25 +1,12 @@
 'use strict';
 
 var Reflux = require('reflux');
-var StartActions = require('../../actions/start/start-actions');
-var StartStore = require('../../store/start/start-store');
+var page = require('page');
 
 var StartInfo = React.createClass({
-  mixins: [Reflux.connect(StartStore)],
-
-  getInitialState: function () {
-    return {
-      agree: false
-    };
-  },
-
-  changeAgreeState() {
-    var newState = !(this.state.agree);
-    this.setState({agree: newState});
-  },
 
   start: function () {
-    StartActions.agreeDeal(this.state.agree);
+    page('logic-puzzle.html');
   },
 
   render() {
@@ -56,23 +43,10 @@ var StartInfo = React.createClass({
                 </ol>
               </div>
             </div>
-            <div className="row">
-              <div>
-                二 请阅读并同意保密协议
-              </div>
-            </div>
-            <div className="row">
-              <div className="checkbox">
-                <label>
-                  <input type="checkbox" onClick={this.changeAgreeState}/> 同意
-                </label>
-                <a id="agreement" data-toggle="modal" data-target="#agreementModal">保密协议</a>
-              </div>
-            </div>
           </section>
           <section className="start-button">
             <button type="submit" className="btn btn-info btn-lg btn-block"
-                    disabled={this.state.agree ? '' : 'disabled'} onClick={this.start}>开始
+                     onClick={this.start}>开始
             </button>
           </section>
         </div>
