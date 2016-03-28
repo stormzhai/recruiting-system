@@ -7,16 +7,16 @@
     <environments default="default">
         <environment id="default">
             <transactionManager type="JDBC"/>
-            <dataSource type="POOLED">
-                <property name="driver" value="com.mysql.jdbc.Driver"/>
-                <property name="url"
+            <dataSource type="com.thoughtworks.twars.util.C3P0DataSourceFactory">
+                <property name="driverClass" value="com.mysql.jdbc.Driver"/>
+                <property name="jdbcUrl"
                           value="${jdbc.url}"/>
-                <property name="username" value="${jdbc.user}"/>
+                <property name="user" value="${jdbc.user}"/>
                 <property name="password" value="${jdbc.password}"/>
-                <property name="poolMaximumActiveConnections" value="10" />
-                <property name="poolTimeToWait" value="5000" />
-                <property name="poolPingEnabled" value="true"/>
-                <property name="poolPingQuery" value="select 1 from users" />
+                <property name="idleConnectionTestPeriod" value="60" />
+                <property name="maxPoolSize" value="20" />
+                <property name="maxIdleTime" value="600" />
+                <property name="preferredTestQuery" value="SELECT 1" />
             </dataSource>
         </environment>
     </environments>
