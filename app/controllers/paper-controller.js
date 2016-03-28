@@ -23,7 +23,6 @@ function PaperController() {
 
 }
 
-
 function getUserDataByPaperId(paperId, callback) {
 
   var logicPuzzleURL = 'papers/' + paperId + '/logicPuzzle';
@@ -54,7 +53,6 @@ function getUserDataByPaperId(paperId, callback) {
   });
 }
 
-
 function createUserDetail(data) {
   return {
     name: data.name,
@@ -76,7 +74,6 @@ function getLogicPuzzleByUserId(logicPuzzles, userId) {
   return logicPuzzleInfo;
 }
 
-
 function getHomeworkByUserId(homeworks, userId) {
 
   var homeworkInfo;
@@ -90,10 +87,10 @@ function getHomeworkByUserId(homeworks, userId) {
   return homeworkInfo;
 }
 
-
 function createLogicPuzzle(logicPuzzles, userId) {
 
   var accuracy = 0;
+  var passStandard = 0.6;
   var logicPuzzle = getLogicPuzzleByUserId(logicPuzzles, userId);
 
 
@@ -101,7 +98,9 @@ function createLogicPuzzle(logicPuzzles, userId) {
   var correctNumber = logicPuzzle.correctNumber;
 
   if (correctNumber !== 0) {
-    accuracy = ((correctNumber / itemNumber) * _percentage).toFixed(2);
+    accuracy = (correctNumber / itemNumber).toFixed(1);
+  } else {
+    accuracy = accuracy.toFixed(1);
   }
 
   return {
@@ -109,7 +108,8 @@ function createLogicPuzzle(logicPuzzles, userId) {
     itemNumber: itemNumber,
     startTime: logicPuzzle.startTime,
     endTime: logicPuzzle.endTime,
-    accuracy: accuracy + '%'
+    accuracy: accuracy,
+    isLogicPuzzlePassed: (accuracy > passStandard) ? '是' : '否'
   };
 }
 
@@ -117,6 +117,7 @@ function createHomework(homeworks, userId) {
 
   var sumTime = 0;
   var correctNumber = 0;
+  var passStandard = 0.6;
   var homework = {
     quizzes: []
   };
@@ -154,16 +155,17 @@ function createHomework(homeworks, userId) {
     homework.quizzes.push(quiz);
   });
 
-  var completion = (correctNumber / data.quizzes.length) * _percentage;
+  var accuracy = correctNumber / data.quizzes.length;
 
   homework.elapsedTime = sumTime;
-  homework.completion = completion.toFixed(2) + '%';
+  homework.homeworkDetailsAccuracy = accuracy.toFixed(1);
   homework.correctNumber = correctNumber;
   homework.quizNumber = data.quizzes.length;
+  homework.isHomeworkPassed = (accuracy > passStandard) ? '是' : '否';
+
 
   return homework;
 }
-
 
 function createScoresheetInfo(paperId, callback) {
 
@@ -216,12 +218,12 @@ function calcLogicPuzzleElapsedTime(logicPuzzle) {
   return elapsedHour + '小时' + elapsedMintues + '分' + time + '秒';
 }
 
-function calcHomeworkElapsedTime(homework) {
+function calcHomeworkElapsedTime(elapsedTime) {
 
   var elapsedDay = 0;
   var elapsedHour = 0;
   var elapsedMintues = 0;
-  var time = homework.elapsedTime;
+  var time = elapsedTime;
 
   elapsedDay = Math.floor(time / dayToSecond);
   time -= elapsedDay * dayToSecond;
@@ -232,52 +234,206 @@ function calcHomeworkElapsedTime(homework) {
   return elapsedDay + '天' + elapsedHour + '小时' + elapsedMintues + '分';
 }
 
-function createCSV(usersInfo, callback) {
+function createScoresheetCsvForPaper(paperId, usersInfo, callback) {
 
   var usersCsvInfo = [];
 
   var logicPuzzleElapsedTime = 0;
-  var fieldNames = ['姓名', '电话', '邮箱', '逻辑题准确率', '逻辑题花费时间', '家庭作业详情', '家庭作业花费时间'];
+  var fieldNames = ['姓名', '电话', '邮箱', '逻辑题准确率', '逻辑题是否通过', '逻辑题花费时间', '编程题正确率', '编程题是否通过', '编程题花费时间', '编程题详情'];
 
   usersInfo.forEach((userInfo)=> {
-
     usersCsvInfo.push({
       name: userInfo.userDetail.name,
       mobilePhone: userInfo.userDetail.mobilePhone,
       email: userInfo.userDetail.email,
-      accuracy: userInfo.logicPuzzle.accuracy,
+      logicPuzzleAccuracy: userInfo.logicPuzzle.accuracy,
+      isLogicPuzzlePassed: userInfo.logicPuzzle.isLogicPuzzlePassed,
       logicPuzzleElapsedTime: calcLogicPuzzleElapsedTime(userInfo.logicPuzzle),
-      homeworkDetails: config.appServer + 'homework-details.html?userId=' + userInfo.userId,
-      homeworkElapsedTime: calcHomeworkElapsedTime(userInfo.homework)
+      homeworkDetailsAccuracy: userInfo.homework.homeworkDetailsAccuracy,
+      isHomeworkPassed: userInfo.homework.isHomeworkPassed,
+      homeworkElapsedTime: calcHomeworkElapsedTime(userInfo.homework.elapsedTime),
+      homeworkDetails: config.appServer + 'paper/' + paperId + '/user/' + userInfo.userId + '/homework-details'
     });
 
   });
 
-  var fields = ['name', 'mobilePhone', 'email', 'accuracy', 'logicPuzzleElapsedTime', 'homeworkDetails', 'homeworkElapsedTime'];
+  var fields = ['name', 'mobilePhone', 'email', 'logicPuzzleAccuracy', 'isLogicPuzzlePassed', 'logicPuzzleElapsedTime', 'homeworkDetailsAccuracy', 'isHomeworkPassed', 'homeworkElapsedTime', 'homeworkDetails'];
 
   json2csv({data: usersCsvInfo, fields: fields, fieldNames: fieldNames}, function (err, csv) {
     callback(csv);
   });
 }
 
-
-PaperController.prototype.exportCsv = (req, res)=> {
+PaperController.prototype.exportScoresheetCsvForPaper = (req, res)=> {
   var paperId = req.params.paperId;
   createScoresheetInfo(paperId, function (scoresheetInfo) {
 
     if (scoresheetInfo.httpCode === constant.httpCode.NOT_FOUND) {
       res.sendStatus(constant.httpCode.NOT_FOUND);
     } else {
-
-      createCSV(scoresheetInfo.usersInfo, function (csv) {
-
-        var fileName = moment.unix(new Date() / constant.time.MILLISECOND_PER_SECONDS).format('YYYY-MM-DD') + '.csv';
-        fileName = 'paper-' + paperId + '-' + fileName;
+      createScoresheetCsvForPaper(paperId, scoresheetInfo.usersInfo, function (csv) {
+        var time = moment.unix(new Date() / constant.time.MILLISECOND_PER_SECONDS).format('YYYY-MM-DD');
+        var fileName = time + '/paper-' + paperId + '.csv';
         res.setHeader('Content-disposition', 'attachment; filename=' + fileName + '');
         res.setHeader('Content-Type', 'text/csv');
         res.send(csv);
       });
 
+    }
+  });
+};
+
+function getHomeworkDetailsByUserId(userId, callback) {
+  var userDetailURL = 'users/' + userId + '/detail';
+
+  async.parallel({
+    userDetail: function (done) {
+      apiRequest.get(userDetailURL, done);
+    },
+    homework: function (done) {
+      userHomeworkQuizzes.findOne({userId: userId}, done);
+    }
+  }, (err, result)=> {
+    if (err) {
+      callback({
+        httpCode: constant.httpCode.NOT_FOUND
+      });
+    } else {
+      callback({
+        result: result,
+        httpCode: constant.httpCode.OK
+      });
+    }
+  });
+}
+
+function createHomeworkDetail(quiz, quizzesLength) {
+  var homeworkDetails = {};
+  var passStandard = 0.6;
+  var sumTime = 0;
+  var correctNumber = 0;
+  var elapsedTime = 0;
+
+  if (quiz.homeworkSubmitPostHistory.length !== 0) {
+    var homeworkSubmitPostHistoryLength = quiz.homeworkSubmitPostHistory.length - 1;
+    elapsedTime = quiz.homeworkSubmitPostHistory[homeworkSubmitPostHistoryLength].commitTime - quiz.startTime;
+    homeworkDetails.lastCommitedDetail = new Buffer(quiz.homeworkSubmitPostHistory[quiz.homeworkSubmitPostHistory.length - 1].homeworkDetail, 'base64').toString('utf8');
+  } else {
+    homeworkDetails.lastCommitedDetail = '--';
+  }
+
+  if ((quiz.homeworkSubmitPostHistory.length !== 0) && quiz.homeworkSubmitPostHistory[homeworkSubmitPostHistoryLength].status === constant.homeworkQuizzesStatus.SUCCESS) {
+    correctNumber++;
+  }
+
+  sumTime += elapsedTime;
+
+  var accrucy = (correctNumber / quizzesLength).toFixed(1);
+
+  homeworkDetails.id = quiz.id;
+  homeworkDetails.address = quiz.uri;
+  homeworkDetails.startTime = quiz.startTime;
+  homeworkDetails.commitNumbers = quiz.homeworkSubmitPostHistory.length;
+  homeworkDetails.elapsedTime = sumTime;
+  homeworkDetails.isPassed = accrucy > passStandard ? '是' : '否';
+
+
+  //if (quiz.homeworkDetails === undefined) {
+  //  homeworkDetails.lastCommitedDetail = '';
+  //} else {
+  //  homeworkDetails.lastCommitedDetail = new Buffer(quiz.homeworkDetail, 'base64').toString('utf8');
+  //}
+
+  return homeworkDetails;
+}
+
+function createUserHomeworkDetails(paperId, userId, callback) {
+
+  getHomeworkDetailsByUserId(userId, (data)=> {
+
+    var userHomeworkDetails = {};
+    var usersInfo = [];
+    if (data.httpCode !== constant.httpCode.NOT_FOUND) {
+
+      data.result.homework.quizzes.forEach((quiz, index)=> {
+
+        var userInfo = {};
+        if (index === 0) {
+          userInfo.userDetail = createUserDetail(data.result.userDetail.body);
+        } else {
+          userInfo.userDetail = createUserDetail({
+            name: '',
+            mobilePhone: '',
+            email: ''
+          });
+        }
+        userInfo.userId = userId;
+        userInfo.homeworkDetails = createHomeworkDetail(quiz, data.result.homework.quizzes.length);
+
+        usersInfo.push(userInfo);
+      });
+
+      userHomeworkDetails.httpCode = data.httpCode;
+
+    } else {
+      userHomeworkDetails.httpCode = constant.httpCode.NOT_FOUND;
+    }
+
+    userHomeworkDetails.usersInfo = usersInfo;
+    callback(userHomeworkDetails);
+  });
+}
+
+function createUserHomeworkDetailsCsv(paperId, userHomeworkDetails, callback) {
+
+  var usersCsvInfo = [];
+
+  var fieldNames = ['姓名', '电话', '邮箱', '编程题编号', '编程题地址', '开始时间', '提交次数', '编程题花费时间', '编程题是否通过', '最后一次提交详情', '提交历史详情'];
+
+  userHomeworkDetails.usersInfo.forEach((userInfo)=> {
+    var startTime = userInfo.homeworkDetails.startTime;
+    startTime = startTime === undefined ? '--' : moment.unix(userInfo.homeworkDetails.startTime).format('YYYY-MM-DD HH:mm:ss');
+    usersCsvInfo.push({
+      name: userInfo.userDetail.name,
+      mobilePhone: userInfo.userDetail.mobilePhone,
+      email: userInfo.userDetail.email,
+      id: userInfo.homeworkDetails.id,
+      address: userInfo.homeworkDetails.address,
+      startTime: startTime,
+      commitNumbers: userInfo.homeworkDetails.commitNumbers,
+      elapsedTime: calcHomeworkElapsedTime(userInfo.homeworkDetails.elapsedTime),
+      isPassed: userInfo.homeworkDetails.isPassed,
+      lastCommitedDetail: userInfo.homeworkDetails.lastCommitedDetail,
+      homeworkDetailsUrl: config.appServer + 'paper/' + paperId + '/user/' + userInfo.userId + '/homeworkQuiz/' + userInfo.homeworkDetails.id
+    });
+
+  });
+
+  var fields = ['name', 'mobilePhone', 'email', 'id', 'address', 'startTime', 'commitNumbers', 'elapsedTime', 'isPassed', 'lastCommitedDetail', 'homeworkDetailsUrl'];
+
+  json2csv({data: usersCsvInfo, fields: fields, fieldNames: fieldNames}, function (err, csv) {
+    callback(csv);
+  });
+}
+
+PaperController.prototype.exportHomeworkDetailsCsvForUser = (req, res)=> {
+  var paperId = req.params.paperId;
+  var userId = req.params.userId;
+
+  createUserHomeworkDetails(paperId, userId, function (userHomeworkDetails) {
+
+    if (userHomeworkDetails.httpCode === constant.httpCode.NOT_FOUND) {
+      res.sendStatus(constant.httpCode.NOT_FOUND);
+    } else {
+      createUserHomeworkDetailsCsv(paperId, userHomeworkDetails, function (csv) {
+
+        var time = moment.unix(new Date() / constant.time.MILLISECOND_PER_SECONDS).format('YYYY-MM-DD');
+        var fileName = time + '-paper-' + paperId + '-user-' + userId + '.csv';
+
+        res.setHeader('Content-disposition', 'attachment; filename=' + fileName + '');
+        res.setHeader('Content-Type', 'text/csv');
+        res.send(csv);
+      });
     }
   });
 };
