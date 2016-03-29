@@ -6,3 +6,4 @@ default:
   jobName: 'TASK-RUNNER'
   nginxServer: 'http://10.29.3.221:8888/fs'
   taskServer: 'http://10.29.3.219' #更改为连接data时,你电脑的ip地址
+  database: 'mongodb://localhost/twars'
