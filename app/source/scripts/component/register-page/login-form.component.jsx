@@ -140,7 +140,7 @@ var LoginForm = React.createClass({
                   className={'lose' + (this.state.loginPasswordError === '' ? ' hide' : '')}>{this.state.loginPasswordError}
               </div>
             </div>
-            <button type="submit" id="login-btn"
+            <button type="submit" id="login-btn" disabled={this.state.clickable}
                   className="btn btn-lg btn-block btn-primary">登录
               <i className={'fa fa-spinner fa-spin loading' + (this.state.clickable ? '' : ' hide')}/>
             </button>

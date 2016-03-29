@@ -5,7 +5,7 @@ var LoginActions = require('../../actions/register-page/login-actions');
 var request = require('superagent');
 var constant = require('../../../../mixin/constant');
 var page = require('page');
-var errorHandler = require('../../../../tools/error-handler');
+var errorHandler = require('../../../../tools/error-handler.jsx');
 
 
 var LoginStore = Reflux.createStore({

@@ -10,18 +10,18 @@ var pathToBootstarp = path.resolve(node_modules, 'bootstrap/dist/');
 
 var config = {
   entry: {
-    "deadline": './source/scripts/deadline.js',
+    "deadline": './source/scripts/deadline.jsx',
     "404": "./source/scripts/404.js",
-    "index": "./source/scripts/index.js",
-    "logic-puzzle": "./source/scripts/logic-puzzle",
-    "homework": "./source/scripts/homework.js",
-    "register": "./source/scripts/register.js",
-    "start": "./source/scripts/start.js",
-    "user-center": './source/scripts/user-center.js',
-    "dashboard": './source/scripts/dashboard.js',
-    "password-retrieve": './source/scripts/password-retrieve.js',
-    "password-reset": './source/scripts/password-reset.js',
-    "homework-details": './source/scripts/homework-details.js',
+    "index": "./source/scripts/index.jsx",
+    "logic-puzzle": "./source/scripts/logic-puzzle.jsx",
+    "homework": "./source/scripts/homework.jsx",
+    "register": "./source/scripts/register.jsx",
+    "start": "./source/scripts/start.jsx",
+    "user-center": './source/scripts/user-center.jsx',
+    "dashboard": './source/scripts/dashboard.jsx',
+    "password-retrieve": './source/scripts/password-retrieve.jsx',
+    "password-reset": './source/scripts/password-reset.jsx',
+    "homework-details": './source/scripts/homework-details.jsx',
     "vendors": ['jquery', 'bootstrap.css', 'font-awesome', 'react', 'react-dom', 'bootstrap.js']
     //"vendor.css": ['bootstrap.css','font-awesome']
   },
@@ -37,7 +37,15 @@ var config = {
         loader: 'expose?jQuery'
       },
       {
-        test: /\.js?$/,
+        test: /\.js$/,
+        exclude: /(node_modules|bower_components)/,
+        loader: 'babel',
+        query: {
+          presets: ['es2015']
+        }
+      },
+      {
+        test: /\.jsx$/,
         exclude: /(node_modules|bower_components)/,
         loader: 'babel',
         query: {

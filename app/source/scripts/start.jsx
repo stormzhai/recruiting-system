@@ -2,9 +2,9 @@
 
 require('../less/start.less');
 
-var StartInfo = require('./component/start-info/start-info.component');
-var Navigation = require('./component/navigation/navigation.component');
-var Account = require('./component/reuse/get-account.component');
+var StartInfo = require('./component/start-info/start-info.component.jsx');
+var Navigation = require('./component/navigation/navigation.component.jsx');
+var Account = require('./component/reuse/get-account.component.jsx');
 
 ReactDom.render(
     <div>

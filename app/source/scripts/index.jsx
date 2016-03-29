@@ -1,7 +1,7 @@
 'use strict';
 require('../less/index.less');
 
-var Account = require('./component/reuse/get-account.component');
+var Account = require('./component/reuse/get-account.component.jsx');
 var ScrollToTop = require('react-scroll-up');
 
 var style = {

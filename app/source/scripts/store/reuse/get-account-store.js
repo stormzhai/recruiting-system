@@ -3,7 +3,7 @@
 var Reflux = require('reflux');
 var GetAccountActions = require('../../actions/reuse/get-account-actions');
 var request = require('superagent');
-var errorHandler = require('../../../../tools/error-handler');
+var errorHandler = require('../../../../tools/error-handler.jsx');
 var constant = require('../../../../mixin/constant');
 
 
