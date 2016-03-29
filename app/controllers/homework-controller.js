@@ -1,6 +1,7 @@
 'use strict';
 
 var userHomeworkQuizzes = require('../models/user-homework-quizzes');
+var homeworkInfo = require('../models/homework-info');
 var async = require('async');
 var constant = require('../mixin/constant');
 var apiRequest = require('../services/api-request');
@@ -112,7 +113,7 @@ HomeworkController.prototype.getQuiz = (req, res) => {
 HomeworkController.prototype.saveGithubUrl = (req, res) => {
   var userId = req.session.user.id;
   var orderId = req.body.orderId;
-  var homeworkId, uri;
+  var homeworkId, uri, uniqId;
   async.waterfall([
     (done) => {
       userHomeworkQuizzes.checkDataForSubmit(userId, orderId, done);
@@ -139,6 +140,13 @@ HomeworkController.prototype.saveGithubUrl = (req, res) => {
       }
     },
     (product, numAffected, done) => {
+      homeworkInfo.create({
+        userId: userId,
+        homeworkId: homeworkId
+      }, done);
+    },
+    function (result, done) {
+      uniqId = result._id;
       apiRequest.get(uri, done);
     },
     (result, done) => {
@@ -146,11 +154,9 @@ HomeworkController.prototype.saveGithubUrl = (req, res) => {
           .post(config.taskServer + 'tasks')
           .set('Content-Type', 'application/json')
           .send({
-            userId: userId,
-            homeworkId: homeworkId,
+            uniqId: uniqId,
             userAnswerRepo: req.body.userAnswerRepo,
             evaluateScript: result.body.evaluateScript,
-            callbackURL: config.appServer + 'homework/result',
             branch: req.body.branch
           })
           .end(done);
@@ -243,9 +249,8 @@ HomeworkController.prototype.getResult = (req, res) => {
       res.send();
     } else {
       history = data.quizzes[orderId - 1].homeworkSubmitPostHistory ? data.quizzes[orderId - 1].homeworkSubmitPostHistory : [];
-      console.log(orderId);
       isSubmited = history.length > 0;
-      if (isSubmited && history[history.length - 1].resultURL) {
+      if (isSubmited && history[history.length - 1].homeworkDetail) {
         resultText = history[history.length - 1].homeworkDetail;
         resultText = new Buffer(resultText, 'base64').toString('utf8');
       }
