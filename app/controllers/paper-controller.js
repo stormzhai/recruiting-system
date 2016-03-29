@@ -97,9 +97,9 @@ function createLogicPuzzle(logicPuzzles, userId) {
   var correctNumber = logicPuzzle.correctNumber;
 
   if (correctNumber !== 0) {
-    accuracy = (correctNumber / itemNumber).toFixed(1);
+    accuracy = (correctNumber / itemNumber).toFixed(2);
   } else {
-    accuracy = accuracy.toFixed(1);
+    accuracy = accuracy.toFixed(2);
   }
 
   return {
@@ -117,13 +117,14 @@ function createHomework(homeworks, userId) {
   var sumTime = 0;
   var correctNumber = 0;
   var passStandard = 0.6;
+  var startTime = 0;
   var homework = {
     quizzes: []
   };
 
   var data = getHomeworkByUserId(homeworks, userId);
 
-  data.quizzes.forEach(function (result) {
+  data.quizzes.forEach(function (result, index) {
     var commitHistory = [];
     var elapsedTime = 0;
 
@@ -139,8 +140,13 @@ function createHomework(homeworks, userId) {
       });
       elapsedTime = result.homeworkSubmitPostHistory[homeworkSubmitPostHistoryLength].commitTime - result.startTime;
     }
+
     if ((result.homeworkSubmitPostHistory.length !== 0) && result.homeworkSubmitPostHistory[homeworkSubmitPostHistoryLength].status === constant.homeworkQuizzesStatus.SUCCESS) {
       correctNumber++;
+    }
+
+    if (index === 0) {
+      startTime = (result.startTime === undefined) ? '--' : moment.unix(result.startTime).format('YYYY-MM-DD HH:mm:ss');
     }
 
     sumTime += elapsedTime;
@@ -156,12 +162,13 @@ function createHomework(homeworks, userId) {
 
   var accuracy = correctNumber / data.quizzes.length;
 
+
   homework.elapsedTime = sumTime;
-  homework.homeworkDetailsAccuracy = accuracy.toFixed(1);
+  homework.homeworkDetailsAccuracy = accuracy.toFixed(2);
   homework.correctNumber = correctNumber;
   homework.quizNumber = data.quizzes.length;
   homework.isHomeworkPassed = (accuracy > passStandard) ? '是' : '否';
-
+  homework.startTime = startTime;
 
   return homework;
 }
@@ -238,25 +245,28 @@ function createScoresheetCsvForPaper(paperId, usersInfo, callback) {
   var usersCsvInfo = [];
 
   var logicPuzzleElapsedTime = 0;
-  var fieldNames = ['姓名', '电话', '邮箱', '逻辑题准确率', '逻辑题是否通过', '逻辑题花费时间', '编程题正确率', '编程题是否通过', '编程题花费时间', '编程题详情'];
+  var fieldNames = ['姓名', '电话', '邮箱', '逻辑题准确率', '逻辑题是否通过', '逻辑题开始时间', '逻辑题花费时间', '编程题正确率', '编程题是否通过', '编程题开始时间', '编程题花费时间', '编程题详情'];
 
   usersInfo.forEach((userInfo)=> {
+
     usersCsvInfo.push({
       name: userInfo.userDetail.name,
       mobilePhone: userInfo.userDetail.mobilePhone,
       email: userInfo.userDetail.email,
       logicPuzzleAccuracy: userInfo.logicPuzzle.accuracy,
       isLogicPuzzlePassed: userInfo.logicPuzzle.isLogicPuzzlePassed,
+      logicPuzzleStartTime: moment.unix(userInfo.logicPuzzle.startTime).format('YYYY-MM-DD HH:mm:ss'),
       logicPuzzleElapsedTime: calcLogicPuzzleElapsedTime(userInfo.logicPuzzle),
       homeworkDetailsAccuracy: userInfo.homework.homeworkDetailsAccuracy,
       isHomeworkPassed: userInfo.homework.isHomeworkPassed,
+      homeworkStartTime: userInfo.homework.startTime,
       homeworkElapsedTime: calcHomeworkElapsedTime(userInfo.homework.elapsedTime),
       homeworkDetails: config.appServer + 'paper/' + paperId + '/user/' + userInfo.userId + '/homework-details'
     });
 
   });
 
-  var fields = ['name', 'mobilePhone', 'email', 'logicPuzzleAccuracy', 'isLogicPuzzlePassed', 'logicPuzzleElapsedTime', 'homeworkDetailsAccuracy', 'isHomeworkPassed', 'homeworkElapsedTime', 'homeworkDetails'];
+  var fields = ['name', 'mobilePhone', 'email', 'logicPuzzleAccuracy', 'isLogicPuzzlePassed', 'logicPuzzleStartTime', 'logicPuzzleElapsedTime', 'homeworkDetailsAccuracy', 'isHomeworkPassed', 'homeworkStartTime', 'homeworkElapsedTime', 'homeworkDetails'];
 
   json2csv({data: usersCsvInfo, fields: fields, fieldNames: fieldNames}, function (err, csv) {
     callback(csv);
@@ -274,6 +284,8 @@ PaperController.prototype.exportPaperScoresheetCsv = (req, res)=> {
       createScoresheetCsvForPaper(paperId, scoresheetInfo.usersInfo, function (csv) {
         var time = moment.unix(new Date() / constant.time.MILLISECOND_PER_SECONDS).format('YYYY-MM-DD');
         var fileName = time + '/paper-' + paperId + '.csv';
+
+        csv = csv.split("\\n").join(String.fromCharCode(10));
         res.setHeader('Content-disposition', 'attachment; filename=' + fileName + '');
         res.setHeader('Content-Type', 'text/csv');
         res.send(csv);
@@ -307,35 +319,30 @@ function getHomeworkDetailsByUserId(userId, callback) {
   });
 }
 
-function createHomeworkDetail(quiz, quizzesLength) {
+function createHomeworkDetail(quiz) {
   var homeworkDetails = {};
-  var passStandard = 0.6;
   var sumTime = 0;
-  var correctNumber = 0;
   var elapsedTime = 0;
 
   if (quiz.homeworkSubmitPostHistory.length !== 0) {
     var homeworkSubmitPostHistoryLength = quiz.homeworkSubmitPostHistory.length - 1;
     elapsedTime = quiz.homeworkSubmitPostHistory[homeworkSubmitPostHistoryLength].commitTime - quiz.startTime;
-    homeworkDetails.lastCommitedDetail = new Buffer(quiz.homeworkSubmitPostHistory[quiz.homeworkSubmitPostHistory.length - 1].homeworkDetail, 'base64').toString('utf8');
-  } else {
-    homeworkDetails.lastCommitedDetail = '--';
-  }
+    if (quiz.homeworkSubmitPostHistory[quiz.homeworkSubmitPostHistory.length - 1].homeworkDetail !== undefined) {
+      homeworkDetails.lastCommitedDetail = new Buffer(quiz.homeworkSubmitPostHistory[quiz.homeworkSubmitPostHistory.length - 1].homeworkDetail, 'base64').toString('utf8').split('\n').join(String.fromCharCode(10));
+    } else {
+      homeworkDetails.lastCommitedDetail = '--';
+    }
 
-  if ((quiz.homeworkSubmitPostHistory.length !== 0) && quiz.homeworkSubmitPostHistory[homeworkSubmitPostHistoryLength].status === constant.homeworkQuizzesStatus.SUCCESS) {
-    correctNumber++;
   }
 
   sumTime += elapsedTime;
-
-  var accrucy = (correctNumber / quizzesLength).toFixed(1);
 
   homeworkDetails.id = quiz.id;
   homeworkDetails.address = quiz.uri;
   homeworkDetails.startTime = quiz.startTime;
   homeworkDetails.commitNumbers = quiz.homeworkSubmitPostHistory.length;
   homeworkDetails.elapsedTime = sumTime;
-  homeworkDetails.isPassed = accrucy > passStandard ? '是' : '否';
+  homeworkDetails.isPassed = (quiz.status === constant.homeworkQuizzesStatus.SUCCESS) ? '是' : '否';
 
   return homeworkDetails;
 }
@@ -361,7 +368,7 @@ function createUserHomeworkDetails(paperId, userId, callback) {
           });
         }
         userInfo.userId = userId;
-        userInfo.homeworkDetails = createHomeworkDetail(quiz, data.result.homework.quizzes.length);
+        userInfo.homeworkDetails = createHomeworkDetail(quiz);
 
         usersInfo.push(userInfo);
       });
@@ -423,8 +430,10 @@ PaperController.prototype.exportUserHomeworkDetailsCsv = (req, res)=> {
         var time = moment.unix(new Date() / constant.time.MILLISECOND_PER_SECONDS).format('YYYY-MM-DD');
         var fileName = time + '-paper-' + paperId + '-user-' + userId + '.csv';
 
+        csv = csv.split("\\n").join(String.fromCharCode(10));
         res.setHeader('Content-disposition', 'attachment; filename=' + fileName + '');
         res.setHeader('Content-Type', 'text/csv');
+
         res.send(csv);
       });
     }
@@ -434,7 +443,7 @@ PaperController.prototype.exportUserHomeworkDetailsCsv = (req, res)=> {
 function createHomeworkQuizDetail(commitItem) {
   var homeworkQuizDetail = {};
   homeworkQuizDetail.commitAddress = commitItem.homeworkURL;
-  homeworkQuizDetail.homeworkDetail = (commitItem.homeworkDetail === undefined) ? '--' : new Buffer(commitItem.homeworkDetail, 'base64').toString('utf8').replace('\n', '');
+  homeworkQuizDetail.homeworkDetail = (commitItem.homeworkDetail === undefined) ? '--' : new Buffer(commitItem.homeworkDetail, 'base64').toString('utf8').split('\n').join(String.fromCharCode(10));
   return homeworkQuizDetail;
 }
 
@@ -548,8 +557,11 @@ PaperController.prototype.exportUserHomeworkQuizDetailsCsv = (req, res)=> {
         var time = moment.unix(new Date() / constant.time.MILLISECOND_PER_SECONDS).format('YYYY-MM-DD');
         var fileName = time + '-paper-' + paperId + '-user-' + userId + '-homeworkquiz-' + homeworkquizId + '.csv';
 
+        csv = csv.split("\\n").join(String.fromCharCode(10));
         res.setHeader('Content-disposition', 'attachment; filename=' + fileName + '');
         res.setHeader('Content-Type', 'text/csv');
+
+
         res.send(csv);
       });
     }
