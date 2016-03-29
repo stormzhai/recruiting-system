@@ -25,13 +25,14 @@ var HomeworkSidebar = React.createClass({
 
   changeIcon: function (state) {
     var icon = 'home-icon h4 fa fa-lg fa-';
-    var iconList = ['lock', '', 'clock-o', 'check-circle', 'times-circle'];
+    var iconList = ['lock', '', 'clock-o', 'check-circle', 'times-circle', 'clock-o'];
     var statusCode = [
       homeworkQuizzesStatus.LOCKED,
       homeworkQuizzesStatus.ACTIVE,
       homeworkQuizzesStatus.PROGRESS,
       homeworkQuizzesStatus.SUCCESS,
-      homeworkQuizzesStatus.ERROR
+      homeworkQuizzesStatus.ERROR,
+      homeworkQuizzesStatus.LINE_UP
     ];
 
     statusCode.forEach((item, index) => {
