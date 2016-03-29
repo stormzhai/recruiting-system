@@ -56,7 +56,7 @@ var SubmissionIntroduction = React.createClass({
   },
   onUrlChange: function (event) {
     var target = event.target;
-    var value = target.value;
+    var value = target.value.trim();
 
     this.state.githubUrl = value;
 
