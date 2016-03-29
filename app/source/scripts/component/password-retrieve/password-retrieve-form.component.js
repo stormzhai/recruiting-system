@@ -30,7 +30,7 @@ var passwordRetrieveForm = React.createClass({
 
   validate: function (event) {
     var target = event.target;
-    var value = target.value;
+    var value = target.value.trim();
     var name = target.name;
     var valObj = {};
     var result;
@@ -82,7 +82,7 @@ var passwordRetrieveForm = React.createClass({
           <div id="retrieve" className={retrieveClassName}>
             <h4 className="welcome">密码找回</h4>
             <div className={'lose' + (this.state.retrieveFailed === false ? ' hide' : '')} name="retrieveFailed">
-              该邮箱并不存在
+              邮箱不存在
             </div>
             <form action="" onSubmit={this.retrieve}>
               <div className="form-group">
