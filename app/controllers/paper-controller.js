@@ -17,7 +17,7 @@ var second = constant.time.SECONDS_PER_MINUTE;
 var dayToSecond = second * mintues * hour;
 var hourToSecond = second * mintues;
 var mintuesToSecond = mintues;
-
+var LF= 10;
 function PaperController() {
 
 }
@@ -285,7 +285,7 @@ PaperController.prototype.exportPaperScoresheetCsv = (req, res)=> {
         var time = moment.unix(new Date() / constant.time.MILLISECOND_PER_SECONDS).format('YYYY-MM-DD');
         var fileName = time + '/paper-' + paperId + '.csv';
 
-        csv = csv.split("\\n").join(String.fromCharCode(10));
+        csv = csv.split('\\n').join(String.fromCharCode(LF));
         res.setHeader('Content-disposition', 'attachment; filename=' + fileName + '');
         res.setHeader('Content-Type', 'text/csv');
         res.send(csv);
@@ -328,7 +328,7 @@ function createHomeworkDetail(quiz) {
     var homeworkSubmitPostHistoryLength = quiz.homeworkSubmitPostHistory.length - 1;
     elapsedTime = quiz.homeworkSubmitPostHistory[homeworkSubmitPostHistoryLength].commitTime - quiz.startTime;
     if (quiz.homeworkSubmitPostHistory[quiz.homeworkSubmitPostHistory.length - 1].homeworkDetail !== undefined) {
-      homeworkDetails.lastCommitedDetail = new Buffer(quiz.homeworkSubmitPostHistory[quiz.homeworkSubmitPostHistory.length - 1].homeworkDetail, 'base64').toString('utf8').split('\n').join(String.fromCharCode(10));
+      homeworkDetails.lastCommitedDetail = new Buffer(quiz.homeworkSubmitPostHistory[quiz.homeworkSubmitPostHistory.length - 1].homeworkDetail, 'base64').toString('utf8');
     } else {
       homeworkDetails.lastCommitedDetail = '--';
     }
@@ -430,7 +430,7 @@ PaperController.prototype.exportUserHomeworkDetailsCsv = (req, res)=> {
         var time = moment.unix(new Date() / constant.time.MILLISECOND_PER_SECONDS).format('YYYY-MM-DD');
         var fileName = time + '-paper-' + paperId + '-user-' + userId + '.csv';
 
-        csv = csv.split("\\n").join(String.fromCharCode(10));
+        csv = csv.split('\\n').join(String.fromCharCode(LF));
         res.setHeader('Content-disposition', 'attachment; filename=' + fileName + '');
         res.setHeader('Content-Type', 'text/csv');
 
@@ -443,7 +443,7 @@ PaperController.prototype.exportUserHomeworkDetailsCsv = (req, res)=> {
 function createHomeworkQuizDetail(commitItem) {
   var homeworkQuizDetail = {};
   homeworkQuizDetail.commitAddress = commitItem.homeworkURL;
-  homeworkQuizDetail.homeworkDetail = (commitItem.homeworkDetail === undefined) ? '--' : new Buffer(commitItem.homeworkDetail, 'base64').toString('utf8').split('\n').join(String.fromCharCode(10));
+  homeworkQuizDetail.homeworkDetail = (commitItem.homeworkDetail === undefined) ? '--' : new Buffer(commitItem.homeworkDetail, 'base64').toString('utf8');
   return homeworkQuizDetail;
 }
 
@@ -557,7 +557,7 @@ PaperController.prototype.exportUserHomeworkQuizDetailsCsv = (req, res)=> {
         var time = moment.unix(new Date() / constant.time.MILLISECOND_PER_SECONDS).format('YYYY-MM-DD');
         var fileName = time + '-paper-' + paperId + '-user-' + userId + '-homeworkquiz-' + homeworkquizId + '.csv';
 
-        csv = csv.split("\\n").join(String.fromCharCode(10));
+        csv = csv.split('\\n').join(String.fromCharCode(LF));
         res.setHeader('Content-disposition', 'attachment; filename=' + fileName + '');
         res.setHeader('Content-Type', 'text/csv');
 
