@@ -230,15 +230,20 @@ HomeworkController.prototype.updateResult = (req, res)=> {
 
 HomeworkController.prototype.getResult = (req, res) => {
   var userId = req.session.user ? req.session.user.id : 'invalid';
-  var orderId = req.query.orderId;
+  var orderId = parseInt(req.query.orderId, 10) || 1;
   var history, isSubmited, resultText;
 
   userHomeworkQuizzes.findOne({userId: userId}, function(err, data) {
-    var integer = (Number(orderId) === parseInt(orderId, 10));
-    if (!integer || orderId === undefined || orderId > data.quizzes.length || orderId < 1) {
+
+    var quizzesLength = (data && data.quizzes) ? data.quizzes.length : 0;
+    orderId = Math.max(1, orderId);
+    orderId = Math.min(orderId, quizzesLength);
+
+    if (0 === orderId) {
       res.send();
     } else {
       history = data.quizzes[orderId - 1].homeworkSubmitPostHistory ? data.quizzes[orderId - 1].homeworkSubmitPostHistory : [];
+      console.log(orderId);
       isSubmited = history.length > 0;
       if (isSubmited && history[history.length - 1].resultURL) {
         resultText = history[history.length - 1].homeworkDetail;
