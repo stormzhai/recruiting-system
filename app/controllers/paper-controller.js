@@ -434,7 +434,7 @@ PaperController.prototype.exportUserHomeworkDetailsCsv = (req, res)=> {
 function createHomeworkQuizDetail(commitItem) {
   var homeworkQuizDetail = {};
   homeworkQuizDetail.commitAddress = commitItem.homeworkURL;
-  homeworkQuizDetail.homeworkDetail = (commitItem.homeworkDetail === undefined) ? '--' : new Buffer(commitItem.homeworkDetail, 'base64').toString('utf8').replace("\n", "");
+  homeworkQuizDetail.homeworkDetail = (commitItem.homeworkDetail === undefined) ? '--' : new Buffer(commitItem.homeworkDetail, 'base64').toString('utf8').replace('\n', '');
   return homeworkQuizDetail;
 }
 
@@ -493,7 +493,7 @@ function createUserHomeworkQuizDetails(paperId, userId, homeworkquizId, callback
           userInfo.homeworkDetails.elapsedTime = calculateElapsedTime(index, homeworkquiz);
 
           usersInfo.push(userInfo);
-        })
+        });
       }
       userHomeworkDetails.httpCode = data.httpCode;
     } else {
@@ -538,23 +538,22 @@ PaperController.prototype.exportUserHomeworkQuizDetailsCsv = (req, res)=> {
   var userId = req.params.userId;
   var homeworkquizId = req.params.homeworkquizId;
 
-  createUserHomeworkQuizDetails(paperId, userId, homeworkquizId, function (userHomeworkDetails) {
+  createUserHomeworkQuizDetails(paperId, userId, homeworkquizId, (userHomeworkDetails)=> {
 
-        if (userHomeworkDetails.httpCode === constant.httpCode.NOT_FOUND) {
-          res.sendStatus(constant.httpCode.NOT_FOUND);
-        } else {
-          createUserHomeworkQuizDetailsCsv(paperId, userHomeworkDetails, function (csv) {
+    if (userHomeworkDetails.httpCode === constant.httpCode.NOT_FOUND) {
+      res.sendStatus(constant.httpCode.NOT_FOUND);
+    } else {
+      createUserHomeworkQuizDetailsCsv(paperId, userHomeworkDetails, (csv) => {
 
-            var time = moment.unix(new Date() / constant.time.MILLISECOND_PER_SECONDS).format('YYYY-MM-DD');
-            var fileName = time + '-paper-' + paperId + '-user-' + userId + '-homeworkquiz-' + homeworkquizId + '.csv';
+        var time = moment.unix(new Date() / constant.time.MILLISECOND_PER_SECONDS).format('YYYY-MM-DD');
+        var fileName = time + '-paper-' + paperId + '-user-' + userId + '-homeworkquiz-' + homeworkquizId + '.csv';
 
-            res.setHeader('Content-disposition', 'attachment; filename=' + fileName + '');
-            res.setHeader('Content-Type', 'text/csv');
-            res.send(csv);
-          });
-        }
-      }
-  );
+        res.setHeader('Content-disposition', 'attachment; filename=' + fileName + '');
+        res.setHeader('Content-Type', 'text/csv');
+        res.send(csv);
+      });
+    }
+  });
 };
 
 module.exports = PaperController;
