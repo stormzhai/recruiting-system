@@ -10,7 +10,6 @@ var yamlConfig = require('node-yaml-config');
 var config = yamlConfig.load('./config/config.yml');
 var moment = require('moment');
 
-var _percentage = 100;
 var hour = constant.time.HOURS_PER_DAY;
 var mintues = constant.time.MINUTE_PER_HOUR;
 var second = constant.time.SECONDS_PER_MINUTE;
@@ -264,8 +263,9 @@ function createScoresheetCsvForPaper(paperId, usersInfo, callback) {
   });
 }
 
-PaperController.prototype.exportScoresheetCsvForPaper = (req, res)=> {
+PaperController.prototype.exportPaperScoresheetCsv = (req, res)=> {
   var paperId = req.params.paperId;
+
   createScoresheetInfo(paperId, function (scoresheetInfo) {
 
     if (scoresheetInfo.httpCode === constant.httpCode.NOT_FOUND) {
@@ -336,13 +336,6 @@ function createHomeworkDetail(quiz, quizzesLength) {
   homeworkDetails.commitNumbers = quiz.homeworkSubmitPostHistory.length;
   homeworkDetails.elapsedTime = sumTime;
   homeworkDetails.isPassed = accrucy > passStandard ? '是' : '否';
-
-
-  //if (quiz.homeworkDetails === undefined) {
-  //  homeworkDetails.lastCommitedDetail = '';
-  //} else {
-  //  homeworkDetails.lastCommitedDetail = new Buffer(quiz.homeworkDetail, 'base64').toString('utf8');
-  //}
 
   return homeworkDetails;
 }
@@ -416,7 +409,7 @@ function createUserHomeworkDetailsCsv(paperId, userHomeworkDetails, callback) {
   });
 }
 
-PaperController.prototype.exportHomeworkDetailsCsvForUser = (req, res)=> {
+PaperController.prototype.exportUserHomeworkDetailsCsv = (req, res)=> {
   var paperId = req.params.paperId;
   var userId = req.params.userId;
 
@@ -436,6 +429,132 @@ PaperController.prototype.exportHomeworkDetailsCsvForUser = (req, res)=> {
       });
     }
   });
+};
+
+function createHomeworkQuizDetail(commitItem) {
+  var homeworkQuizDetail = {};
+  homeworkQuizDetail.commitAddress = commitItem.homeworkURL;
+  homeworkQuizDetail.homeworkDetail = (commitItem.homeworkDetail === undefined) ? '--' : new Buffer(commitItem.homeworkDetail, 'base64').toString('utf8').replace("\n", "");
+  return homeworkQuizDetail;
+}
+
+function getHomeworkQuizByHomeworkquizId(quizzes, quizId) {
+  var homeworkquiz;
+  quizzes.forEach((quiz)=> {
+    if (quiz.id.toString() === quizId) {
+      homeworkquiz = quiz;
+      return;
+    }
+  });
+  return homeworkquiz;
+}
+
+function calculateElapsedTime(index, homeworkquiz) {
+  var time;
+  if (index === 0) {
+    time = homeworkquiz.homeworkSubmitPostHistory[index].commitTime - homeworkquiz.startTime;
+  } else {
+    time = homeworkquiz.homeworkSubmitPostHistory[index].commitTime - homeworkquiz.homeworkSubmitPostHistory[index - 1].commitTime;
+  }
+  return time;
+}
+
+function createUserHomeworkQuizDetails(paperId, userId, homeworkquizId, callback) {
+
+  getHomeworkDetailsByUserId(userId, (data)=> {
+    var userHomeworkDetails = {};
+    var usersInfo = [];
+    if (data.httpCode !== constant.httpCode.NOT_FOUND) {
+      var homeworkquiz = getHomeworkQuizByHomeworkquizId(data.result.homework.quizzes, homeworkquizId);
+
+      if (homeworkquiz !== undefined && homeworkquiz.homeworkSubmitPostHistory.length !== 0) {
+
+        homeworkquiz.homeworkSubmitPostHistory.forEach((commitItem, index)=> {
+          var userInfo = {};
+          if (index === 0) {
+            userInfo.userDetail = createUserDetail(data.result.userDetail.body);
+
+            userInfo.startTime = homeworkquiz.startTime;
+
+            userInfo.uri = homeworkquiz.uri;
+
+          } else {
+            userInfo.userDetail = createUserDetail({
+              name: '',
+              mobilePhone: '',
+              email: ''
+            });
+            userInfo.startTime = '';
+            userInfo.uri = '';
+
+          }
+          userInfo.userId = userId;
+          userInfo.homeworkDetails = createHomeworkQuizDetail(commitItem);
+          userInfo.homeworkDetails.elapsedTime = calculateElapsedTime(index, homeworkquiz);
+
+          usersInfo.push(userInfo);
+        })
+      }
+      userHomeworkDetails.httpCode = data.httpCode;
+    } else {
+      userHomeworkDetails.httpCode = constant.httpCode.NOT_FOUND;
+    }
+
+    userHomeworkDetails.usersInfo = usersInfo;
+    callback(userHomeworkDetails);
+  });
+}
+
+function createUserHomeworkQuizDetailsCsv(paperId, userHomeworkDetails, callback) {
+  var usersCsvInfo = [];
+
+  var fieldNames = ['姓名', '电话', '邮箱', '编程题题目地址', '开始时间', '提交作业记录', '分析记录', '花费时间'];
+
+  userHomeworkDetails.usersInfo.forEach((userInfo)=> {
+    var startTime = userInfo.startTime;
+    startTime = startTime === '' ? '' : moment.unix(startTime).format('YYYY-MM-DD HH:mm:ss');
+
+    usersCsvInfo.push({
+      name: userInfo.userDetail.name,
+      mobilePhone: userInfo.userDetail.mobilePhone,
+      email: userInfo.userDetail.email,
+      homeworkAddress: userInfo.uri,
+      startTime: startTime,
+      commitUrlLog: userInfo.homeworkDetails.commitAddress,
+      commitResultLog: userInfo.homeworkDetails.homeworkDetail,
+      elapsedTime: calcHomeworkElapsedTime(userInfo.homeworkDetails.elapsedTime)
+    });
+  });
+
+  var fields = ['name', 'mobilePhone', 'email', 'homeworkAddress', 'startTime', 'commitUrlLog', 'commitResultLog', 'elapsedTime'];
+
+  json2csv({data: usersCsvInfo, fields: fields, fieldNames: fieldNames}, function (err, csv) {
+    callback(csv);
+  });
+}
+
+PaperController.prototype.exportUserHomeworkQuizDetailsCsv = (req, res)=> {
+  var paperId = req.params.paperId;
+  var userId = req.params.userId;
+  var homeworkquizId = req.params.homeworkquizId;
+
+  createUserHomeworkQuizDetails(paperId, userId, homeworkquizId, function (userHomeworkDetails) {
+
+        if (userHomeworkDetails.httpCode === constant.httpCode.NOT_FOUND) {
+          res.sendStatus(constant.httpCode.NOT_FOUND);
+        } else {
+          createUserHomeworkQuizDetailsCsv(paperId, userHomeworkDetails, function (csv) {
+
+            var time = moment.unix(new Date() / constant.time.MILLISECOND_PER_SECONDS).format('YYYY-MM-DD');
+            var fileName = time + '-paper-' + paperId + '-user-' + userId + '-homeworkquiz-' + homeworkquizId + '.csv';
+
+            res.setHeader('Content-disposition', 'attachment; filename=' + fileName + '');
+            res.setHeader('Content-Type', 'text/csv');
+            res.send(csv);
+          });
+        }
+      }
+  );
 };
 
 module.exports = PaperController;
