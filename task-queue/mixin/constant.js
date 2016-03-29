@@ -20,7 +20,8 @@ var constant = {
     ACTIVE:2,
     PROGRESS:3,
     SUCCESS:4,
-    ERROR:5
+    ERROR:5,
+    LINE_UP:6
   },
   changePassword: {
     ERROR: '旧密码错误',
