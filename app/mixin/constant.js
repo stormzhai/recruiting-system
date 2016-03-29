@@ -23,7 +23,8 @@ var constant = {
     ACTIVE: 2,
     PROGRESS: 3,
     SUCCESS: 4,
-    ERROR: 5
+    ERROR: 5,
+    LINE_UP: 6
   },
   backConstant: {
     MOBILE_PHONE_LENGTH: 11,
