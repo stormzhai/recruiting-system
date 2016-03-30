@@ -39,7 +39,7 @@ process.on('SIGINT', function () {
 
 process.on('uncaughtException', function (err) {
   mongoStatus = err;
-  console.log(err);
+  console.log(err.stack);
 });
 
 module.exports = {
