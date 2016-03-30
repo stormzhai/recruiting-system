@@ -28,7 +28,6 @@ function status() {
   };
 }
 
-
 //If the Node process ends, close the Mongoose connection
 process.on('SIGINT', function () {
   mongoose.connection.close(function () {
@@ -39,7 +38,7 @@ process.on('SIGINT', function () {
 
 process.on('uncaughtException', function (err) {
   mongoStatus = err;
-  console.log(err.stack);
+  console.log(err);
 });
 
 module.exports = {

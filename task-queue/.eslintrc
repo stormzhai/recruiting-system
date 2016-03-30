@@ -1,19 +1,6 @@
 {
   "env": {
-    "browser": true,
     "node": true
-  },
-  "globals": {
-    "React": true,
-    "describe": false,
-    "it": false,
-    "before": false,
-    "beforeEach": false,
-    "after": false,
-    "afterEach": false,
-    "spyOn": false,
-    "expect": false,
-    "beforeAll": false
   },
   "rules": {
     "camelcase": 2,
@@ -25,13 +12,8 @@
     "computed-property-spacing": [2, "never"],
     "array-bracket-spacing": 2,
     "eqeqeq": 2,
-    "strict": [1, "global"],
     "indent": [2, 2],
     "no-magic-numbers": 2
-
   },
-  "plugins": [
-    "react"
-  ],
   "parser": "babel-eslint"
 }

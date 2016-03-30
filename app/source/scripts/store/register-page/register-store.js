@@ -8,7 +8,7 @@ var request = require('superagent');
 var constant = require('../../../../mixin/constant');
 var constraint = require('../../../../mixin/register-constraint');
 var async = require('async');
-var errorHandler = require('../../../../tools/error-handler');
+var errorHandler = require('../../../../tools/error-handler.jsx');
 
 var RegisterStore = Reflux.createStore({
   listenables: RegisterActions,

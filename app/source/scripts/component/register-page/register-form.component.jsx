@@ -169,7 +169,7 @@ var RegisterForm = React.createClass({
             </div>
 
             <button type="submit" id="register-btn" ref="register"
-             className="btn btn-lg btn-block btn-primary">注册
+             className="btn btn-lg btn-block btn-primary" disabled={this.state.clickable}>注册
               <i className={'fa fa-spinner fa-spin' + (this.state.clickable ? '' : ' hide')}/>
             </button>
           </form>

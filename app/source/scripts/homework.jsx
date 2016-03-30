@@ -1,17 +1,17 @@
 'use strict';
 
 require('../less/homework.less');
-var Navigation = require('./component/navigation/navigation.component');
-var Account = require('./component/reuse/get-account.component');
-var HomeworkSidebar = require('./component/homework/homework-sidebar.component');
-var HomeworkContent = require('./component/homework/homework-content.component');
-var HomeworkIntroduction = require('./component/homework/homework-introduction.component');
-var SubmissionIntroduction = require('./component/homework/submission-introduction.component');
-var RunningResult = require('./component/homework/running-result.component');
+var Navigation = require('./component/navigation/navigation.component.jsx');
+var Account = require('./component/reuse/get-account.component.jsx');
+var HomeworkSidebar = require('./component/homework/homework-sidebar.component.jsx');
+var HomeworkContent = require('./component/homework/homework-content.component.jsx');
+var HomeworkIntroduction = require('./component/homework/homework-introduction.component.jsx');
+var SubmissionIntroduction = require('./component/homework/submission-introduction.component.jsx');
+var RunningResult = require('./component/homework/running-result.component.jsx');
 var HomeworkAction = require('./actions/homework/homework-actions');
 var constant = require('../../mixin/constant');
 var request = require('superagent');
-var errorHandler = require('../../tools/error-handler');
+var errorHandler = require('../../tools/error-handler.jsx');
 var homeworkQuizzesStatus = require('../../mixin/constant').homeworkQuizzesStatus;
 
 function changeId() {

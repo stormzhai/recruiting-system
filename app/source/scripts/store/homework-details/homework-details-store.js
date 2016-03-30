@@ -4,7 +4,7 @@ var Reflux = require('reflux');
 var HomeworkDetailsActions = require('../../actions/homework-details/homework-details-actions');
 var superAgent = require('superagent');
 var constant = require('../../../../mixin/constant');
-var errorHandler = require('../../../../tools/error-handler');
+var errorHandler = require('../../../../tools/error-handler.jsx');
 
 
 var HomeworkDetailsStore = Reflux.createStore({
@@ -28,6 +28,3 @@ var HomeworkDetailsStore = Reflux.createStore({
 });
 
 module.exports = HomeworkDetailsStore;
-
-
-

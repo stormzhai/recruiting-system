@@ -2,6 +2,7 @@
 
 var HomeworkController = require('../../controllers/homework-controller');
 var userHomeworkQuizzes = require('../../models/user-homework-quizzes');
+var homeworkInfo = require('../../models/homework-info');
 var constant = require('../../mixin/constant');
 var apiRequest = require('../../services/api-request');
 var request = require('superagent');
@@ -435,6 +436,15 @@ describe('HomeworkController', function () {
           isValidate: true
         };
         callback(null, result);
+      });
+
+      spyOn(homeworkInfo, 'create').and.callFake(function (data, callback) {
+        var data = {
+          _id: '56fa42a05a20a97b25870a8d',
+          userId: 1,
+          homeworkId: 2
+        };
+        callback(null, data);
       });
 
       spyOn(apiRequest, 'get').and.callFake(function (url, callback) {

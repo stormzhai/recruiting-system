@@ -28,4 +28,20 @@ public final class DBUtil {
         return session;
     }
 
+    public static SqlSessionManager getSession(String environment) {
+        String resource = "mybatis/mybatis-config.xml";
+        SqlSessionManager session = null;
+
+        try {
+            InputStream is = Resources.getResourceAsStream(resource);
+            SqlSessionFactoryBuilder builder = new SqlSessionFactoryBuilder();
+            SqlSessionFactory sqlSessionFactory = builder.build(is, environment);
+            session = SqlSessionManager.newInstance(sqlSessionFactory);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return session;
+    }
+
 }

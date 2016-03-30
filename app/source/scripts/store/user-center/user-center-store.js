@@ -5,7 +5,7 @@ var UserCenterActions = require('../../actions/user-center/user-center-actions')
 var request = require('superagent');
 var page = require('page');
 var constant = require('../../../../mixin/constant');
-var errorHandler = require('../../../../tools/error-handler');
+var errorHandler = require('../../../../tools/error-handler.jsx');
 
 
 var UserDetailStore = Reflux.createStore({

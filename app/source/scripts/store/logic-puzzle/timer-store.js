@@ -3,7 +3,7 @@
 var Reflux = require('reflux');
 var TimerActions = require('../../actions/logic-puzzle/timer-actions');
 var superAgent = require('superagent');
-var errorHandler = require('../../../../tools/error-handler');
+var errorHandler = require('../../../../tools/error-handler.jsx');
 
 
 var TimerStore = Reflux.createStore({

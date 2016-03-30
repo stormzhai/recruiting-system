@@ -30,7 +30,7 @@ var passwordRetrieveForm = React.createClass({
 
   validate: function (event) {
     var target = event.target;
-    var value = target.value;
+    var value = target.value.trim();
     var name = target.name;
     var valObj = {};
     var result;
@@ -59,13 +59,9 @@ var passwordRetrieveForm = React.createClass({
       this.setState({
         clickable: true
       });
-      var email = this.refs.email.value;
+      var email = this.refs.email.value.trim();
       passwordRetrieveActions.retrieve(email);
     }
-  },
-
-  handler: function (evt) {
-    this.setState({email: evt.target.value});
   },
 
   back: function() {
@@ -82,13 +78,13 @@ var passwordRetrieveForm = React.createClass({
           <div id="retrieve" className={retrieveClassName}>
             <h4 className="welcome">密码找回</h4>
             <div className={'lose' + (this.state.retrieveFailed === false ? ' hide' : '')} name="retrieveFailed">
-              该邮箱并不存在
+              邮箱不存在
             </div>
             <form action="" onSubmit={this.retrieve}>
               <div className="form-group">
                 <input className="form-control" type="text" placeholder="请输入注册时填写的邮箱" name="email"
                        onBlur={this.validate} onkeypress="if(event.keyCode==13||event.which==13){return false;}"
-                       ref="email" autoComplete="off" onChange={this.handler}/>
+                       ref="email" autoComplete="off"/>
                 <div
                     className={'lose' + (this.state.emailError === '' ? ' hide' : '')}>{this.state.emailError}
                 </div>

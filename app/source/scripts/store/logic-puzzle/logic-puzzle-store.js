@@ -8,7 +8,7 @@ var page = require('page');
 var _currentIndex = 0;
 var _answer;
 var constant = require('../../../../mixin/constant');
-var errorHandler = require('../../../../tools/error-handler');
+var errorHandler = require('../../../../tools/error-handler.jsx');
 
 
 

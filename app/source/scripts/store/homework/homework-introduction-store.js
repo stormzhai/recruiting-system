@@ -5,7 +5,7 @@ var HomeworkActions = require('../../actions/homework/homework-actions');
 var request = require('superagent');
 var constant = require('../../../../mixin/constant');
 var homeworkQuizzesStatus = require('../../../../mixin/constant').homeworkQuizzesStatus;
-var errorHandler = require('../../../../tools/error-handler');
+var errorHandler = require('../../../../tools/error-handler.jsx');
 
 var HomeworkIntroductionStore = Reflux.createStore({
   listenables: [HomeworkActions],

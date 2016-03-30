@@ -4,7 +4,7 @@ var Reflux = require('reflux');
 var passwordRetrieveActions = require('../../actions/password-retrieve/password-retrieve-actions');
 var request = require('superagent');
 var constant = require('../../../../mixin/constant');
-var errorHandler = require('../../../../tools/error-handler');
+var errorHandler = require('../../../../tools/error-handler.jsx');
 
 
 var passwordRetrieveStore = Reflux.createStore({

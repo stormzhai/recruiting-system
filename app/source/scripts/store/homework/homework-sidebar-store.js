@@ -4,7 +4,7 @@ var Reflux = require('reflux');
 var HomeworkActions = require('../../actions/homework/homework-actions');
 var superAgent = require('superagent');
 var constant = require('../../../../mixin/constant');
-var errorHandler = require('../../../../tools/error-handler');
+var errorHandler = require('../../../../tools/error-handler.jsx');
 
 
 var HomeworkSidebarStore = Reflux.createStore({
@@ -23,7 +23,7 @@ var HomeworkSidebarStore = Reflux.createStore({
           });
         });
   },
-  
+
   onChangeOrderId: function (clickNumber) {
     this.trigger({clickNumber: clickNumber});
   },

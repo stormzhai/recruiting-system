@@ -7,8 +7,10 @@ var async = require('async');
 var yamlConfig = require('node-yaml-config');
 var config = yamlConfig.load('./config/config.yml');
 
+const CI_REQEST_TIME_OUT = 1000;
+
 var redisData = {
-  "redis": "connecting..."
+  'redis': 'connecting...'
 };
 
 function getRedisInfo(done) {
@@ -18,17 +20,17 @@ function getRedisInfo(done) {
 function getHookInfo(done) {
   if(!this) {
     done(null, {
-      "hook-server": "unknown"
-    })
+      'hook-server': 'unknown'
+    });
   } else {
     request.options(this.hook + 'inspector')
         .end(function(err, resp) {
-          var data = {"hook-server": "connected"};
+          var data = {'hook-server': 'connected'};
           if(err) {
-            data["hook-server"] = err
+            data['hook-server'] = err;
           }
           done(null, data);
-        })
+        });
   }
 }
 
@@ -36,22 +38,22 @@ var ciServer = config.CIServer + '/job/' + config.jobName + '/api/json';
 
 function getCIInfo(done) {
   request.get(ciServer)
-      .timeout(1000)
+      .timeout(CI_REQEST_TIME_OUT)
       .end(function(err, resp) {
         var data = {
-          "ci-server": "connected"
+          'ci-server': 'connected'
         };
         if(err) {
           data = {
-            "ci-server": err
-          }
+            'ci-server': err
+          };
         }
         done(null, data);
-      })
+      });
 }
 
 router.get('/', function (req, res) {
-  var data = {"task-queue": "connected"};
+  var data = {'task-queue': 'connected'};
   async.parallel([
     getHookInfo.bind(req.query),
     getRedisInfo,

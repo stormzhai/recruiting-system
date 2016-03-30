@@ -9,7 +9,7 @@ var taskController = new TaskController();
 
 router.post('/', taskController.createTask);
 
-router.post('/:homeworkName/completion', taskController.result);
+router.post('/:uniqId/completion', taskController.result);
 
 router.get('/status', taskController.status);
 
