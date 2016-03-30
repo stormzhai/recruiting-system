@@ -41,6 +41,8 @@ public class PaperResource extends Resource {
     private ItemPostMapper itemPostMapper;
     @Inject
     private QuizItemMapper quizItemMapper;
+    @Inject
+    private BlankQuizMapper blankQuizMapper;
 
 
     @GET
@@ -191,6 +193,13 @@ public class PaperResource extends Resource {
             List<ItemPost> itemPostList = itemPostMapper
                     .findByBlankQuizSubmit(blankQuizSubmit.getId());
 
+            int paperId = item.getPaperId();
+            BlankQuiz blankQuiz = blankQuizMapper.findOne(paperId);
+            int itemCount = blankQuiz.getEasyCount()
+                    + blankQuiz.getNormalCount()
+                    + blankQuiz.getHardCount();
+
+
             List<String> correctList = new ArrayList<>();
             itemPostList.forEach(val -> {
                 String answer = quizItemMapper.getQuizItemById(val.getQuizItemId()).getAnswer();
@@ -202,7 +211,7 @@ public class PaperResource extends Resource {
             Map map = new HashMap();
             map.put("userId", item.getExamerId());
             map.put("correctNumber", correctList.size());
-            map.put("itemNumber", itemPostList.size());
+            map.put("itemNumber", itemCount);
             map.put("startTime", blankQuizSubmit.getStartTime());
             map.put("endTime", blankQuizSubmit.getEndTime());
 
