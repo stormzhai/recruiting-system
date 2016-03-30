@@ -17,7 +17,11 @@ var second = constant.time.SECONDS_PER_MINUTE;
 var dayToSecond = second * mintues * hour;
 var hourToSecond = second * mintues;
 var mintuesToSecond = mintues;
-var LF= 10;
+
+var BREAK_LINE_CODE = 10;
+var CUT_OFF_RATE = 0.6;
+
+
 function PaperController() {
 
 }
@@ -29,48 +33,29 @@ function getUserDataByPaperId(paperId, callback) {
 
   async.parallel({
     usersDetail: function (done) {
-      apiRequest.get(usersDetailURL, done);
+      apiRequest.get(usersDetailURL, function (err, data) {
+        done(err, data.body);
+      });
     },
     logicPuzzles: function (done) {
-
-      apiRequest.get(logicPuzzleURL, done);
+      apiRequest.get(logicPuzzleURL, function (err, data) {
+        done(err, data.body);
+      });
     },
     homeworks: function (done) {
-      userHomeworkQuizzes.find({paperId: paperId}, done);
-    }
-  }, (err, result)=> {
-    if (err) {
-      callback({
-        httpCode: constant.httpCode.NOT_FOUND
-      });
-    } else {
-      callback({
-        result: result,
-        httpCode: constant.httpCode.OK
+      userHomeworkQuizzes.find({paperId: paperId}, function (err, data) {
+        done(err, data);
       });
     }
-  });
+  }, callback);
 }
 
-function createUserDetail(data) {
+function buildUserSummary(data) {
   return {
     name: data.name,
     mobilePhone: data.mobilePhone,
     email: data.email
   };
-}
-
-function getLogicPuzzleByUserId(logicPuzzles, userId) {
-
-  var logicPuzzleInfo;
-  logicPuzzles.forEach((logicPuzzle)=> {
-    if (logicPuzzle.userId === userId) {
-      logicPuzzleInfo = logicPuzzle;
-      return;
-    }
-  });
-
-  return logicPuzzleInfo;
 }
 
 function getHomeworkByUserId(homeworks, userId) {
@@ -86,31 +71,6 @@ function getHomeworkByUserId(homeworks, userId) {
   return homeworkInfo;
 }
 
-function createLogicPuzzle(logicPuzzles, userId) {
-
-  var accuracy = 0;
-  var passStandard = 0.6;
-  var logicPuzzle = getLogicPuzzleByUserId(logicPuzzles, userId);
-
-
-  var itemNumber = logicPuzzle.itemNumber;
-  var correctNumber = logicPuzzle.correctNumber;
-
-  if (correctNumber !== 0) {
-    accuracy = (correctNumber / itemNumber).toFixed(2);
-  } else {
-    accuracy = accuracy.toFixed(2);
-  }
-
-  return {
-    correctNumber: correctNumber,
-    itemNumber: itemNumber,
-    startTime: logicPuzzle.startTime,
-    endTime: logicPuzzle.endTime,
-    accuracy: accuracy,
-    isLogicPuzzlePassed: (accuracy > passStandard) ? '是' : '否'
-  };
-}
 
 function createHomework(homeworks, userId) {
 
@@ -118,9 +78,7 @@ function createHomework(homeworks, userId) {
   var correctNumber = 0;
   var passStandard = 0.6;
   var startTime = 0;
-  var homework = {
-    quizzes: []
-  };
+  var homework = {};
 
   var data = getHomeworkByUserId(homeworks, userId);
 
@@ -150,14 +108,6 @@ function createHomework(homeworks, userId) {
     }
 
     sumTime += elapsedTime;
-
-    var quiz = {
-      startTime: result.startTime,
-      homeworkDesc: result.uri,
-      elapsedTime: elapsedTime,
-      commitHistory: commitHistory
-    };
-    homework.quizzes.push(quiz);
   });
 
   var accuracy = correctNumber / data.quizzes.length;
@@ -168,40 +118,37 @@ function createHomework(homeworks, userId) {
   homework.correctNumber = correctNumber;
   homework.quizNumber = data.quizzes.length;
   homework.isHomeworkPassed = (accuracy > passStandard) ? '是' : '否';
-  homework.startTime = startTime;
+  homework.homeWorkStartTime = startTime;
 
   return homework;
 }
 
 function createScoresheetInfo(paperId, callback) {
 
-  getUserDataByPaperId(paperId, function (usersData) {
-    var ScoresheetInfo = {};
-    var usersInfo = [];
-    var userId;
-
-    if (usersData.httpCode !== constant.httpCode.NOT_FOUND) {
-
-      usersData.result.usersDetail.body.forEach((userDetail)=> {
-
-        var userInfo = {};
-        userId = userDetail.userId;
-        userInfo.userId = userId;
-        userInfo.userDetail = createUserDetail(userDetail);
-        userInfo.logicPuzzle = createLogicPuzzle(usersData.result.logicPuzzles.body, userId);
-        userInfo.homework = createHomework(usersData.result.homeworks, userId);
-
-        usersInfo.push(userInfo);
-      });
-
-      ScoresheetInfo.httpCode = usersData.httpCode;
-
-    } else {
-      ScoresheetInfo.httpCode = constant.httpCode.NOT_FOUND;
+  getUserDataByPaperId(paperId, function (err, usersData) {
+    if (err) {
+      callback(err);
+      return;
     }
 
-    ScoresheetInfo.usersInfo = usersInfo;
-    callback(ScoresheetInfo);
+
+    var result = usersData.usersDetail.map((detail) => {
+
+      var userSummary = buildUserSummary(detail);
+
+      var logicPuzzleSummary = usersData.logicPuzzles.find((item) => {
+        return item.userId = detail.userId;
+      });
+
+      var homeworkSummary = createHomework(usersData.homeworks, detail.userId);
+
+      return Object.assign({}, userSummary, logicPuzzleSummary, homeworkSummary);
+    });
+    console.log(result);
+
+    callback(null, {
+      usersInfo: result
+    });
   });
 
 }
@@ -249,18 +196,21 @@ function createScoresheetCsvForPaper(paperId, usersInfo, callback) {
 
   usersInfo.forEach((userInfo)=> {
 
+    var logicPuzzleAccury = (userInfo.correctNumber / userInfo.itemNumber).toFixed(2);
+    var isLogicPuzzlePassed = logicPuzzleAccury > CUT_OFF_RATE ? '是' : '否';
+
     usersCsvInfo.push({
-      name: userInfo.userDetail.name,
-      mobilePhone: userInfo.userDetail.mobilePhone,
-      email: userInfo.userDetail.email,
-      logicPuzzleAccuracy: userInfo.logicPuzzle.accuracy,
-      isLogicPuzzlePassed: userInfo.logicPuzzle.isLogicPuzzlePassed,
-      logicPuzzleStartTime: moment.unix(userInfo.logicPuzzle.startTime).format('YYYY-MM-DD HH:mm:ss'),
-      logicPuzzleElapsedTime: calcLogicPuzzleElapsedTime(userInfo.logicPuzzle),
-      homeworkDetailsAccuracy: userInfo.homework.homeworkDetailsAccuracy,
-      isHomeworkPassed: userInfo.homework.isHomeworkPassed,
-      homeworkStartTime: userInfo.homework.startTime,
-      homeworkElapsedTime: calcHomeworkElapsedTime(userInfo.homework.elapsedTime),
+      name: userInfo.name,
+      mobilePhone: userInfo.mobilePhone,
+      email: userInfo.email,
+      logicPuzzleAccuracy: logicPuzzleAccury,
+      isLogicPuzzlePassed: isLogicPuzzlePassed,
+      logicPuzzleStartTime: moment.unix(userInfo.startTime).format('YYYY-MM-DD HH:mm:ss'),
+      logicPuzzleElapsedTime: calcLogicPuzzleElapsedTime(userInfo),
+      homeworkDetailsAccuracy: userInfo.homeworkDetailsAccuracy,
+      isHomeworkPassed: userInfo.isHomeworkPassed,
+      homeworkStartTime: userInfo.homeWorkStartTime,
+      homeworkElapsedTime: calcHomeworkElapsedTime(userInfo.elapsedTime),
       homeworkDetails: config.appServer + 'paper/' + paperId + '/user/' + userInfo.userId + '/homework-details'
     });
 
@@ -273,25 +223,26 @@ function createScoresheetCsvForPaper(paperId, usersInfo, callback) {
   });
 }
 
-PaperController.prototype.exportPaperScoresheetCsv = (req, res)=> {
+PaperController.prototype.exportPaperScoresheetCsv = (req, res, next)=> {
   var paperId = req.params.paperId;
 
-  createScoresheetInfo(paperId, function (scoresheetInfo) {
-
-    if (scoresheetInfo.httpCode === constant.httpCode.NOT_FOUND) {
-      res.sendStatus(constant.httpCode.NOT_FOUND);
-    } else {
-      createScoresheetCsvForPaper(paperId, scoresheetInfo.usersInfo, function (csv) {
-        var time = moment.unix(new Date() / constant.time.MILLISECOND_PER_SECONDS).format('YYYY-MM-DD');
-        var fileName = time + '/paper-' + paperId + '.csv';
-
-        csv = csv.split('\\n').join(String.fromCharCode(LF));
-        res.setHeader('Content-disposition', 'attachment; filename=' + fileName + '');
-        res.setHeader('Content-Type', 'text/csv');
-        res.send(csv);
-      });
-
+  createScoresheetInfo(paperId, function (err, scoresheetInfo) {
+    if (err) {
+      next(err);
+      return;
     }
+
+    createScoresheetCsvForPaper(paperId, scoresheetInfo.usersInfo, function (csv) {
+      var time = moment.unix(new Date() / constant.time.MILLISECOND_PER_SECONDS).format('YYYY-MM-DD');
+      var fileName = time + '/paper-' + paperId + '.csv';
+
+      csv = csv.split('\\n').join(String.fromCharCode(BREAK_LINE_CODE));
+      res.setHeader('Content-disposition', 'attachment; filename=' + fileName + '');
+      res.setHeader('Content-Type', 'text/csv');
+      res.send(csv);
+    });
+
+
   });
 };
 
@@ -359,9 +310,9 @@ function createUserHomeworkDetails(paperId, userId, callback) {
 
         var userInfo = {};
         if (index === 0) {
-          userInfo.userDetail = createUserDetail(data.result.userDetail.body);
+          userInfo.userDetail = buildUserSummary(data.result.userDetail.body);
         } else {
-          userInfo.userDetail = createUserDetail({
+          userInfo.userDetail = buildUserSummary({
             name: '',
             mobilePhone: '',
             email: ''
@@ -430,7 +381,7 @@ PaperController.prototype.exportUserHomeworkDetailsCsv = (req, res)=> {
         var time = moment.unix(new Date() / constant.time.MILLISECOND_PER_SECONDS).format('YYYY-MM-DD');
         var fileName = time + '-paper-' + paperId + '-user-' + userId + '.csv';
 
-        csv = csv.split('\\n').join(String.fromCharCode(LF));
+        csv = csv.split('\\n').join(String.fromCharCode(BREAK_LINE_CODE));
         res.setHeader('Content-disposition', 'attachment; filename=' + fileName + '');
         res.setHeader('Content-Type', 'text/csv');
 
@@ -481,14 +432,14 @@ function createUserHomeworkQuizDetails(paperId, userId, homeworkquizId, callback
         homeworkquiz.homeworkSubmitPostHistory.forEach((commitItem, index)=> {
           var userInfo = {};
           if (index === 0) {
-            userInfo.userDetail = createUserDetail(data.result.userDetail.body);
+            userInfo.userDetail = buildUserSummary(data.result.userDetail.body);
 
             userInfo.startTime = homeworkquiz.startTime;
 
             userInfo.uri = homeworkquiz.uri;
 
           } else {
-            userInfo.userDetail = createUserDetail({
+            userInfo.userDetail = buildUserSummary({
               name: '',
               mobilePhone: '',
               email: ''
@@ -557,7 +508,7 @@ PaperController.prototype.exportUserHomeworkQuizDetailsCsv = (req, res)=> {
         var time = moment.unix(new Date() / constant.time.MILLISECOND_PER_SECONDS).format('YYYY-MM-DD');
         var fileName = time + '-paper-' + paperId + '-user-' + userId + '-homeworkquiz-' + homeworkquizId + '.csv';
 
-        csv = csv.split('\\n').join(String.fromCharCode(LF));
+        csv = csv.split('\\n').join(String.fromCharCode(BREAK_LINE_CODE));
         res.setHeader('Content-disposition', 'attachment; filename=' + fileName + '');
         res.setHeader('Content-Type', 'text/csv');
 
