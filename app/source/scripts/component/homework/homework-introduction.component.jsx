@@ -28,7 +28,10 @@ var HomeworkIntroduction = React.createClass({
     var desc = this.state.desc;
 
     function content() {
-      return {__html: marked(desc)};
+      var pattern = /a href=/g;
+      desc = marked(desc);
+      var addTargetInMarkDownText = desc.replace(pattern, "a target='_blank' href=");
+      return {__html: addTargetInMarkDownText};
     }
 
     return (
