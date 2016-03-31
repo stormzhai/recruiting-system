@@ -13,21 +13,24 @@ var DashboardStore = Reflux.createStore({
         .set('Content-Type', 'application/json')
         .use(errorHandler)
         .end((err, res) => {
-          var status;
-          if(res.body.isOverTime){
-            status = 'overTime';
-            if(res.body.isLast){
-              status = 'isFinished';
-            }
+          var puzzleEnabled = res.body.isPaperCommited ? false : true;
+          if (!puzzleEnabled) {
+            this.submitPaper();
           }
           this.trigger({
-            puzzleEnabled: res.body.isPaperCommited ? false : true,
+            puzzleEnabled: puzzleEnabled,
             homeworkEnabled: res.body.isPaperCommited,
             isOverTime: res.body.isOverTime,
-            isFinished: res.body.isFinished,
-            status: status
+            isFinished: res.body.isFinished
           });
         });
+  },
+
+  submitPaper: function () {
+    request.post('/logic-puzzle')
+        .set('Content_Type', 'application/json')
+        .use(errorHandler)
+        .end();
   }
 
 });

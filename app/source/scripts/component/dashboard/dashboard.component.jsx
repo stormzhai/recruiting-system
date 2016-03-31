@@ -14,13 +14,10 @@ var Dashboard = React.createClass({
   },
 
   render() {
-
     return (
-
-      <div className="app-list container-fluid">
-        {this.props.children}
-      </div>
-
+        <div className="app-list container-fluid">
+          {this.props.children}
+        </div>
     );
   }
 });
