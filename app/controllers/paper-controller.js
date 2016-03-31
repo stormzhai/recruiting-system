@@ -265,7 +265,6 @@ function createUserHomeworkDetails(paperId, userId, callback) {
   getHomeworkDetailsByUserId(userId, (err, data)=> {
 
     var userHomeworkDetails = {};
-    //var usersInfo = [];
     if (err) {
       callback(err);
       return;
