@@ -1,13 +1,12 @@
 'use strict';
 
-var client = require('../models/index');
 var request = require('superagent');
 var async = require('async');
 var yamlConfig = require('node-yaml-config');
 var config = yamlConfig.load('./config/config.yml');
 var constant = require('../mixin/constant');
 var UserHomeworkQuizzes = require('../models/user-homework-quizzes');
-var HomeworkInfo = require('../models/homework-info');
+var UserHomeworkAnswer = require('../models/user-homework-answer');
 
 function TaskController () {}
 
@@ -18,10 +17,7 @@ TaskController.prototype.createTask = (req, res) => {
 
   async.waterfall([
     (done) => {
-      HomeworkInfo.findOne({_id: uniqId}, done);
-    },
-    (info, done) => {
-      UserHomeworkQuizzes.updateStatus(info, constant.homeworkQuizzesStatus.LINE_UP, done);
+      UserHomeworkAnswer.updateStatus(uniqId, constant.homeworkQuizzesStatus.LINE_UP, done);
     }
   ], (err, product, numAffected) => {
     request
@@ -51,13 +47,32 @@ TaskController.prototype.result = (req, res) => {
 
   async.waterfall([
     (done) => {
-      HomeworkInfo.findOne({_id: uniqId}, done);
-    },
-    (info, done) => {
       if(req.body.result === constant.homeworkQuizzesStatus.PROGRESS) {
-        UserHomeworkQuizzes.updateStatus(info, req.body.result, done);
+        UserHomeworkAnswer.updateStatus(uniqId, req.body.result, done);
       }else {
-        UserHomeworkQuizzes.writeResult(info, req.body, done);
+        UserHomeworkAnswer.writeResult(uniqId, req.body, done);
+      }
+    },
+    (product, numAffected, done) => {
+      if (req.body.result === constant.homeworkQuizzesStatus.SUCCESS) {
+        UserHomeworkQuizzes.findQuizInfo(uniqId, (err, doc) => {
+          var firstIndex = 0;
+
+          request.post(config.apiServer + '/scoresheets')
+              .set('Content-Type', 'application/json')
+              .send({
+                examerId: doc.userId,
+                paperId: doc.paperId,
+                homeworkSubmits: [{
+                  homeworkQuizId: doc.quizzes[firstIndex].id,
+                  startTime: doc.quizzes[firstIndex].startTime,
+                  homeworkSubmitPostHistory: doc.quizzes[firstIndex].homeworkSubmitPostHistory
+                }]
+              })
+              .end(done);
+        });
+      } else {
+        done(null);
       }
     }
   ],(err, product, numAffected) => {
