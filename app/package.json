@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jasmine",
-    "it": "export NODE_ENV=test && webpack && cd integration-test && jasmine",
+    "it": "export NODE_ENV=test  && cd integration-test && jasmine",
     "eslint": "eslint .",
     "start": "nodemon app.js"
   },
