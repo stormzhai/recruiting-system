@@ -11,7 +11,6 @@ var vendor = new Vendor();
 router.get('/get-list', homeworkController.getList);
 router.get('/quiz',homeworkController.getQuiz);
 router.post('/save',homeworkController.saveGithubUrl);
-router.post('/result',homeworkController.updateResult);
 router.get('/get-branches',vendor.getBranches);
 router.get('/get-result',homeworkController.getResult);
 
