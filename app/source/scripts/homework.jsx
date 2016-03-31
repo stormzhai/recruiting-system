@@ -48,7 +48,7 @@ function startProgress() {
       .use(errorHandler)
       .end((err, res) => {
         goOn = res.body.homeworkQuizzes.some((element) => {
-          return element.status === homeworkQuizzesStatus.PROGRESS;
+          return element.status === homeworkQuizzesStatus.PROGRESS || element.status === homeworkQuizzesStatus.LINE_UP;
         });
 
         if(!goOn){

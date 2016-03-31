@@ -84,7 +84,7 @@ var SubmissionIntroduction = React.createClass({
     if (this.state.quizStatus === homeworkQuizzesStatus.PROGRESS) {
       HomeworkActions.submited(this.state.currentHomeworkNumber);
     }
-    var isSubmitted = this.state.quizStatus === homeworkQuizzesStatus.PROGRESS || this.state.quizStatus === homeworkQuizzesStatus.SUCCESS;
+    var isSubmitted = this.state.quizStatus === homeworkQuizzesStatus.PROGRESS || this.state.quizStatus === homeworkQuizzesStatus.SUCCESS || this.state.quizStatus === homeworkQuizzesStatus.LINE_UP;
 
     var branches = this.state.branches.map((branch, index)=> {
       return (<option key={index}>{branch}</option>);

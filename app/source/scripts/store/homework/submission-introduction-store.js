@@ -36,7 +36,7 @@ var submissionIntroductionStore = Reflux.createStore({
           if(!res.body.quiz) {
             return;
           }
-          if (res.body.quiz.quizStatus === homeworkQuizzesStatus.PROGRESS) {
+          if (res.body.quiz.quizStatus === homeworkQuizzesStatus.PROGRESS || res.body.quiz.quizStatus === homeworkQuizzesStatus.LINE_UP) {
             this.trigger({
               quizStatus: homeworkQuizzesStatus.PROGRESS,
               githubUrl: res.body.quiz.userAnswerRepo,
