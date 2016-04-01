@@ -3,17 +3,6 @@ import static org.gradle.logging.StyledTextOutput.Style
 
 def out = services.get(StyledTextOutputFactory).create("blah")
 
-subprojects {
-    apply plugin: 'java'
-    repositories {
-        jcenter()
-    }
-}
-
-allprojects {
-    apply plugin: "idea"
-}
-
 task(startserver) {
     doFirst{
         out.withStyle(Style.Failure).println('The task \'startserver\' was deprecated')
@@ -25,11 +14,11 @@ task(startserver) {
 task(startApi) {
     doFirst {
         out.withStyle(Style.Info).println('migrating database...')
-        project(':api').flywayClean.execute()
-        project(':api').flywayMigrate.execute()
+        project(':paper-api').flywayClean.execute()
+        project(':paper-api').flywayMigrate.execute()
 
         out.withStyle(Style.Info).println('starting jetty server...')
-        project(':api').jettyRun.execute()
+        project(':paper-api').jettyRun.execute()
     }
 }
 
