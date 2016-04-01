@@ -3,7 +3,6 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var constant = require('../mixin/constant');
-var userHomeworkAnswer = require('./user-homework-answer');
 
 var userHomeworkQuizzesSchema = Schema({
   userId: Number,
@@ -113,7 +112,7 @@ userHomeworkQuizzesSchema.statics.findProgressTasks = function (callback) {
 };
 
 userHomeworkQuizzesSchema.statics.checkDataForUpdate = function (userId, homeworkId, callback) {
-  var result = {};
+
   this.findOne({
     userId: userId,
     quizzes: {$elemMatch: {id: homeworkId}}
