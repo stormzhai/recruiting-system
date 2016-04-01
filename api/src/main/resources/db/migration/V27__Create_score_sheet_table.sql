@@ -1,5 +1,0 @@
-CREATE TABLE scoreSheet(
-    id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    examerId INT NOT NULL ,
-    paperId INT NOT NULL
-)

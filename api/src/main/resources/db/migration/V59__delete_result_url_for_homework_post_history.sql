@@ -1,1 +1,0 @@
-ALTER TABLE homeworkPostHistory DROP resultURL;

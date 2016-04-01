@@ -1,1 +1,0 @@
-ALTER TABLE homeworkQuizItem change homeworkQuizId sectionId INT NOT NULL ;

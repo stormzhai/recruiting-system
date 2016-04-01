@@ -1,1 +1,0 @@
-ALTER TABLE homeworkQuizItem RENAME TO homeworkQuiz;

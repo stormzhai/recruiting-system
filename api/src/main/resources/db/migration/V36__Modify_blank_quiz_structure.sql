@@ -1,1 +1,0 @@
-ALTER TABLE blankQuiz MODIFY COLUMN sectionId INT NULL ;

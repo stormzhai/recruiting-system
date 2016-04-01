@@ -1,1 +1,0 @@
-ALTER TABLE blankQuiz ADD COLUMN exampleCount INTEGER NOT NULL ;

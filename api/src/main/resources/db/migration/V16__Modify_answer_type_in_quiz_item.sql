@@ -1,1 +1,0 @@
-alter table quizItem modify column answer varchar(128);
