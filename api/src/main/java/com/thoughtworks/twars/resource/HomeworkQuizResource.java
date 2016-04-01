@@ -42,7 +42,6 @@ public class HomeworkQuizResource {
         homeworkItem.put("id", id);
         homeworkItem.put("description", homeworkQuiz.getDescription());
         homeworkItem.put("evaluateScript", homeworkQuiz.getEvaluateScript());
-        homeworkItem.put("evaluateRepository", homeworkQuiz.getEvaluateRepository());
         homeworkItem.put("templateRepository", homeworkQuiz.getTemplateRepository());
 
         return Response.status(Response.Status.OK).entity(homeworkItem).build();

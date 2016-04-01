@@ -22,7 +22,6 @@ public class HomeworkQuizResourceTest extends TestBase {
     @Test
     public void should_return_one_homework_quiz() {
         when(homeworkQuizMapper.findById(1)).thenReturn(homeworkQuiz);
-        when(homeworkQuiz.getEvaluateRepository()).thenReturn("evaluateRepository");
         when(homeworkQuiz.getDescription()).thenReturn("这是一道比较简单的题目");
         when(homeworkQuiz.getEvaluateScript()).thenReturn("www.baidu.com");
         when(homeworkQuiz.getTemplateRepository()).thenReturn("templateRepository");

@@ -5,7 +5,6 @@ public class HomeworkQuiz {
     private int sectionId;
     private String description;
     private String evaluateScript;
-    private String evaluateRepository;
     private String templateRepository;
 
     public int getId() {
@@ -38,14 +37,6 @@ public class HomeworkQuiz {
 
     public void setEvaluateScript(String evaluateScript) {
         this.evaluateScript = evaluateScript;
-    }
-
-    public String getEvaluateRepository() {
-        return evaluateRepository;
-    }
-
-    public void setEvaluateRepository(String evaluateRepository) {
-        this.evaluateRepository = evaluateRepository;
     }
 
     public String getTemplateRepository() {

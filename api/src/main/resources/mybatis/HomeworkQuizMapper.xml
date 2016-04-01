@@ -9,7 +9,6 @@
         <id property="id" column="id"></id>
         <result column="description" property="description"></result>
         <result column="evaluateScript" property="evaluateScript"></result>
-        <result column="evaluateRepository" property="evaluateRepository"></result>
         <result column="templateRepository" property="templateRepository"></result>
         <result column="sectionId" property="sectionId"></result>
     </resultMap>

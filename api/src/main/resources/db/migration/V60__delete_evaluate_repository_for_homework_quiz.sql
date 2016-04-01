@@ -1,0 +1,1 @@
+ALTER TABLE homeworkQuiz DROP evaluateRepository;

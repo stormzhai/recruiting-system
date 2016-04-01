@@ -28,7 +28,6 @@ public class HomeworkPostHistoryMapperTest extends TestBase {
         homeworkPostHistory.setBranch("master");
         homeworkPostHistory.setCommitTime(1453287441);
         homeworkPostHistory.setStartTime(12345634);
-        homeworkPostHistory.setResultURL("123456");
 
         homeworkPostHistoryMapper.insertHomeworkPostHistory(homeworkPostHistory);
 
@@ -46,7 +45,6 @@ public class HomeworkPostHistoryMapperTest extends TestBase {
         assertThat(homeworkPostHistoryList.get(0).getId(), is(1));
         assertThat(homeworkPostHistoryList.get(0).getStatus(), is(3));
         assertThat(homeworkPostHistoryList.get(0).getCommitTime(), is(1453287441));
-        assertThat(homeworkPostHistoryList.get(0).getResultURL(),is("http://10.29.3.221:8080/job/TASK-QUEUE/111/console"));
     }
 
 }

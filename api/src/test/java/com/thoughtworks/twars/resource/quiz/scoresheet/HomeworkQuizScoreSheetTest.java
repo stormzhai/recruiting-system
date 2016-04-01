@@ -65,14 +65,13 @@ public class HomeworkQuizScoreSheetTest {
         when(homeworkPostHistory.getCommitTime()).thenReturn(5678);
         when(homeworkPostHistory.getHomeworkURL())
                 .thenReturn("github.com/jingjing");
-        when(homeworkPostHistory.getResultURL()).thenReturn("12345");
         when(homeworkPostHistory.getStartTime()).thenReturn(123456);
         Gson gson = new GsonBuilder().create();
         List<Map> homeworkPostHistoryList = homeworkQuizScoreSheet
                 .findByHomeworkSubmitId(1);
         String homeworkPostHistoryStr = gson.toJson(homeworkPostHistoryList);
         assertThat(homeworkPostHistoryStr,
-                is("[{\"commitTime\":5678,\"resultURL\":\"12345\",\"homeworkURL\":\"github.com/jingjing\"," +
+                is("[{\"commitTime\":5678,\"homeworkURL\":\"github.com/jingjing\"," +
                         "\"branch\":\"dev\",\"version\":\"ghjkl\",\"status\":7}]"));
     }
 

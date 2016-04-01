@@ -30,7 +30,6 @@ public class HomeWorkQuizMapperTest extends TestBase {
     public void should_return_one_homework_quiz_when_by_id() {
         HomeworkQuiz homeworkQuiz = homeworkQuizMapper.findById(1);
 
-        assertThat(homeworkQuiz.getEvaluateRepository(), is("test.com/homework/1"));
         assertThat(homeworkQuiz.getEvaluateScript(), is("/homework-script/check-readme.sh"));
         assertThat(homeworkQuiz.getTemplateRepository(), is(""));
     }
