@@ -1,3 +1,6 @@
 [submodule "paper-api"]
 	path = paper-api
 	url = git@github.com:thoughtworks-academy/recruiting-system-paper-api.git
+[submodule "task-queue"]
+	path = task-queue
+	url = git@github.com:thoughtworks-academy/recruiting-system-task-queue.git
