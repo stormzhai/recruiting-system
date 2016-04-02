@@ -5,7 +5,7 @@ var superAgent = require('superagent');
 var yamlConfig = require('node-yaml-config');
 var gitHubToken = yamlConfig.load('./config/config.yml').gitHubToken;
 
-getBranches = function (req, res) {
+function getBranches(req, res) {
   var originUrl = req.query.url;
   var list = originUrl.split('/');
   var user = list[3];
