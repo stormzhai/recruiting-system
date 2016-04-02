@@ -13,6 +13,10 @@ var userHomeworkQuizzesSchema = Schema({
     userAnswerRepo: String,
     uri: String,
     branch: String,
+    status: {
+      type: Number,
+      default: constant.homeworkQuizzesStatus.LOCKED
+    },
     homeworkSubmitPostHistory: [{type: Schema.Types.ObjectId, ref: 'UserHomeworkAnswer'}]
   }]
 });
@@ -20,16 +24,16 @@ var userHomeworkQuizzesSchema = Schema({
 userHomeworkQuizzesSchema.statics.initUserHomeworkQuizzes = function (userId, quizzes, paperId, callback) {
   this.findOne({userId: userId}, (err, doc) => {
     if (doc) {
-      callback(new Error('is exist'), null);
+      callback(null, doc);
     } else {
-      var _quizzes = [];
-
-      quizzes.forEach((quiz) => {
-        _quizzes.push({
+      var _quizzes = quizzes.map((quiz) => {
+        return {
           id: quiz.id,
           uri: quiz.definition_uri
-        });
+        };
       });
+
+      _quizzes[0].status = constant.homeworkQuizzesStatus.ACTIVE;
 
       this.create({
         userId: userId,
@@ -42,24 +46,32 @@ userHomeworkQuizzesSchema.statics.initUserHomeworkQuizzes = function (userId, qu
 
 userHomeworkQuizzesSchema.statics.getQuizStatus = function(userId, callback) {
   this.findOne({userId: userId})
-    .populate('quizzes.homeworkSubmitPostHistory')
     .exec((err, doc) => {
+      return callback(err, doc.quizzes.map((item) => {
+        return {status: item.status}
+      }));
+
+
       if (err || !doc) {
         callback(err || 'NOT_FOUND');
       } else {
         var result = [];
 
+        call
+
         doc.quizzes.forEach((item, index) => {
           var historyLength = item.homeworkSubmitPostHistory.length;
-
+          // 如果有历史记录，则返回历史记录的状态
           if (historyLength) {
             result.push({
               status: item.homeworkSubmitPostHistory[historyLength - 1].status
             });
+          // 如果是第一题，则直接解锁
           } else if (!index) {
             result.push({
               status: constant.homeworkQuizzesStatus.ACTIVE
             });
+          // 如果上一题已经成功，则直接解锁
           } else if (doc.quizzes[index - 1].homeworkSubmitPostHistory.length) {
             var lastStatus = doc.quizzes[index - 1].homeworkSubmitPostHistory.pop().status;
 
@@ -72,6 +84,7 @@ userHomeworkQuizzesSchema.statics.getQuizStatus = function(userId, callback) {
                 status: constant.homeworkQuizzesStatus.LOCKED
               });
             }
+          // 否则是锁
           } else {
             result.push({
               status: constant.homeworkQuizzesStatus.LOCKED

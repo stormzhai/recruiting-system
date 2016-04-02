@@ -126,7 +126,6 @@ var HomeworkDetails = React.createClass({
             </tbody>
           </table>
         </div>
-
     );
   }
 });

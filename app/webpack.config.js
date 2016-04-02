@@ -86,13 +86,13 @@ var config = {
     }),
     new ExtractTextPlugin("[chunkhash:8].[name].css"),
     new webpack.optimize.CommonsChunkPlugin('vendors', 'vendors.js'),
-    new webpack.optimize.UglifyJsPlugin({
-      compress: {
-        warnings: false
-      }
-    })
+    // new webpack.optimize.UglifyJsPlugin({
+    //   compress: {
+    //     warnings: false
+    //   }
+    // })
   ],
-  //devtool: '#inline-source-map',
+  devtool: '#cheap-source-map',
   resolve: {
     alias: {
       'jquery': 'jquery/dist/jquery.min.js',

@@ -44,15 +44,17 @@ var SubmissionIntroduction = React.createClass({
       this.state.githubBranch = this.state.defaultBranch;
     }
 
-    var commitSHA;
+    var commitSHA = this.state.branchesDetail.find((item) => {
+      return (item.name === this.state.githubBranch)
+    }).commit.sha;
 
-    this.state.branchesDetail.forEach((item) => {
-      if(item.name === this.state.githubBranch) {
-        commitSHA = item.commit.sha;
-      }
-    });
     this.props.startProgress();
-    HomeworkActions.submitUrl(this.state.githubUrl, this.state.githubBranch, commitSHA, this.state.currentHomeworkNumber);
+    HomeworkActions.submitUrl(
+      this.state.githubUrl,
+      this.state.githubBranch,
+      commitSHA,
+      this.state.currentHomeworkNumber
+    );
   },
   onUrlChange: function (event) {
     var target = event.target;
