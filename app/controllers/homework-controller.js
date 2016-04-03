@@ -8,6 +8,7 @@ var apiRequest = require('../services/api-request');
 var request = require('superagent');
 var yamlConfig = require('node-yaml-config');
 var config = yamlConfig.load('./config/config.yml');
+var mongoose = require('mongoose');
 
 function HomeworkController() {}
 
@@ -25,72 +26,98 @@ HomeworkController.prototype.getList = (req, res, next) => {
   });
 };
 
-HomeworkController.prototype.getQuiz = (req, res) => {
-  var userId = req.session.user ? req.session.user.id : 'invalid';
-  var orderId = req.query.orderId;
-  var error = {};
-  var quizStatus;
-  var userAnswerRepo;
-  var branch;
-  var quiz;
+HomeworkController.prototype.updateStatus = (req, res, next) => {
+
+  var target;
+
+  async.waterfall([
+    (done) => {
+      var id = new mongoose.Types.ObjectId(req.params.historyId);
+      userHomeworkQuizzes
+          .aggregate([
+            {"$unwind": "$quizzes"},
+            {"$unwind": "$quizzes.homeworkSubmitPostHistory"}
+          ])
+          .match({'quizzes.homeworkSubmitPostHistory': id})
+          .exec(done);
+    },
+
+    (data, done) => {
+      if(!data.length) {
+        done(new Error("没有找到相应资源：" + req.params.historyId), null)
+      }
+
+      target = data[0];
+      userHomeworkQuizzes.findOne(data[0]._id, done)
+    },
+
+    (data, done) => {
+      var quiz = data.quizzes.find((item, idx, doc) => {
+        return item._id.toString() === target.quizzes._id.toString();
+      });
+      debugger;
+      quiz.status = parseInt(req.body.status) || 1;
+      data.save(done);
+    },
+
+  ], (err, data) => {
+    if(err) {return next(req, res, err);}
+    res.send(data);
+  });
+
+};
+
+HomeworkController.prototype.getQuiz = (req, res, next) => {
+
+  var userId = req.session.user.id;
+  var orderId = parseInt(req.query.orderId, 10) || 1;
+  var result = {};
 
   async.waterfall([
 
     (done) => {
-      userHomeworkQuizzes.getQuizStatus(userId, done);
+      userHomeworkQuizzes.findOne({userId: userId}, done);
     },
 
-    (result, done) => {
-      if (!(Number(orderId) === parseInt(orderId, 10))) {
-        error.status = constant.httpCode.NOT_FOUND;
-        done(true, error);
-      } else {
-        quizStatus = result[orderId - 1].status;
-      }
-      userHomeworkQuizzes.findOne({userId: userId}).exec(done);
+    (data, done) => {
+      orderId = Math.max(orderId, 1);
+      orderId = Math.min(orderId, data.quizzes.length);
+      var index = orderId - 1;
+      done(null, data.quizzes[index]);
     },
 
-    (result, done) => {
-      quiz = result.quizzes[orderId - 1];
-      if (orderId === undefined || orderId > result.quizzes.length || orderId < 1) {
-        error.status = constant.httpCode.NOT_FOUND;
-        done(true, error);
-      } else if (quizStatus === constant.homeworkQuizzesStatus.LOCKED) {
-        error.status = constant.httpCode.FORBIDDEN;
-        done(true, error);
-      } else {
-        if (quiz.homeworkSubmitPostHistory.length) {
-          var userSubmitInfo = quiz.homeworkSubmitPostHistory.pop();
-          userAnswerRepo = userSubmitInfo.homeworkURL;
-          branch = userSubmitInfo.branch;
-        }
-        if (!quiz.startTime) {
-          quiz.startTime = Date.parse(new Date()) / constant.time.MILLISECOND_PER_SECONDS;
-          result.save();
-        }
-        apiRequest.get(quiz.uri, (err, result) => {
-          done(err, result.body);
-        });
-      }
+    (data, done) => {
+      result.uri = data.uri;
+      var histories = data.homeworkSubmitPostHistory;
+      var lastHomeworkSubmitId = histories[histories.length - 1];
+      request
+          .get(config.taskServer + 'tasks/' + lastHomeworkSubmitId)
+          .set('Content-Type', 'application/json')
+          .end(done);
     },
-  ], (err, data) => {
-    if (err && (err !== 'break')) {
-      if (!data) {
-        res.status(constant.httpCode.INTERNAL_SERVER_ERROR);
-      }
-      res.send({status: data ? data.status : constant.httpCode.INTERNAL_SERVER_ERROR});
-    } else {
-      res.send({
-        status: constant.httpCode.OK,
-        quiz: {
-          quizStatus: quizStatus,
-          desc: data.description,
-          templateRepo: data.templateRepository,
-          userAnswerRepo: userAnswerRepo,
-          branch: branch
-        }
-      });
+
+    (data, done) => {
+      result.userAnswerRepo = data.body.userAnswerRepo;
+      result.branch = data.body.branch;
+      result.status = data.body.status;
+      done(null, null);
+    },
+
+    (data, done) => {
+      apiRequest.get(result.uri, done);
+    },
+
+    (data, done) => {
+      result.desc = data.body.description;
+      result.templateRepo = data.body.templateRepository;
+      done(null, result);
     }
+  ], (err, data) => {
+    if(err) {return next(req, res, err);}
+    res.send({
+      status: constant.httpCode.OK,
+      quiz: data
+    });
   });
 };
 
@@ -120,7 +147,8 @@ HomeworkController.prototype.saveGithubUrl = (req, res, next) => {
       done(null, {
         branch: req.body.branch,
         userAnswerRepo: req.body.userAnswerRepo,
-        evaluateScript: data.body.evaluateScript
+        evaluateScript: data.body.evaluateScript,
+        callbackUrl: config.appServer + 'homework/status'
       })
     },
 
@@ -144,7 +172,7 @@ HomeworkController.prototype.saveGithubUrl = (req, res, next) => {
     if(err) {return next(req, res, err);}
     res.send(data);
   })
-}
+};
 
 HomeworkController.prototype.getResult = (req, res) => {
   var userId = req.session.user ? req.session.user.id : 'invalid';

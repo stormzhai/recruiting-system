@@ -13,5 +13,6 @@ router.get('/quiz',homeworkController.getQuiz);
 router.post('/save',homeworkController.saveGithubUrl);
 router.get('/get-branches',githubReq.getBranches);
 router.get('/get-result',homeworkController.getResult);
+router.put('/status/:historyId', homeworkController.updateStatus);
 
 module.exports = router;
