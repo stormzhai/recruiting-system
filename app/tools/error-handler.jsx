@@ -11,6 +11,8 @@ var errorHandler = function(req) {
   });
 };
 
+
+
 function addErrorMessage() {
   var errorMessageBlock = document.createElement('DIV');
   errorMessageBlock.setAttribute('id','alert');
@@ -25,5 +27,7 @@ function addErrorMessage() {
       document.getElementById('alert')
   );
 }
+
+errorHandler.showError = addErrorMessage;
 
 module.exports = errorHandler;

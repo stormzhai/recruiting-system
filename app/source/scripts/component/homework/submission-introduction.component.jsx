@@ -3,9 +3,9 @@
 var Reflux = require('reflux');
 var validate = require('validate.js');
 var constraint = require('../../../../mixin/url-constraint');
+var constant = require('../../../../mixin/constant');
 var homeworkQuizzesStatus = require('../../../../mixin/constant').homeworkQuizzesStatus;
 var HomeworkActions = require('../../actions/homework/homework-actions');
-var HomeworkIntroductionStore = require('../../store/homework/homework-introduction-store');
 var SubmissionIntroductionStore = require('../../store/homework/submission-introduction-store');
 
 function getError(validateInfo, field) {
@@ -16,7 +16,8 @@ function getError(validateInfo, field) {
 }
 
 var SubmissionIntroduction = React.createClass({
-  mixins: [Reflux.connect(HomeworkIntroductionStore), Reflux.connect(SubmissionIntroductionStore)],
+  mixins: [Reflux.connect(SubmissionIntroductionStore)],
+  
   getInitialState: function () {
     return {
       showRepo: this.props.getShowStatus,
@@ -32,8 +33,22 @@ var SubmissionIntroduction = React.createClass({
       branchesDetail: []
     };
   },
+
   componentDidUpdate: function (prevProps, prevState) {
     this.refs.githubUrl.value = this.state.githubUrl;
+
+    // 如果状态为正在进行,则
+    if (this.state.quizStatus === homeworkQuizzesStatus.PROGRESS) {
+      HomeworkActions.submited(this.state.currentHomeworkNumber);
+    }
+
+    if(
+      this.state.quizStatus === constant.homeworkQuizzesStatus.LINE_UP &&
+      this.state.quizStatus !== prevState.quizStatus
+    ) {
+        this.props.startProgress();
+    }
+
   },
 
   clickBranch: function () {
@@ -48,7 +63,7 @@ var SubmissionIntroduction = React.createClass({
       return (item.name === this.state.githubBranch)
     }).commit.sha;
 
-    this.props.startProgress();
+    //
     HomeworkActions.submitUrl(
       this.state.githubUrl,
       this.state.githubBranch,
@@ -56,6 +71,7 @@ var SubmissionIntroduction = React.createClass({
       this.state.currentHomeworkNumber
     );
   },
+
   onUrlChange: function (event) {
     var target = event.target;
     var value = target.value.trim();
@@ -83,9 +99,8 @@ var SubmissionIntroduction = React.createClass({
   },
 
   render() {
-    if (this.state.quizStatus === homeworkQuizzesStatus.PROGRESS) {
-      HomeworkActions.submited(this.state.currentHomeworkNumber);
-    }
+    // 如果状态为正在进行，则
+
     var isSubmitted = this.state.quizStatus === homeworkQuizzesStatus.PROGRESS || this.state.quizStatus === homeworkQuizzesStatus.SUCCESS || this.state.quizStatus === homeworkQuizzesStatus.LINE_UP;
 
     var branches = this.state.branches.map((branch, index)=> {

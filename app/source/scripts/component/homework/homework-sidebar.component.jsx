@@ -10,22 +10,11 @@ var homeworkQuizzesStatus = require('../../../../mixin/constant').homeworkQuizze
 var HomeworkSidebar = React.createClass({
   mixins: [Reflux.connect(HomeworkSidebarStore)],
 
-  getInitialState: function () {
-    var list = [];
-    return {
-      homeworkStatusList: list,
-      currentHomeworkNumber: this.props.orderId,
-      clickNumber: this.props.orderId
-    };
-  },
+  componentDidMount: function () {},
 
-  componentDidMount: function () {
-    HomeworkActions.loadHomeworkList();
-  },
-
-  changeIcon: function (state) {
+  getIconCss: function (state) {
     var icon = 'home-icon h4 fa fa-lg fa-';
-    var iconList = ['lock', '', 'clock-o', 'check-circle', 'times-circle', 'clock-o'];
+    var iconList = ['lock', '', 'clock-o flashing', 'check-circle', 'times-circle', 'clock-o flashing'];
     var statusCode = [
       homeworkQuizzesStatus.LOCKED,
       homeworkQuizzesStatus.ACTIVE,
@@ -42,25 +31,28 @@ var HomeworkSidebar = React.createClass({
     });
     return icon;
   },
-  handleClick: function (mark) {
-    this.props.onAction(mark);
+
+  handleClick: function (orderId) {
+    if(orderId !== this.state.orderId) {
+      this.props.onOrderIdChange(orderId);
+    }
   },
 
   render() {
-    var list = this.state.homeworkStatusList;
-    var itemHtml = list.map((item, index) => {
-      var classStr = 'list-group-item ' + (this.state.clickNumber === index + 1 ? ' selected' : '');
-      var iTagClassStr = this.changeIcon(item.status);
-
-      iTagClassStr += ~iTagClassStr.indexOf('clock-o') ? ' flashing' : '';
+    var itemHtml = this.props.homeworkQuizzes.map((item, index) => {
+      var orderId = index + 1;
+      var classStr = 'list-group-item ' +(this.props.orderId === orderId ? ' selected' : '');
+      var iconCss = this.getIconCss(item.status);
+      var quizName = '第' + (orderId) + '题'
 
       return (
-          <button className={classStr} key={index}
-                  onClick={this.handleClick.bind(null, index + 1)}>
+          <button className={classStr}
+                  key={index}
+                  onClick={this.handleClick.bind(null, orderId)}>
             <div className="row">
-              <div className="col-xs-9 h4 text-center ">{'第' + (index + 1) + '题'}</div>
+              <div className="col-xs-9 h4 text-center ">{quizName}</div>
               <div className='col-xs-3'>
-                <i className={iTagClassStr}/></div>
+                <i className={iconCss}/></div>
             </div>
           </button>
       );

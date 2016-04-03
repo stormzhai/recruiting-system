@@ -3,6 +3,7 @@
 var Reflux = require('reflux');
 
 var HomeworkActions = Reflux.createActions([
+  'init',
   'changeOrderId',
   'loadHomeworkList',
   'getRunningResult',

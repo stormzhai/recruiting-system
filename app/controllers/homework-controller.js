@@ -88,6 +88,7 @@ HomeworkController.prototype.getQuiz = (req, res, next) => {
 
     (data, done) => {
       result.uri = data.uri;
+      result.status = data.status;
       var histories = data.homeworkSubmitPostHistory;
       var lastHomeworkSubmitId = histories[histories.length - 1];
       request
@@ -99,11 +100,7 @@ HomeworkController.prototype.getQuiz = (req, res, next) => {
     (data, done) => {
       result.userAnswerRepo = data.body.userAnswerRepo;
       result.branch = data.body.branch;
-      result.status = data.body.status;
-      done(null, null);
-    },
 
-    (data, done) => {
       apiRequest.get(result.uri, done);
     },
 
@@ -114,9 +111,10 @@ HomeworkController.prototype.getQuiz = (req, res, next) => {
     }
   ], (err, data) => {
     if(err) {return next(req, res, err);}
+
     res.send({
       status: constant.httpCode.OK,
-      quiz: data
+      quiz: result
     });
   });
 };

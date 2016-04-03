@@ -2,39 +2,29 @@
 
 var Tabs = require('react-bootstrap/lib/Tabs');
 var Tab = require('react-bootstrap/lib/Tab');
-var Reflux = require('reflux');
-var HomeworkSidebarStore = require('../../store/homework/homework-sidebar-store');
-
+var homeworkQuizzesStatus = require('../../../../mixin/constant').homeworkQuizzesStatus;
 
 var HomeworkContent = React.createClass({
-  mixins: [Reflux.connect(HomeworkSidebarStore)],
-
-  getInitialState: function (){
-    return {
-      clickNumber: ''
-    };
-  },
-
-  componentDidUpdate: function (prevProps, prevState){
-    if(prevState.clickNumber !== this.state.clickNumber){
-      this.refs.tabs.state.activeKey = 0;
-      this.setState({
-        clickNumber: this.state.clickNumber
-      });
-    }
+  componentWillUpdate: function (){
+    this.refs.tabs.state.activeKey = 0;
   },
 
   render(){
+    var isOpend = homeworkQuizzesStatus.LOCKED !== this.props.quiz.status;
+
+    var tabNames = isOpend ? ["题目说明", "提交作业", "运行结果"] : ["题目说明"];
+    var tabHtml = tabNames.map((item, idx) => {
+      return <Tab eventKey={idx} title={item}>{this.props.children[idx]}</Tab>
+    })
+
     return (
-    <div className="col-md-9 col-sm-9 col-xs-12">
-      <div className="content">
-        <Tabs defaultActiveKey={0} animation={false} getShowStatus={true} ref="tabs">
-          <Tab eventKey={0} title="题目说明">{this.props.children[0]}</Tab>
-          <Tab eventKey={1} title="提交作业">{this.props.children[1]}</Tab>
-          <Tab eventKey={2} title="运行结果">{this.props.children[2]}</Tab>
-        </Tabs>
+      <div className="col-md-9 col-sm-9 col-xs-12">
+        <div className="content">
+          <Tabs defaultActiveKey={0} animation={false} getShowStatus={true} ref="tabs">
+            {tabHtml}
+          </Tabs>
+        </div>
       </div>
-    </div>
     );
   }
 
