@@ -2,11 +2,20 @@
 
 var Reflux = require('reflux');
 var validate = require('validate.js');
-var constraint = require('../../../../mixin/url-constraint');
 var constant = require('../../../../mixin/constant');
 var homeworkQuizzesStatus = require('../../../../mixin/constant').homeworkQuizzesStatus;
 var HomeworkActions = require('../../actions/homework/homework-actions');
 var SubmissionIntroductionStore = require('../../store/homework/submission-introduction-store');
+
+var constraint = {
+  githubUrl:{
+    presence: {message: '^请输入仓库地址'},
+    format:{
+      pattern: /^(?:https\:\/\/)?(?:github\.com\/)(?:[^ ]+)(?:\/)(?:[^ ]+)$/,
+      message: '^仓库地址不正确'
+    }
+  }
+};
 
 function getError(validateInfo, field) {
   if (validateInfo && validateInfo[field] && validateInfo[field].length > 0) {
@@ -17,137 +26,105 @@ function getError(validateInfo, field) {
 
 var SubmissionIntroduction = React.createClass({
   mixins: [Reflux.connect(SubmissionIntroductionStore)],
-  
-  getInitialState: function () {
+
+  getInitialState: function() {
     return {
-      showRepo: this.props.getShowStatus,
-      currentHomeworkNumber: this.props.homeworkNumber,
-      githubUrlError: '',
-      disableBranches: true,
-      branches: [],
-      defaultBranch: '',
-      githubUrl: '',
-      githubBranch: '',
-      quizStatus: 0,
-      showIcon: false,
-      branchesDetail: []
-    };
-  },
-
-  componentDidUpdate: function (prevProps, prevState) {
-    this.refs.githubUrl.value = this.state.githubUrl;
-
-    // 如果状态为正在进行,则
-    if (this.state.quizStatus === homeworkQuizzesStatus.PROGRESS) {
-      HomeworkActions.submited(this.state.currentHomeworkNumber);
+        'githubUrlError': '',
     }
-
-    if(
-      this.state.quizStatus === constant.homeworkQuizzesStatus.LINE_UP &&
-      this.state.quizStatus !== prevState.quizStatus
-    ) {
-        this.props.startProgress();
-    }
-
   },
 
-  clickBranch: function () {
-    HomeworkActions.getBranches(this.state.githubUrl);
-  },
   clickSubmit: function () {
-    if (!this.state.githubBranch) {
-      this.state.githubBranch = this.state.defaultBranch;
+    if(this.state.githubUrlError) {
+      return;
     }
 
-    var commitSHA = this.state.branchesDetail.find((item) => {
-      return (item.name === this.state.githubBranch)
-    }).commit.sha;
-
-    //
-    HomeworkActions.submitUrl(
-      this.state.githubUrl,
-      this.state.githubBranch,
-      commitSHA,
-      this.state.currentHomeworkNumber
-    );
+    HomeworkActions.createTask({
+      orderId: this.props.orderId,
+      userAnswerRepo: this.props.quiz.userAnswerRepo,
+      branch: this.props.quiz.branch,
+      commitSHA: ""
+    });
   },
 
-  onUrlChange: function (event) {
-    var target = event.target;
-    var value = target.value.trim();
+  handleBranchChange: function(evt) {
+    var branch = evt.target.value.trim();
+    this.props.onBranchUpdate(branch);
+  },
 
-    this.state.githubUrl = value;
+  handleRepoChange: function(evt) {
+    var repo = evt.target.value.trim();
+    this.props.onRepoUpdate(repo);
 
-    var name = target.name;
-    var valObj = {};
-    valObj[name] = value;
+    var valObj = {
+      'githubUrl': repo
+    };
 
     var result = validate(valObj, constraint);
-    var error = getError(result, name);
-    var stateObj = {};
-    stateObj[name + 'Error'] = error;
+    var error = getError(result, 'githubUrl');
+    var stateObj = {
+      'githubUrlError': error
+    };
 
     this.setState(stateObj);
-
-    this.state.disableBranches = !!error;
-    if (error) {
-      this.state.branches = [];
-    }
-  },
-  onBranchChange: function (event) {
-    this.state.githubBranch = event.target.value;
   },
 
   render() {
-    // 如果状态为正在进行，则
+    var submitableStatus = [
+      homeworkQuizzesStatus.ERROR,
+      homeworkQuizzesStatus.ACTIVE
+    ];
 
-    var isSubmitted = this.state.quizStatus === homeworkQuizzesStatus.PROGRESS || this.state.quizStatus === homeworkQuizzesStatus.SUCCESS || this.state.quizStatus === homeworkQuizzesStatus.LINE_UP;
-
-    var branches = this.state.branches.map((branch, index)=> {
-      return (<option key={index}>{branch}</option>);
+    var submitable = submitableStatus.some((val) => {
+      return this.props.quiz.status === val
     });
+
     return (
         <div className="tab">
-          <div className={(this.state.showRepo ? '' : ' hide')}>
+          <div>
             <div className="row last-time">
             </div>
             <div className="form-horizontal">
               <div className="form-group">
                 <label className="col-xs-2 control-label">编程题模板库地址</label>
-                <div className="col-xs-9">
-                  <label className="form-control">{this.state.templateRepo}</label>
+                <div className="col-xs-8">
+                  <label className="form-control">{this.props.quiz.templateRepo || "本题没有模板地址"}</label>
                 </div>
               </div>
               <div className="form-group">
-                <label htmlFor="githubUrl" className="col-sm-2 control-label">github仓库地址</label>
-                <div className="col-sm-9">
-                  <input type="text" className="form-control" id="githubUrl" name="githubUrl" ref="githubUrl"
+                <label htmlFor="githubUrl" className="col-sm-2 control-label">git仓库地址</label>
+                <div className="col-sm-8">
+                  <input type="text"
+                        className="form-control"
+                        ref="githubUrl"
+                        onChange={this.handleRepoChange}
+                        value={this.props.quiz.userAnswerRepo}
+                        placeholder="支持github和oschina，例：https://github.com/abc/def"
+                        disabled={submitable ? '':'disabled'}/>
 
-                         onChange={this.onUrlChange} placeholder="https://github.com/用户名/仓库名" disabled={isSubmitted ? 'disabled':''}/>
-                  <div
-                      className={'lose' + (this.state.githubUrlError === '' ? ' hide' : '')}>{this.state.githubUrlError}</div>
+                      <div ref="error" className={'lose' + (this.state.githubUrlError === '' ? ' hide' : '')}>
+                      {this.state.githubUrlError}
+                  </div>
                 </div>
               </div>
               <div className="form-group">
-                <label className="col-sm-2 control-label">github仓库分支</label>
-                <div className="col-sm-7">
-                  <select className="form-control" disabled={isSubmitted ? 'disabled':''} onChange={this.onBranchChange}>
-                    {branches}
-                  </select>
+                <label className="col-sm-2 control-label">git仓库分支</label>
+                <div className="col-sm-8">
+                  <input ref="branch"
+                      className="form-control"
+                      type="text"
+                      onChange={this.handleBranchChange}
+                      value={this.props.quiz.branch}
+                      disabled={submitable ? '':'disabled'}/>
                 </div>
-                <div className="col-sm-2">
-                  <button className="btn btn-default btn-block"
-                          disabled={(this.state.disableBranches || isSubmitted) === true ? 'disabled':''}
-                          onClick={this.clickBranch}>获取分支
-                    <i className={'fa fa-spinner fa-spin loading' + (this.state.showIcon ? '' : ' hide')}/>
+              </div>
+              <div className="form-group">
+                <label className="col-sm-2 control-label"></label>
+                <div className="col-sm-4">
+                  <button className="btn btn-block btn-primary"
+                          onClick={this.clickSubmit}>
+                          提交代码地址
                   </button>
                 </div>
-              </div>
-              <div className="col-sm-2 col-sm-offset-2">
-                <button className="btn btn-default btn-block"
-                        disabled={(this.state.branches.length === 0) || isSubmitted ? 'disabled':''}
-                        onClick={this.clickSubmit}>提交地址
-                </button>
               </div>
             </div>
           </div>

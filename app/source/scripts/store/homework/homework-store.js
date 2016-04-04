@@ -3,15 +3,32 @@
 var Reflux = require('reflux');
 var HomeworkActions = require('../../actions/homework/homework-actions');
 var superAgent = require('superagent');
-var constant = require('../../../../mixin/constant');
+var homeworkQuizzesStatus = require('../../../../mixin/constant').homeworkQuizzesStatus;
 var errorHandler = require('../../../../tools/error-handler.jsx');
 var async = require('async');
+
+var pollTimeout;
 
 var HomeworkSidebarStore = Reflux.createStore({
   listenables: [HomeworkActions],
 
   init: function() {
     this.data = {};
+  },
+
+  hasTaskProcess() {
+    return this.data.homeworkQuizzes.some((item) => {
+      return item.status == homeworkQuizzesStatus.PROGRESS ||
+              item.status == homeworkQuizzesStatus.LINE_UP
+    })
+  },
+
+  pollData: function() {
+    if(this.hasTaskProcess()) {
+      pollTimeout = setTimeout(this.onInit, 5000);
+    } else {
+      pollTimeout && clearTimeout(pollTimeout);
+    }
   },
 
   onInit: function() {
@@ -46,11 +63,32 @@ var HomeworkSidebarStore = Reflux.createStore({
         if(err) {return errorHandler.showError(err);}
         this.data.currentQuiz = data.body.quiz;
         this.trigger(this.data);
+        this.pollData();
     })
   },
 
-  onChangeOrderId: function (orderId) {
+  onCreateTask: function (data) {
+    async.waterfall([
+      (done) => {
+        superAgent.post('homework/save')
+            .set('Content-Type', 'application/json')
+            .send(data)
+            .end(done)
+      },
 
+      (data, done) => {
+        this.data.currentQuiz.status = data.body.status;
+        this.data.homeworkQuizzes[this.data.orderId-1].status = data.body.status;
+        done(null, null);
+      },
+    ], (err, data) => {
+      if(err) {return errorHandler.showError(err);}
+      this.trigger(this.data);
+      this.pollData();
+    });
+  },
+
+  onChangeOrderId: function (orderId) {
     async.waterfall([
       (done) => {
         var orderId = location.hash.substr(1);
@@ -65,7 +103,6 @@ var HomeworkSidebarStore = Reflux.createStore({
       },
 
       (query, done) => {
-        console.log(orderId);
         superAgent.get('/homework/quiz')
             .set('Content-Type', 'application/json')
             .query(query)
@@ -73,9 +110,9 @@ var HomeworkSidebarStore = Reflux.createStore({
       },
     ], (err, data) => {
         if(err) {return errorHandler.showError(err);}
-        console.log(data.quiz);
         this.data.currentQuiz = data.body.quiz;
         this.trigger(this.data);
+        this.pollData();
     })
   },
 });

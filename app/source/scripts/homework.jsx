@@ -54,6 +54,20 @@ var Homework = React.createClass({
     window.onpopstate = HomeworkAction.init;
   },
 
+  handleRepoUpdate: function(newRepo) {
+    this.state.currentQuiz.userAnswerRepo = newRepo;
+    this.setState({
+      "currentQuiz": this.state.currentQuiz
+    });
+  },
+
+  handleBranchUpdate: function(newBranch) {
+    this.state.currentQuiz.branch = newBranch;
+    this.setState({
+      "currentQuiz": this.state.currentQuiz
+    });
+  },
+
   render: function(){
     return (
       <div>
@@ -68,12 +82,18 @@ var Homework = React.createClass({
                 onOrderIdChange={this.handleOrderIdChange}
                 orderId={this.state.orderId}/>
 
-            <HomeworkContent quiz={this.state.currentQuiz}>
+            <HomeworkContent
+                orderId={this.state.orderId}
+                quiz={this.state.currentQuiz}>
+
                 <HomeworkIntroduction
                     quiz={this.state.currentQuiz}/>
 
                 <SubmissionIntroduction
                     quiz={this.state.currentQuiz}
+                    orderId={this.state.orderId}
+                    onRepoUpdate={this.handleRepoUpdate}
+                    onBranchUpdate={this.handleBranchUpdate}
                     startProgress={this.pollData}/>
 
                 <RunningResult

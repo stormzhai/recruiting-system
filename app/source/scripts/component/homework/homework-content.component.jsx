@@ -5,8 +5,10 @@ var Tab = require('react-bootstrap/lib/Tab');
 var homeworkQuizzesStatus = require('../../../../mixin/constant').homeworkQuizzesStatus;
 
 var HomeworkContent = React.createClass({
-  componentWillUpdate: function (){
-    this.refs.tabs.state.activeKey = 0;
+  componentWillReceiveProps: function(nextProps) {
+    if(this.props.orderId !== nextProps.orderId) {
+        this.refs.tabs.state.activeKey = 0;
+    }
   },
 
   render(){
@@ -14,7 +16,7 @@ var HomeworkContent = React.createClass({
 
     var tabNames = isOpend ? ["题目说明", "提交作业", "运行结果"] : ["题目说明"];
     var tabHtml = tabNames.map((item, idx) => {
-      return <Tab eventKey={idx} title={item}>{this.props.children[idx]}</Tab>
+      return <Tab key={idx} eventKey={idx} title={item}>{this.props.children[idx]}</Tab>
     })
 
     return (
