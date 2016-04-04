@@ -2,7 +2,7 @@
 'use strict';
 
 var Reflux = require('reflux');
-var HomeworkActions = require('../../actions/homework/homework-actions');
+// var HomeworkActions = require('../../actions/homework/homework-actions');
 var superAgent = require('superagent');
 var constant = require('../../../../mixin/constant');
 var errorHandler = require('../../../../tools/error-handler.jsx');
@@ -10,61 +10,61 @@ var homeworkQuizzesStatus = require('../../../../mixin/constant').homeworkQuizze
 var request = require('superagent');
 
 var submissionIntroductionStore = Reflux.createStore({
-  listenables: [HomeworkActions],
+  // listenables: [HomeworkActions],
 
-  onChangeOrderId: function (clickNumber) {
-    this.onReload(clickNumber);
-    this.trigger({
-      currentHomeworkNumber: clickNumber,
-      githubUrlError: '',
-      disableBranches: true,
-      branches: [],
-      defaultBranch: '',
-      githubUrl: '',
-      githubBranch: '',
-      quizStatus: 0,
-      showIcon: false
-    });
-  },
-
-  onReload: function(orderId) {
-    request.get('homework/quiz')
-        .set('Content-Type', 'application/json')
-        .query({orderId: orderId})
-        .use(errorHandler)
-        .end((err, res) => {
-          if(!res.body.quiz) {
-            return;
-          }
-          if (res.body.quiz.quizStatus === homeworkQuizzesStatus.PROGRESS || res.body.quiz.quizStatus === homeworkQuizzesStatus.LINE_UP) {
-            this.trigger({
-              quizStatus: homeworkQuizzesStatus.PROGRESS,
-              githubUrl: res.body.quiz.userAnswerRepo,
-              branches: [res.body.quiz.branch]
-            });
-          } else if (res.body.quiz.quizStatus === homeworkQuizzesStatus.SUCCESS) {
-            this.trigger({
-              quizStatus: homeworkQuizzesStatus.SUCCESS,
-              githubUrl: res.body.quiz.userAnswerRepo,
-              branches: [res.body.quiz.branch]
-            });
-          } else {
-            this.trigger({
-              quizStatus: res.body.quiz.quizStatus
-            });
-          }
-        });
-  },
-
-  onSubmitUrl: function (url, branch, commitSHA, orderId) {
-    superAgent.post('homework/save')
-        .set('Content-Type', 'application/json')
-        .send({orderId: orderId, userAnswerRepo: url, branch: branch, commitSHA: commitSHA})
-        .use(errorHandler)
-        .end((err, res) => {
-          this.trigger({quizStatus: res.body.status});
-        });
-  },
+  // onChangeOrderId: function (clickNumber) {
+  //   this.onReload(clickNumber);
+  //   this.trigger({
+  //     currentHomeworkNumber: clickNumber,
+  //     githubUrlError: '',
+  //     disableBranches: true,
+  //     branches: [],
+  //     defaultBranch: '',
+  //     githubUrl: '',
+  //     githubBranch: '',
+  //     quizStatus: 0,
+  //     showIcon: false
+  //   });
+  // },
+  //
+  // onReload: function(orderId) {
+  //   request.get('homework/quiz')
+  //       .set('Content-Type', 'application/json')
+  //       .query({orderId: orderId})
+  //       .use(errorHandler)
+  //       .end((err, res) => {
+  //         if(!res.body.quiz) {
+  //           return;
+  //         }
+  //         if (res.body.quiz.quizStatus === homeworkQuizzesStatus.PROGRESS || res.body.quiz.quizStatus === homeworkQuizzesStatus.LINE_UP) {
+  //           this.trigger({
+  //             quizStatus: homeworkQuizzesStatus.PROGRESS,
+  //             githubUrl: res.body.quiz.userAnswerRepo,
+  //             branches: [res.body.quiz.branch]
+  //           });
+  //         } else if (res.body.quiz.quizStatus === homeworkQuizzesStatus.SUCCESS) {
+  //           this.trigger({
+  //             quizStatus: homeworkQuizzesStatus.SUCCESS,
+  //             githubUrl: res.body.quiz.userAnswerRepo,
+  //             branches: [res.body.quiz.branch]
+  //           });
+  //         } else {
+  //           this.trigger({
+  //             quizStatus: res.body.quiz.quizStatus
+  //           });
+  //         }
+  //       });
+  // },
+  //
+  // onSubmitUrl: function (url, branch, commitSHA, orderId) {
+  //   superAgent.post('homework/save')
+  //       .set('Content-Type', 'application/json')
+  //       .send({orderId: orderId, userAnswerRepo: url, branch: branch, commitSHA: commitSHA})
+  //       .use(errorHandler)
+  //       .end((err, res) => {
+  //         this.trigger({quizStatus: res.body.status});
+  //       });
+  // },
 
   onGetBranches: function (url) {
     this.trigger({showIcon:true});

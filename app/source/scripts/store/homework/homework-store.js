@@ -79,6 +79,7 @@ var HomeworkSidebarStore = Reflux.createStore({
       (data, done) => {
         this.data.currentQuiz.status = data.body.status;
         this.data.homeworkQuizzes[this.data.orderId-1].status = data.body.status;
+        this.data.homeworkQuizzes[this.data.orderId-1].result = data.body.result;
         done(null, null);
       },
     ], (err, data) => {

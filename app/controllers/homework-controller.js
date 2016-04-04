@@ -55,7 +55,6 @@ HomeworkController.prototype.updateStatus = (req, res, next) => {
       var quiz = data.quizzes.find((item, idx, doc) => {
         return item._id.toString() === target.quizzes._id.toString();
       });
-      debugger;
       quiz.status = parseInt(req.body.status) || 1;
       data.save(done);
     },
@@ -100,6 +99,7 @@ HomeworkController.prototype.getQuiz = (req, res, next) => {
     (data, done) => {
       result.userAnswerRepo = data.body.userAnswerRepo;
       result.branch = data.body.branch;
+      result.result = data.body.result;
 
       apiRequest.get(result.uri, done);
     },

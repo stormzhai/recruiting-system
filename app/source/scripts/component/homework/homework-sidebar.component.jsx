@@ -3,15 +3,9 @@
 'use strict';
 
 var Reflux = require('reflux');
-var HomeworkActions = require('../../actions/homework/homework-actions');
-var HomeworkSidebarStore = require('../../store/homework/homework-sidebar-store');
 var homeworkQuizzesStatus = require('../../../../mixin/constant').homeworkQuizzesStatus;
 
 var HomeworkSidebar = React.createClass({
-  mixins: [Reflux.connect(HomeworkSidebarStore)],
-
-  componentDidMount: function () {},
-
   getIconCss: function (state) {
     var icon = 'home-icon h4 fa fa-lg fa-';
     var iconList = ['lock', '', 'clock-o flashing', 'check-circle', 'times-circle', 'clock-o flashing'];
@@ -33,7 +27,7 @@ var HomeworkSidebar = React.createClass({
   },
 
   handleClick: function (orderId) {
-    if(orderId !== this.state.orderId) {
+    if(orderId !== this.props.orderId) {
       this.props.onOrderIdChange(orderId);
     }
   },
