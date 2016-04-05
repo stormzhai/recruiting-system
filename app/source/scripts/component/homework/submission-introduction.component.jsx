@@ -33,7 +33,7 @@ var SubmissionIntroduction = React.createClass({
     }
   },
 
-  clickSubmit: function () {
+  handleSubmit: function () {
     if(this.state.githubUrlError) {
       return;
     }
@@ -121,7 +121,7 @@ var SubmissionIntroduction = React.createClass({
                 <label className="col-sm-2 control-label"></label>
                 <div className="col-sm-4">
                   <button className="btn btn-block btn-primary"
-                          onClick={this.clickSubmit}>
+                          onClick={this.handleSubmit}>
                           提交代码地址
                   </button>
                 </div>

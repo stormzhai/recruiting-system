@@ -10,9 +10,8 @@ var githubReq = require('../../services/github-req.js');
 
 router.get('/get-list', homeworkController.getList);
 router.get('/quiz',homeworkController.getQuiz);
-router.post('/save',homeworkController.saveGithubUrl);
 router.get('/get-branches',githubReq.getBranches);
-router.get('/get-result',homeworkController.getResult);
+router.post('/save',homeworkController.saveGithubUrl);
 router.put('/status/:historyId', homeworkController.updateStatus);
 
 module.exports = router;

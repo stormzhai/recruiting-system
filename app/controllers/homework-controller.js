@@ -10,6 +10,14 @@ var yamlConfig = require('node-yaml-config');
 var config = yamlConfig.load('./config/config.yml');
 var mongoose = require('mongoose');
 
+function getDesc(status, realDesc) {
+  if(status === constant.homeworkQuizzesStatus.LOCKED) {
+    return "## 当前题目未解锁,请先完成之前的题目.";
+  } else {
+    return realDesc
+  }
+}
+
 function HomeworkController() {}
 
 HomeworkController.prototype.getList = (req, res, next) => {
@@ -28,7 +36,7 @@ HomeworkController.prototype.getList = (req, res, next) => {
 
 HomeworkController.prototype.updateStatus = (req, res, next) => {
 
-  var target;
+  var homewrok;
 
   async.waterfall([
     (done) => {
@@ -47,15 +55,23 @@ HomeworkController.prototype.updateStatus = (req, res, next) => {
         done(new Error("没有找到相应资源：" + req.params.historyId), null)
       }
 
-      target = data[0];
+      homewrok = data[0];
       userHomeworkQuizzes.findOne(data[0]._id, done)
     },
 
     (data, done) => {
+      var nextIdx;
+
       var quiz = data.quizzes.find((item, idx, doc) => {
-        return item._id.toString() === target.quizzes._id.toString();
+        var match = item._id.toString() === homewrok.quizzes._id.toString()
+        if(match) { nextIdx = idx + 1;}
+        return match;
       });
+
       quiz.status = parseInt(req.body.status) || 1;
+      if(quiz.status === constant.homeworkQuizzesStatus.SUCCESS && data.quizzes[nextIdx]) {
+        data.quizzes[nextIdx].status = constant.homeworkQuizzesStatus.ACTIVE;
+      }
       data.save(done);
     },
 
@@ -63,7 +79,6 @@ HomeworkController.prototype.updateStatus = (req, res, next) => {
     if(err) {return next(req, res, err);}
     res.send(data);
   });
-
 };
 
 HomeworkController.prototype.getQuiz = (req, res, next) => {
@@ -73,7 +88,6 @@ HomeworkController.prototype.getQuiz = (req, res, next) => {
   var result = {};
 
   async.waterfall([
-
     (done) => {
       userHomeworkQuizzes.findOne({userId: userId}, done);
     },
@@ -105,13 +119,12 @@ HomeworkController.prototype.getQuiz = (req, res, next) => {
     },
 
     (data, done) => {
-      result.desc = data.body.description;
+      result.desc = getDesc(result.status, data.body.description);
       result.templateRepo = data.body.templateRepository;
       done(null, result);
     }
   ], (err, data) => {
     if(err) {return next(req, res, err);}
-
     res.send({
       status: constant.httpCode.OK,
       quiz: result
@@ -121,8 +134,7 @@ HomeworkController.prototype.getQuiz = (req, res, next) => {
 
 HomeworkController.prototype.saveGithubUrl = (req, res, next) => {
   var userHomework;
-  var orderId = parseInt(req.body.orderId) || 1;
-  var index = orderId - 1;
+  var index;
 
   async.waterfall([
     (done) => {
@@ -132,8 +144,11 @@ HomeworkController.prototype.saveGithubUrl = (req, res, next) => {
 
     (data, done) => {
       userHomework = data;
-      index = Math.max(0, index);
-      index = Math.min(data.quizzes.length - 1, index);
+
+      var orderId = parseInt(req.body.orderId) || 1;
+      orderId = Math.max(1, orderId);
+      orderId = Math.min(data.quizzes.length - 1, orderId);
+      index = orderId - 1
       done(null, data.quizzes[index].uri);
     },
 
@@ -171,36 +186,5 @@ HomeworkController.prototype.saveGithubUrl = (req, res, next) => {
     res.send(data);
   })
 };
-
-HomeworkController.prototype.getResult = (req, res) => {
-  var userId = req.session.user ? req.session.user.id : 'invalid';
-  var orderId = parseInt(req.query.orderId, 10) || 1;
-  var history, isSubmited, resultText;
-
-  userHomeworkQuizzes.findOne({userId: userId})
-      .populate('quizzes.homeworkSubmitPostHistory')
-      .exec(function(err, data) {
-
-        var quizzesLength = (data && data.quizzes) ? data.quizzes.length : 0;
-        orderId = Math.max(1, orderId);
-        orderId = Math.min(orderId, quizzesLength);
-
-        if (0 === orderId) {
-          res.send();
-        } else {
-          history = data.quizzes[orderId - 1].homeworkSubmitPostHistory ? data.quizzes[orderId - 1].homeworkSubmitPostHistory : [];
-          isSubmited = history.length > 0;
-          if (isSubmited && history[history.length - 1].homeworkDetail) {
-            resultText = history[history.length - 1].homeworkDetail;
-            resultText = new Buffer(resultText, 'base64').toString('utf8');
-          }
-          res.send({
-            isSubmited: isSubmited,
-            resultText: resultText
-          });
-        }
-      });
-};
-
 
 module.exports = HomeworkController;
