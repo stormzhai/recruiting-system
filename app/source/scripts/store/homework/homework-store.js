@@ -8,30 +8,31 @@ var errorHandler = require('../../../../tools/error-handler.jsx');
 var async = require('async');
 
 var pollTimeout;
+var TIMEOUT = 5000;
 
 var HomeworkSidebarStore = Reflux.createStore({
   listenables: [HomeworkActions],
 
-  init: function() {
+  init: function () {
     this.data = {};
   },
 
   hasTaskProcess() {
     return this.data.homeworkQuizzes.some((item) => {
-      return item.status == homeworkQuizzesStatus.PROGRESS ||
-              item.status == homeworkQuizzesStatus.LINE_UP
-    })
+      return item.status === homeworkQuizzesStatus.PROGRESS ||
+          item.status === homeworkQuizzesStatus.LINE_UP;
+    });
   },
 
-  pollData: function() {
-    if(this.hasTaskProcess()) {
-      pollTimeout = setTimeout(this.onInit, 5000);
+  pollData: function () {
+    if (this.hasTaskProcess()) {
+      pollTimeout = setTimeout(this.onInit, TIMEOUT);
     } else {
       pollTimeout && clearTimeout(pollTimeout);
     }
   },
 
-  onInit: function() {
+  onInit: function () {
     async.waterfall([
       (done) => {
         superAgent.get('/homework/get-list')
@@ -57,14 +58,16 @@ var HomeworkSidebarStore = Reflux.createStore({
         superAgent.get('/homework/quiz')
             .set('Content-Type', 'application/json')
             .query(query)
-            .end(done)
-      },
+            .end(done);
+      }
     ], (err, data) => {
-        if(err) {return errorHandler.showError(err);}
-        this.data.currentQuiz = data.body.quiz;
-        this.trigger(this.data);
-        this.pollData();
-    })
+      if (err) {
+        return errorHandler.showError(err);
+      }
+      this.data.currentQuiz = data.body.quiz;
+      this.trigger(this.data);
+      this.pollData();
+    });
   },
 
   onCreateTask: function (data) {
@@ -73,17 +76,19 @@ var HomeworkSidebarStore = Reflux.createStore({
         superAgent.post('homework/save')
             .set('Content-Type', 'application/json')
             .send(data)
-            .end(done)
+            .end(done);
       },
 
       (data, done) => {
         this.data.currentQuiz.status = data.body.status;
         this.data.currentQuiz.result = data.body.result;
-        this.data.homeworkQuizzes[this.data.orderId-1].status = data.body.status;
+        this.data.homeworkQuizzes[this.data.orderId - 1].status = data.body.status;
         done(null, null);
-      },
+      }
     ], (err, data) => {
-      if(err) {return errorHandler.showError(err);}
+      if (err) {
+        return errorHandler.showError(err);
+      }
       this.trigger(this.data);
       this.pollData();
     });
@@ -107,15 +112,17 @@ var HomeworkSidebarStore = Reflux.createStore({
         superAgent.get('/homework/quiz')
             .set('Content-Type', 'application/json')
             .query(query)
-            .end(done)
-      },
+            .end(done);
+      }
     ], (err, data) => {
-        if(err) {return errorHandler.showError(err);}
-        this.data.currentQuiz = data.body.quiz;
-        this.trigger(this.data);
-        this.pollData();
-    })
-  },
+      if (err) {
+        return errorHandler.showError(err);
+      }
+      this.data.currentQuiz = data.body.quiz;
+      this.trigger(this.data);
+      this.pollData();
+    });
+  }
 });
 
 module.exports = HomeworkSidebarStore;

@@ -5,14 +5,12 @@ var Reflux = require('reflux');
 var superAgent = require('superagent');
 var constant = require('../../../../mixin/constant');
 var errorHandler = require('../../../../tools/error-handler.jsx');
-var homeworkQuizzesStatus = require('../../../../mixin/constant').homeworkQuizzesStatus;
-var request = require('superagent');
 
 var submissionIntroductionStore = Reflux.createStore({
 
   onGetBranches: function (url) {
-    this.trigger({showIcon:true});
-    if(url.indexOf('https://') === -1){
+    this.trigger({showIcon: true});
+    if (url.indexOf('https://') === -1) {
       url = 'https://' + url;
     }
     superAgent.get('/homework/get-branches')
@@ -21,20 +19,20 @@ var submissionIntroductionStore = Reflux.createStore({
         .use(errorHandler)
         .end((err, res)=> {
           if (res.body.message === 'Not Found') {
-            this.trigger({githubUrlError: '仓库不存在',branches: [],showIcon:false});
+            this.trigger({githubUrlError: '仓库不存在', branches: [], showIcon: false});
           } else {
-            var branches = res.body.data.map((branch)=>{
+            var branches = res.body.data.map((branch)=> {
               return branch.name;
             });
-            if(branches.indexOf('master') !== -1){
+            if (branches.indexOf('master') !== -1) {
               var index = branches.indexOf('master');
-              branches.splice(index,1);
+              branches.splice(index, 1);
               branches.unshift('master');
             }
             this.trigger({
               branches: branches,
               defaultBranch: branches[0],
-              showIcon:false,
+              showIcon: false,
               branchesDetail: res.body.data
             });
           }

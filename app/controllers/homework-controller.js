@@ -1,7 +1,6 @@
 'use strict';
 
 var userHomeworkQuizzes = require('../models/user-homework-quizzes');
-var userHomeworkAnswer = require('../models/user-homework-answer');
 var async = require('async');
 var constant = require('../mixin/constant');
 var apiRequest = require('../services/api-request');
@@ -11,21 +10,24 @@ var config = yamlConfig.load('./config/config.yml');
 var mongoose = require('mongoose');
 
 function getDesc(status, realDesc) {
-  if(status === constant.homeworkQuizzesStatus.LOCKED) {
-    return "## 当前题目未解锁,请先完成之前的题目.";
+  if (status === constant.homeworkQuizzesStatus.LOCKED) {
+    return '## 当前题目未解锁,请先完成之前的题目.';
   } else {
-    return realDesc
+    return realDesc;
   }
 }
 
-function HomeworkController() {}
+function HomeworkController() {
+}
 
 HomeworkController.prototype.getList = (req, res, next) => {
 
   var userId = req.session.user.id;
 
-  userHomeworkQuizzes.findOne({userId: userId}, function(err, data) {
-    if(err) {return next(req, res, err);}
+  userHomeworkQuizzes.findOne({userId: userId}, function (err, data) {
+    if (err) {
+      return next(req, res, err);
+    }
 
     res.send({
       status: constant.httpCode.OK,
@@ -43,40 +45,44 @@ HomeworkController.prototype.updateStatus = (req, res, next) => {
       var id = new mongoose.Types.ObjectId(req.params.historyId);
       userHomeworkQuizzes
           .aggregate([
-            {"$unwind": "$quizzes"},
-            {"$unwind": "$quizzes.homeworkSubmitPostHistory"}
+            {'$unwind': '$quizzes'},
+            {'$unwind': '$quizzes.homeworkSubmitPostHistory'}
           ])
           .match({'quizzes.homeworkSubmitPostHistory': id})
           .exec(done);
     },
 
     (data, done) => {
-      if(!data.length) {
-        done(new Error("没有找到相应资源：" + req.params.historyId), null)
+      if (!data.length) {
+        done(new Error('没有找到相应资源：' + req.params.historyId), null);
       }
 
       homewrok = data[0];
-      userHomeworkQuizzes.findOne(data[0]._id, done)
+      userHomeworkQuizzes.findOne(data[0]._id, done);
     },
 
     (data, done) => {
       var nextIdx;
 
       var quiz = data.quizzes.find((item, idx, doc) => {
-        var match = item._id.toString() === homewrok.quizzes._id.toString()
-        if(match) { nextIdx = idx + 1;}
+        var match = item._id.toString() === homewrok.quizzes._id.toString();
+        if (match) {
+          nextIdx = idx + 1;
+        }
         return match;
       });
 
       quiz.status = parseInt(req.body.status) || 1;
-      if(quiz.status === constant.homeworkQuizzesStatus.SUCCESS && data.quizzes[nextIdx]) {
+      if (quiz.status === constant.homeworkQuizzesStatus.SUCCESS && data.quizzes[nextIdx]) {
         data.quizzes[nextIdx].status = constant.homeworkQuizzesStatus.ACTIVE;
       }
       data.save(done);
-    },
+    }
 
   ], (err, data) => {
-    if(err) {return next(req, res, err);}
+    if (err) {
+      return next(req, res, err);
+    }
     res.send(data);
   });
 };
@@ -124,7 +130,9 @@ HomeworkController.prototype.getQuiz = (req, res, next) => {
       done(null, result);
     }
   ], (err, data) => {
-    if(err) {return next(req, res, err);}
+    if (err) {
+      return next(req, res, err);
+    }
     res.send({
       status: constant.httpCode.OK,
       quiz: result
@@ -148,7 +156,7 @@ HomeworkController.prototype.saveGithubUrl = (req, res, next) => {
       var orderId = parseInt(req.body.orderId) || 1;
       orderId = Math.max(1, orderId);
       orderId = Math.min(data.quizzes.length - 1, orderId);
-      index = orderId - 1
+      index = orderId - 1;
       done(null, data.quizzes[index].uri);
     },
 
@@ -162,7 +170,7 @@ HomeworkController.prototype.saveGithubUrl = (req, res, next) => {
         userAnswerRepo: req.body.userAnswerRepo,
         evaluateScript: data.body.evaluateScript,
         callbackUrl: config.appServer + 'homework/status'
-      })
+      });
     },
 
     (data, done) => {
@@ -177,14 +185,16 @@ HomeworkController.prototype.saveGithubUrl = (req, res, next) => {
       var id = data.body.id;
       userHomework.quizzes[index].status = data.body.status;
       userHomework.quizzes[index].homeworkSubmitPostHistory.push(id);
-      userHomework.save(function(err) {
+      userHomework.save(function (err) {
         done(err, data.body);
       });
     }
   ], (err, data) => {
-    if(err) {return next(req, res, err);}
+    if (err) {
+      return next(req, res, err);
+    }
     res.send(data);
-  })
+  });
 };
 
 module.exports = HomeworkController;

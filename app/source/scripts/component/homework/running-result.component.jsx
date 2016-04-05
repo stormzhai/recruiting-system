@@ -1,5 +1,4 @@
 'use strict';
-var Reflux = require('reflux');
 
 var RunningResult = React.createClass({
   render() {

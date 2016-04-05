@@ -2,7 +2,6 @@
 
 'use strict';
 
-var Reflux = require('reflux');
 var homeworkQuizzesStatus = require('../../../../mixin/constant').homeworkQuizzesStatus;
 
 var HomeworkSidebar = React.createClass({
@@ -37,7 +36,7 @@ var HomeworkSidebar = React.createClass({
       var orderId = index + 1;
       var classStr = 'list-group-item ' +(this.props.orderId === orderId ? ' selected' : '');
       var iconCss = this.getIconCss(item.status);
-      var quizName = '第' + (orderId) + '题'
+      var quizName = '第' + (orderId) + '题';
 
       return (
           <button className={classStr}

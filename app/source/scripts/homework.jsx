@@ -11,10 +11,6 @@ var SubmissionIntroduction = require('./component/homework/submission-introducti
 var RunningResult = require('./component/homework/running-result.component.jsx');
 
 var constant = require('../../mixin/constant');
-var request = require('superagent');
-var errorHandler = require('../../tools/error-handler.jsx');
-var homeworkQuizzesStatus = require('../../mixin/constant').homeworkQuizzesStatus;
-
 var Reflux = require('reflux');
 var HomeworkAction = require('./actions/homework/homework-actions');
 var HomeworkStore = require('./store/homework/homework-store.js');
@@ -22,7 +18,7 @@ var HomeworkStore = require('./store/homework/homework-store.js');
 var Homework = React.createClass({
   mixins: [Reflux.connect(HomeworkStore)],
 
-  getInitialState: function (){
+  getInitialState: function () {
     return {
       homeworkQuizzes: [],
       orderId: 1,
@@ -30,7 +26,7 @@ var Homework = React.createClass({
     };
   },
 
-  handleOrderIdChange: function(_orderId) {
+  handleOrderIdChange: function (_orderId) {
     this.setState({
       orderId: _orderId
     });
@@ -38,44 +34,40 @@ var Homework = React.createClass({
     HomeworkAction.changeOrderId(_orderId);
   },
 
-  componentDidUpdate: function() {
+  componentDidUpdate: function () {
     var _orderId = parseInt(location.hash.substr(1));
-    if(this.state.orderId !== _orderId) {
+    if (this.state.orderId !== _orderId) {
       history.pushState(null, '', '#' + this.state.orderId);
     }
   },
 
-  pollData: function() {
-
-  },
-
-  componentDidMount: function (){
+  componentDidMount: function () {
     HomeworkAction.init();
     window.onpopstate = HomeworkAction.init;
   },
 
-  handleRepoUpdate: function(newRepo) {
+  handleRepoUpdate: function (newRepo) {
     this.state.currentQuiz.userAnswerRepo = newRepo;
     this.setState({
       "currentQuiz": this.state.currentQuiz
     });
   },
 
-  handleBranchUpdate: function(newBranch) {
+  handleBranchUpdate: function (newBranch) {
     this.state.currentQuiz.branch = newBranch;
     this.setState({
       "currentQuiz": this.state.currentQuiz
     });
   },
 
-  render: function(){
+  render: function () {
     return (
-      <div>
-        <header>
-          <Navigation>
-            <Account />
-          </Navigation>
-        </header>
+        <div>
+          <header>
+            <Navigation>
+              <Account />
+            </Navigation>
+          </header>
           <div>
             <HomeworkSidebar
                 homeworkQuizzes={this.state.homeworkQuizzes}
@@ -86,21 +78,21 @@ var Homework = React.createClass({
                 orderId={this.state.orderId}
                 quiz={this.state.currentQuiz}>
 
-                <HomeworkIntroduction
-                    quiz={this.state.currentQuiz}/>
+              <HomeworkIntroduction
+                  quiz={this.state.currentQuiz}/>
 
-                <SubmissionIntroduction
-                    quiz={this.state.currentQuiz}
-                    orderId={this.state.orderId}
-                    onRepoUpdate={this.handleRepoUpdate}
-                    onBranchUpdate={this.handleBranchUpdate}
-                    startProgress={this.pollData}/>
+              <SubmissionIntroduction
+                  quiz={this.state.currentQuiz}
+                  orderId={this.state.orderId}
+                  onRepoUpdate={this.handleRepoUpdate}
+                  onBranchUpdate={this.handleBranchUpdate}
+                  startProgress={this.pollData}/>
 
-                <RunningResult
-                    quiz={this.state.currentQuiz}/>
+              <RunningResult
+                  quiz={this.state.currentQuiz}/>
             </HomeworkContent>
           </div>
-      </div>
+        </div>
     );
   }
 });

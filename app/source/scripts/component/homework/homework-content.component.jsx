@@ -17,7 +17,7 @@ var HomeworkContent = React.createClass({
     var tabNames = isOpend ? ["题目说明", "提交作业", "运行结果"] : ["题目说明"];
     var tabHtml = tabNames.map((item, idx) => {
       return <Tab key={idx} eventKey={idx} title={item}>{this.props.children[idx]}</Tab>
-    })
+    });
 
     return (
       <div className="col-md-9 col-sm-9 col-xs-12">

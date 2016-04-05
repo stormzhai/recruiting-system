@@ -29,7 +29,7 @@ var SubmissionIntroduction = React.createClass({
 
   getInitialState: function() {
     return {
-        'githubUrlError': '',
+        'githubUrlError': ''
     }
   },
 
@@ -118,7 +118,7 @@ var SubmissionIntroduction = React.createClass({
                 </div>
               </div>
               <div className="form-group">
-                <label className="col-sm-2 control-label"></label>
+                <label className="col-sm-2 control-label"/>
                 <div className="col-sm-4">
                   <button className="btn btn-block btn-primary"
                           onClick={this.handleSubmit}>
