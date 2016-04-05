@@ -44,13 +44,13 @@ CREATE DATABASE `BronzeSword` CHARACTER SET utf8 COLLATE utf8_general_ci;
 给mysql添加用户,用户名: BronzeSword 密码：12345678
 
 ```
-create user 'BronzeSword'@'localhost' identified by '12345678';
+create user 'BronzeSword'@'%' identified by '12345678';
 ```
 
 将BronzeSword的权限赋给BronzeSword用户
 
 ```
-grant all privileges on BronzeSword.* to 'BronzeSword'@'localhost';
+grant all privileges on BronzeSword.* to 'BronzeSword'@'%';
 flush privileges;
 ```
 

@@ -11,24 +11,25 @@ mysql:
     - ./production.env
   volumes:
     - ./mysql/create-db.sh:/tmp/create-db.sh
-  ports:
-    - "3306:3306"
 jetty-api:
   image: jetty:9.3
   volumes:
-    - ./assemble/jetty-api:/var/lib/jetty/webapps
+    - ../paper-api/build/libs:/var/lib/jetty/webapps
   links:
     - mysql:mysql
-    - ambassador:node-app
+  ports:
+    - "8080:8080"
 mongodb:
   image: mongo:3.2
+  ports:
+      - "27017:27017"
 node-app:
   image: node:5.8
   ports:
     - "3000:3000"
   volumes:
-    - ./assemble/node-app:/var/app
-  command: bash -c "cd /var/app && node app.js"
+    - ../app:/var/app
+  command: bash -c "cd /var/app && npm start"
   links:
     - mongodb:mongodb
     - jetty-api:jetty-api
@@ -39,13 +40,13 @@ node-app:
 node-task-queue:
   image: node:5.8
   volumes:
-    - ./assemble/task-queue:/var/app
-  command: bash -c "cd /var/app && node app.js"
+    - ../task-queue:/var/app
+  command: bash -c "cd /var/app && npm start"
   links:
-    - redis:redis
     - jenkins-nodejs:jenkins-nodejs
     - nginx:nginx
     - ambassador:node-app
+    - mongodb:mongodb
   env_file:
     - ./production.env
   ports:
@@ -56,7 +57,9 @@ nginx:
     - ./production.env
   volumes:
     - ./nginx/conf.d:/etc/nginx/conf.d
-    - /home/ubuntu/works/docker-cached/nginx_fs:/var/fs
+    - ~/docker-cached/nginx_fs:/var/fs
+  ports:
+    - "8000:80"
 jenkins-nodejs:
   build: ./jenkins-nodejs
   links:
