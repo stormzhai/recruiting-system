@@ -37,8 +37,7 @@ HomeworkController.prototype.getList = (req, res, next) => {
 };
 
 HomeworkController.prototype.updateStatus = (req, res, next) => {
-
-  var homewrok;
+  var homewrok, homewrokIdx;
 
   async.waterfall([
     (done) => {
@@ -67,6 +66,7 @@ HomeworkController.prototype.updateStatus = (req, res, next) => {
       var quiz = data.quizzes.find((item, idx, doc) => {
         var match = item._id.toString() === homewrok.quizzes._id.toString();
         if (match) {
+          homewrokIdx = idx;
           nextIdx = idx + 1;
         }
         return match;
@@ -77,8 +77,27 @@ HomeworkController.prototype.updateStatus = (req, res, next) => {
         data.quizzes[nextIdx].status = constant.homeworkQuizzesStatus.ACTIVE;
       }
       data.save(done);
-    }
+    },
 
+    (data, numAffected, done) => {
+      var homeworkQuiz = data.quizzes[homewrokIdx];
+      var submited = req.body;
+      submited.commitTime = parseInt(Date.parse(submited.createdAt) / constant.time.MILLISECOND_PER_SECONDS);
+
+      done(null, {
+        examerId: data.userId,
+        paperId: data.paperId,
+        homeworkSubmits: [{
+          homeworkQuizId: homeworkQuiz.id,
+          startTime: homeworkQuiz.startTime,
+          homeworkSubmitPostHistory: [submited]
+        }]
+      });
+    },
+
+    (data, done) => {
+      apiRequest.post('scoresheets', data, done);
+    }
   ], (err, data) => {
     if (err) {
       return next(req, res, err);
@@ -143,7 +162,6 @@ HomeworkController.prototype.getQuiz = (req, res, next) => {
     }
   ], (err, data) => {
     if (err) {
-      console.log(err)
       return next(req, res, err);
     }
     res.send({
@@ -182,6 +200,7 @@ HomeworkController.prototype.saveGithubUrl = (req, res, next) => {
         branch: req.body.branch,
         userAnswerRepo: req.body.userAnswerRepo,
         evaluateScript: data.body.evaluateScript,
+        version: req.body.commitSHA,
         callbackUrl: config.appServer + 'homework/status'
       });
     },
