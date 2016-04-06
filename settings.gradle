@@ -1,2 +1,0 @@
-include ':app', ':paper-api'
-rootProject.name = 'recruiting-system'
