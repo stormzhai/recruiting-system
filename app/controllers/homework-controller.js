@@ -92,6 +92,7 @@ HomeworkController.prototype.getQuiz = (req, res, next) => {
   var userId = req.session.user.id;
   var orderId = parseInt(req.query.orderId, 10) || 1;
   var result = {};
+  var histories;
 
   async.waterfall([
     (done) => {
@@ -101,14 +102,25 @@ HomeworkController.prototype.getQuiz = (req, res, next) => {
     (data, done) => {
       orderId = Math.max(orderId, 1);
       orderId = Math.min(orderId, data.quizzes.length);
-      var index = orderId - 1;
-      done(null, data.quizzes[index]);
+      done(null, data);
     },
 
-    (data, done) => {
+    (doc, done) => {
+      var index = orderId - 1;
+      var data = doc.quizzes[index];
       result.uri = data.uri;
       result.status = data.status;
-      var histories = data.homeworkSubmitPostHistory;
+      histories = data.homeworkSubmitPostHistory;
+
+      if (!data.startTime) {
+        data.startTime = Date.parse(new Date()) / constant.time.MILLISECOND_PER_SECONDS;
+        doc.save(done);
+      } else {
+        done(null, true, true);
+      }
+    },
+
+    (product, numAffect, done)=> {
       var lastHomeworkSubmitId = histories[histories.length - 1];
       request
           .get(config.taskServer + 'tasks/' + lastHomeworkSubmitId)
@@ -131,6 +143,7 @@ HomeworkController.prototype.getQuiz = (req, res, next) => {
     }
   ], (err, data) => {
     if (err) {
+      console.log(err)
       return next(req, res, err);
     }
     res.send({
