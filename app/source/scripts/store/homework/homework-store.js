@@ -19,8 +19,7 @@ var HomeworkSidebarStore = Reflux.createStore({
 
   hasTaskProcess() {
     return this.data.homeworkQuizzes.some((item) => {
-      return item.status === homeworkQuizzesStatus.PROGRESS ||
-          item.status === homeworkQuizzesStatus.LINE_UP;
+      return item.status === homeworkQuizzesStatus.PROGRESS
     });
   },
 

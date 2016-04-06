@@ -7,14 +7,13 @@ var homeworkQuizzesStatus = require('../../../../mixin/constant').homeworkQuizze
 var HomeworkSidebar = React.createClass({
   getIconCss: function (state) {
     var icon = 'home-icon h4 fa fa-lg fa-';
-    var iconList = ['lock', '', 'clock-o flashing', 'check-circle', 'times-circle', 'clock-o flashing'];
+    var iconList = ['lock', '', 'clock-o flashing', 'check-circle', 'times-circle'];
     var statusCode = [
       homeworkQuizzesStatus.LOCKED,
       homeworkQuizzesStatus.ACTIVE,
       homeworkQuizzesStatus.PROGRESS,
       homeworkQuizzesStatus.SUCCESS,
-      homeworkQuizzesStatus.ERROR,
-      homeworkQuizzesStatus.LINE_UP
+      homeworkQuizzesStatus.ERROR
     ];
 
     statusCode.forEach((item, index) => {
