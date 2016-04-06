@@ -17,7 +17,7 @@ var userHomeworkQuizzesSchema = Schema({
       type: Number,
       default: constant.homeworkQuizzesStatus.LOCKED
     },
-    homeworkSubmitPostHistory: [{type: Schema.Types.ObjectId, ref: 'UserHomeworkAnswer'}]
+    homeworkSubmitPostHistory: [{type: Schema.Types.ObjectId}]
   }]
 });
 
