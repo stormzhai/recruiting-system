@@ -2,7 +2,6 @@
 
 
 require('../less/user-center.less');
-require('react-input-calendar/styles/input-calendar.css');
 var UserCenterApp = require('./component/user-center/user-center-app.component.jsx');
 var Navigation = require('./component/navigation/navigation.component.jsx');
 var UserDetail = require('./component/user-center/user-center-detail.component.jsx');

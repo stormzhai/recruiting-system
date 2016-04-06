@@ -98,6 +98,7 @@ HomeworkController.prototype.updateStatus = (req, res, next) => {
     (data, done) => {
       apiRequest.post('scoresheets', data, done);
     }
+
   ], (err, data) => {
     if (err) {
       return next(req, res, err);

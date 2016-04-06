@@ -12,7 +12,7 @@ var UserDetailStore = Reflux.createStore({
   listenables: [UserCenterActions],
 
   onLoadUserDetail: function () {
-    request.get('/user-detail')
+    request.get('/api/user-detail')
       .set('Content-Type', 'application/json')
       .use(errorHandler)
       .end((err, res) => {
@@ -29,7 +29,7 @@ var UserDetailStore = Reflux.createStore({
   },
 
   onLoadResult : function () {
-    request.get('/user/feedback-result')
+    request.get('/api/user/feedback-result')
         .set('Content-Type', 'application/json')
         .use(errorHandler)
         .end((err, res) => {
@@ -48,7 +48,7 @@ var UserDetailStore = Reflux.createStore({
   },
 
   onUpdateUserDetail: function (userData) {
-    request.put('/user-detail/update')
+    request.put('/api/user-detail/update')
       .set('Content-Type', 'application/json')
       .send({
         data: userData

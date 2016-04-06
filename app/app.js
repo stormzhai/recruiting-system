@@ -5,7 +5,6 @@ var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
 var route = require('./routes/route');
-var webpack = require('webpack');
 var cookieParser = require('cookie-parser');
 var session = require('express-session');
 var sessionCheck = require('./middleware/session-check');

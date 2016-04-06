@@ -43,7 +43,7 @@ router.post('/', function (req, res) {
     });
   } else {
     password = md5(password);
-    console.log(account, password);
+
     apiRequest.post('login', {email: account, password: password}, function (err, result) {
       if (!result) {
         res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR);
