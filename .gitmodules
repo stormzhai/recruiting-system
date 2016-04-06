@@ -7,3 +7,6 @@
 [submodule "web"]
 	path = web
 	url = git@github.com:thoughtworks-academy/recruiting-system-web.git
+[submodule "express-api"]
+	path = express-api
+	url = git@github.com:thoughtworks-academy/recruiting-system-express-api.git
