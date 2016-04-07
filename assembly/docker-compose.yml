@@ -42,7 +42,7 @@ node-task-queue:
     - ~/twars/task-queue:/var/app
   command: bash -c "cd /var/app && node app.js"
   links:
-    - redis:redis
+    - mongodb:mongodb
     - jenkins-nodejs:jenkins-nodejs
     - ambassador:node-app
   env_file:
