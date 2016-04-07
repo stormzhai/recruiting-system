@@ -8,61 +8,60 @@ mysql:
   ports:
     - 3306:3306
   env_file:
-    - ./production.env
-  volumes:
-    - ./mysql/create-db.sh:/tmp/create-db.sh
-  ports:
-    - "3306:3306"
+    - ./test.env
 jetty-api:
   image: jetty:9.3
   volumes:
-    - ~/twars:/var/lib/jetty/webapps
+    - ../paper-api/build/libs:/var/lib/jetty/webapps
   links:
     - mysql:mysql
-    - ambassador:node-app
+  ports:
+    - "8080:8080"
 mongodb:
   image: mongo:3.2
+  ports:
+      - "27017:27017"
 node-app:
   image: node:5.8
   ports:
     - "3000:3000"
   volumes:
-    - ~/twars:/var/app
-  command: bash -c "cd /var/app && node app.js"
+    - ../express-api:/var/app
+  command: bash -c "cd /var/app && npm start"
   links:
     - mongodb:mongodb
     - jetty-api:jetty-api
-    - nginx:nginx
     - node-task-queue:node-task-queue
   env_file:
-    - ./production.env
+    - ./test.env
 node-task-queue:
   image: node:5.8
   volumes:
-    - ~/twars/task-queue:/var/app
-  command: bash -c "cd /var/app && node app.js"
+    - ../task-queue:/var/app
+  command: bash -c "cd /var/app && npm start"
   links:
-    - redis:redis
     - jenkins-nodejs:jenkins-nodejs
-    - nginx:nginx
     - ambassador:node-app
+    - mongodb:mongodb
   env_file:
-    - ./production.env
+    - ./test.env
   ports:
     - "4000:4000"
 nginx:
   image: nginx:1.9
   env_file:
-    - ./production.env
+    - ./test.env
   volumes:
     - ./nginx/conf.d:/etc/nginx/conf.d
-    - /home/ubuntu/works/docker-cached/nginx_fs:/var/fs
+    - ~/docker-cached/nginx_fs:/var/fs
+  ports:
+    - "8000:80"
 jenkins-nodejs:
   build: ./jenkins-nodejs
   links:
     - nginx:nginx
     - ambassador:node-task-queue
   env_file:
-    - ./production.env
+    - ./test.env
   ports:
     - "18080:8080"

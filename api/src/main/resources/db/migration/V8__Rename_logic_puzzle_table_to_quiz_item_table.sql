@@ -1,1 +1,0 @@
-ALTER TABLE logicPuzzle RENAME TO quizItem;

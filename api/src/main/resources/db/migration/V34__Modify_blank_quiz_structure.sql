@@ -1,1 +1,0 @@
-ALTER TABLE blankQuiz DROP COLUMN count;

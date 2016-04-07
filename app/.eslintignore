@@ -1,6 +1,0 @@
-wdio.conf.js
-coverage
-node_modules/
-public/
-source/scripts/libs/
-webpack.config.js

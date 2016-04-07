@@ -1,1 +1,0 @@
-ALTER TABLE homeworkQuiz MODIFY COLUMN sectionId INT NULL ;

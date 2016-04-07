@@ -1,8 +1,0 @@
-CREATE TABLE userInfo (
-    id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    school VARCHAR(128) NOT NULL,
-    name VARCHAR(128) NOT NULL,
-    major VARCHAR(128) NOT NULL,
-    degree VARCHAR (128) NOT NULL,
-    birhday INT NOT NULL
-)

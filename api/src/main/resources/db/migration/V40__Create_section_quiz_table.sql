@@ -1,5 +1,0 @@
-CREATE TABLE sectionQuiz(
-    id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    sectionId INT NOT NULL,
-    quizId INT NOT NULL
-)

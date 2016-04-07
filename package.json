@@ -1,0 +1,23 @@
+{
+  "name": "recruiting-system",
+  "version": "1.0.0",
+  "description": "CREATE DATABASE `BronzeSword` CHARACTER SET utf8 COLLATE utf8_general_ci; create user 'BronzeSword'@'%' identified by '12345678'; grant all privileges on BronzeSword.* to 'BronzeSword'@'%'; flush privileges;",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thoughtworks-academy/recruiting-system.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/thoughtworks-academy/recruiting-system/issues"
+  },
+  "homepage": "https://github.com/thoughtworks-academy/recruiting-system#readme",
+  "dependencies": {
+    "express": "^4.13.4",
+    "express-http-proxy": "^0.6.0"
+  }
+}
