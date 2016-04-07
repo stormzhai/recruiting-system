@@ -18,26 +18,19 @@ cd -
 
 cp api/build/libs/api.war assembly/assemble/jetty-api.war
 
-
-# app package
-cd app
+# web
+rm -fr web/public/
+cd web
 npm install
 ./node_modules/.bin/webpack
 cd -
-
-# 删除文件
-rm -fr assembly/assemble/node-app/*
-
-# 写入文件
-cp -r app/* assembly/assemble/node-app
-
-# 写入配置文件
-cp assembly/conf/app-config.yml assembly/assemble/node-app/config/config.yml
-cd assembly/assemble
-zip -qr node-app.zip node-app
+cp -r web/public/assets assembly/.release
+cd assembly/.release
+zip -qr web.zip assets
+rm -fr assets
 cd -
 
-# task queue package
+# task-queue
 cd task-queue
 npm install
 cd -
