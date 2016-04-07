@@ -2,23 +2,36 @@
 
 set -eo pipefail
 
-if [ -z "$CONFIG_FILE_DIR" ]; then
-	echo >&2 'You need to specify CONFIG_FILE_DIR'
-	exit 1
+if [ "$CONFIG_FILE_DIR" ] && [ -d "$CONFIG_FILE_DIR" ]; then
+	cp $CONFIG_FILE_DIR/config.properties paper-api/src/main/resources/config.properties
 fi
 
-# api package
-rm -fr assembly/assemble/jetty-api/*
-cp $CONFIG_FILE_DIR/config.properties api/src/main/resources/config.properties
+printf "\e[32m Start Assemble paper-api"
+echo -e "\033[0m"
 
-cd api
+cd paper-api
 gradle clean
 gradle war
 cd -
 
-cp api/build/libs/api.war assembly/assemble/jetty-api.war
+cp paper-api/build/libs/paper-api.war assembly/.release
+
+printf "\e[32m Start Assemble express-api"
+echo -e "\033[0m"
+
+cd express-api
+npm install
+cd -
+cp -r express-api assembly/.release
+cd assembly/.release
+zip -qr express-api.zip express-api
+rm -fr express-api
+cd -
 
 # web
+
+printf "\e[32m Start Assemble web"
+echo -e "\033[0m"
 rm -fr web/public/
 cd web
 npm install
@@ -31,18 +44,15 @@ rm -fr assets
 cd -
 
 # task-queue
+
+printf "\e[32m Start Assemble task-queue"
+echo -e "\033[0m"
+
 cd task-queue
 npm install
 cd -
-
-# 删除文件
-rm -fr assembly/assemble/task-queue/*
-# 将文件拷贝到目标地址
-cp -r task-queue/* assembly/assemble/task-queue
-
-# 写入配置文件
-cp assembly/conf/task-queue-config.yml assembly/assemble/task-queue/config/config.yml
-# 压缩
-cd assembly/assemble
+cp -r task-queue assembly/.release
+cd assembly/.release
 zip -qr task-queue.zip task-queue
+rm -fr task-queue
 cd -
