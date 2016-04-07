@@ -16,7 +16,7 @@ mysql:
 jetty-api:
   image: jetty:9.3
   volumes:
-    - ./assemble/jetty-api:/var/lib/jetty/webapps
+    - ~/twars:/var/lib/jetty/webapps
   links:
     - mysql:mysql
     - ambassador:node-app
@@ -27,7 +27,7 @@ node-app:
   ports:
     - "3000:3000"
   volumes:
-    - ./assemble/node-app:/var/app
+    - ~/twars:/var/app
   command: bash -c "cd /var/app && node app.js"
   links:
     - mongodb:mongodb
@@ -39,7 +39,7 @@ node-app:
 node-task-queue:
   image: node:5.8
   volumes:
-    - ./assemble/task-queue:/var/app
+    - ~/twars/task-queue:/var/app
   command: bash -c "cd /var/app && node app.js"
   links:
     - redis:redis
