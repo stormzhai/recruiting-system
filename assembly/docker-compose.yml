@@ -44,7 +44,6 @@ node-task-queue:
   links:
     - redis:redis
     - jenkins-nodejs:jenkins-nodejs
-    - nginx:nginx
     - ambassador:node-app
   env_file:
     - ./production.env
