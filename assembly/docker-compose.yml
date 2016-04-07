@@ -27,7 +27,7 @@ node-app:
   ports:
     - "3000:3000"
   volumes:
-    - ~/twars:/var/app
+    - ~/twars/express-api:/var/app
   command: bash -c "cd /var/app && node app.js"
   links:
     - mongodb:mongodb
