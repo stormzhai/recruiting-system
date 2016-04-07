@@ -43,7 +43,6 @@ node-task-queue:
   command: bash -c "cd /var/app && node app.js"
   links:
     - jenkins-nodejs:jenkins-nodejs
-    - nginx:nginx
     - ambassador:node-app
   env_file:
     - ./production.env
