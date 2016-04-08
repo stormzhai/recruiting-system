@@ -16,7 +16,7 @@ mysql:
 jetty-api:
   image: jetty:9.3
   volumes:
-    - ~/twars/assembly_jetty-api_1:/var/lib/jetty/webapps
+    - ~/twars/jetty-api:/var/lib/jetty/webapps
   links:
     - mysql:mysql
     - ambassador:node-app
