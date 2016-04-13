@@ -1,67 +1,68 @@
 ambassador:
-    image: cpuguy83/docker-grand-ambassador
-    volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock"
-    command: "-name assembly_node-app_1 -name assembly_jenkins-nodejs_1 -name assembly_node-task-queue_1"
+  image: cpuguy83/docker-grand-ambassador
+  volumes:
+    - "/var/run/docker.sock:/var/run/docker.sock"
+  command: "-name assembly_web-api_1 -name assembly_jenkins_1 -name assembly_task-queue_1"
 mysql:
   image: mysql:5.7
   ports:
     - 3306:3306
   env_file:
-    - ./production.env
-  volumes:
-    - ./mysql/create-db.sh:/tmp/create-db.sh
-  ports:
-    - "3306:3306"
-jetty-api:
+    - ./test.env
+paper-api:
   image: jetty:9.3
   volumes:
-    - ~/twars/jetty-api:/var/lib/jetty/webapps
+    - ../paper-api/build/libs:/var/lib/jetty/webapps
   links:
     - mysql:mysql
-    - ambassador:node-app
-mongodb:
+  ports:
+    - "8080:8080"
+mongo:
   image: mongo:3.2
-node-app:
+  ports:
+    - "27017:27017"
+web-api:
   image: node:5.8
   ports:
     - "3000:3000"
   volumes:
-    - ~/twars/express-api:/var/app
-  command: bash -c "cd /var/app && node app.js"
+    - ../web-api:/var/app
+  command: bash -c "cd /var/app && node app"
   links:
-    - mongodb:mongodb
-    - jetty-api:jetty-api
-    - nginx:nginx
-    - node-task-queue:node-task-queue
+    - mongo:mongo
+    - paper-api:paper-api
+    - task-queue:task-queue
   env_file:
-    - ./production.env
-node-task-queue:
+    - ./test.env
+task-queue:
   image: node:5.8
   volumes:
-    - ~/twars/task-queue:/var/app
-  command: bash -c "cd /var/app && node app.js"
+    - ../task-queue/:/var/app
+  command: bash -c "cd /var/app && node app"
   links:
-    - mongodb:mongodb
-    - jenkins-nodejs:jenkins-nodejs
-    - ambassador:node-app
+    - jenkins:jenkins
+    - ambassador:web-api
+    - mongo:mongo
   env_file:
-    - ./production.env
+    - ./test.env
   ports:
     - "4000:4000"
+jenkins:
+  image: jenkins:1.625.3
+  links:
+    - ambassador:task-queue
+    - nginx:nginx
+  env_file:
+    - ./test.env
+  ports:
+    - "8088:8080"
+  volumes:
+    - .data/jenkins:/tmp/data
 nginx:
   image: nginx:1.9
-  env_file:
-    - ./production.env
+  ports:
+    - "8888:80"
   volumes:
     - ./nginx/conf.d:/etc/nginx/conf.d
-    - /home/ubuntu/works/docker-cached/nginx_fs:/var/fs
-jenkins-nodejs:
-  build: ./jenkins-nodejs
-  links:
-    - nginx:nginx
-    - ambassador:node-task-queue
-  env_file:
-    - ./production.env
-  ports:
-    - "18080:8080"
+    - ./nginx/files:/var/fs
+    - ../web/public/assets:/var/twars/web
