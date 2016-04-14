@@ -27,7 +27,7 @@ function initMysql() {
 
 function migrateMysql() {
   cd paper-api
-  gradle flywaymigrate
+  ./gradlew flywaymigrate
   cd -
 }
 
