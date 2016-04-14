@@ -6,8 +6,12 @@ if [ "$CONFIG_FILE_DIR" ] && [ -d "$CONFIG_FILE_DIR" ]; then
 	cp $CONFIG_FILE_DIR/config.properties paper-api/src/main/resources/config.properties
 fi
 
-printf "\e[32m Start Assemble paper-api"
-echo -e "\033[0m"
+function section() {
+	printf "\e[32m $1"
+	echo -e "\033[0m"
+}
+
+section "Start assemble paper-api"
 
 cd paper-api
 gradle clean
