@@ -11,7 +11,7 @@ function section() {
 	echo -e "\033[0m"
 }
 
-section "Start assemble paper-api"
+section "Assembling paper-api"
 
 cd paper-api
 gradle clean
@@ -20,22 +20,20 @@ cd -
 
 cp paper-api/build/libs/paper-api.war assembly/.release
 
-printf "\e[32m Start Assemble express-api"
-echo -e "\033[0m"
+section "Assembling web-api"
 
-cd express-api
+cd web-api
 npm install
 cd -
-cp -r express-api assembly/.release
+cp -r web-api assembly/.release
 cd assembly/.release
-zip -qr express-api.zip express-api
-rm -fr express-api
+zip -qr web-api.zip web-api
+rm -fr web-api
 cd -
 
 # web
+section "Assembling web"
 
-printf "\e[32m Start Assemble web"
-echo -e "\033[0m"
 rm -fr web/public/
 cd web
 npm install
@@ -49,8 +47,7 @@ cd -
 
 # task-queue
 
-printf "\e[32m Start Assemble task-queue"
-echo -e "\033[0m"
+section "Assembling task-queue"
 
 cd task-queue
 npm install
