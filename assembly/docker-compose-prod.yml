@@ -8,11 +8,11 @@ mysql:
   ports:
     - 3306:3306
   env_file:
-    - ./test.env
+    - ./production.env
 paper-api:
   image: jetty:9.3
   volumes:
-    - ../paper-api/build/libs:/var/lib/jetty/webapps
+    - /home/ubuntu/twars/paper-api:/var/lib/jetty/webapps
   links:
     - mysql:mysql
   ports:
@@ -33,7 +33,7 @@ web-api:
     - paper-api:paper-api
     - task-queue:task-queue
   env_file:
-    - ./test.env
+    - ./production.env
 task-queue:
   image: node:5.8
   volumes:
@@ -44,7 +44,7 @@ task-queue:
     - ambassador:web-api
     - mongo:mongo
   env_file:
-    - ./test.env
+    - ./production.env
   ports:
     - "4000:4000"
 jenkins:
@@ -53,7 +53,7 @@ jenkins:
     - ambassador:task-queue
     - nginx:nginx
   env_file:
-    - ./test.env
+    - ./production.env
   ports:
     - "8088:8080"
   volumes:
