@@ -63,7 +63,7 @@ nginx:
   ports:
     - "8888:80"
   links:
-    - web-api:web-api
+    - ambassador:web-api
   volumes:
     - ./nginx/conf.d:/etc/nginx/conf.d
     - /home/ubuntu/works/docker-cached/nginx_fs:/var/fs
