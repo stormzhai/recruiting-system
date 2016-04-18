@@ -64,5 +64,5 @@ nginx:
     - "8888:80"
   volumes:
     - ./nginx/conf.d:/etc/nginx/conf.d
-    - ./nginx/files:/var/fs
-    - ../web/public/assets:/var/twars/web
+    - /home/ubuntu/works/docker-cached/nginx_fs:/var/fs
+    - /home/ubuntu/twars/assets:/var/twars/web
