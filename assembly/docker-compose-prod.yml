@@ -26,7 +26,7 @@ web-api:
   ports:
     - "3000:3000"
   volumes:
-    - ../web-api:/var/app
+    - /home/ubuntu/twars/web-api:/var/app
   command: bash -c "cd /var/app && node app"
   links:
     - mongo:mongo
@@ -37,7 +37,7 @@ web-api:
 task-queue:
   image: node:5.8
   volumes:
-    - ../task-queue/:/var/app
+    - /home/ubuntu/twars/task-queue:/var/app
   command: bash -c "cd /var/app && node app"
   links:
     - jenkins:jenkins
