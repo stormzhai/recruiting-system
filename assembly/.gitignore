@@ -1,2 +1,3 @@
 .release/*.zip
 .release/*.war
+.data/jenkins_home

@@ -1,3 +1,0 @@
-CREATE DATABASE IF NOT EXISTS `BronzeSword` DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;
-CREATE USER 'BronzeSword'@'%' IDENTIFIED BY '12345678';
-GRANT ALL ON `BronzeSword`.* TO 'BronzeSword'@'%';

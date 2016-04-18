@@ -6,8 +6,12 @@ if [ "$CONFIG_FILE_DIR" ] && [ -d "$CONFIG_FILE_DIR" ]; then
 	cp $CONFIG_FILE_DIR/config.properties paper-api/src/main/resources/config.properties
 fi
 
-printf "\e[32m Start Assemble paper-api"
-echo -e "\033[0m"
+function section() {
+	printf "\e[32m $1"
+	echo -e "\033[0m"
+}
+
+section "Assembling paper-api"
 
 cd paper-api
 gradle clean
@@ -16,22 +20,20 @@ cd -
 
 cp paper-api/build/libs/paper-api.war assembly/.release
 
-printf "\e[32m Start Assemble express-api"
-echo -e "\033[0m"
+section "Assembling web-api"
 
-cd express-api
+cd web-api
 npm install
 cd -
-cp -r express-api assembly/.release
+cp -r web-api assembly/.release
 cd assembly/.release
-zip -qr express-api.zip express-api
-rm -fr express-api
+zip -qr web-api.zip web-api
+rm -fr web-api
 cd -
 
 # web
+section "Assembling web"
 
-printf "\e[32m Start Assemble web"
-echo -e "\033[0m"
 rm -fr web/public/
 cd web
 npm install
@@ -45,8 +47,7 @@ cd -
 
 # task-queue
 
-printf "\e[32m Start Assemble task-queue"
-echo -e "\033[0m"
+section "Assembling task-queue"
 
 cd task-queue
 npm install
