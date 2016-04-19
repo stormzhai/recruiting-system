@@ -36,8 +36,6 @@ function updateNodeApp() {
 }
 
 function initAllService() {
-  section
-
   git submodule init
   git submodule update
 
