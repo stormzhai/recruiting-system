@@ -62,7 +62,7 @@ function initializeJenkins() {
 function initMysql() {
   eval $(docker-machine env default)
   echo "the password of root:"
-  sql=$(cat mysql-init.sql)
+  sql=$(cat assembly/mysql-init.sql)
   read -s password
   docker exec -it assembly_mysql_1 mysql -u root -p$password -e "$sql"
 }
