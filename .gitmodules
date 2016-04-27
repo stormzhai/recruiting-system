@@ -10,3 +10,6 @@
 [submodule "web-api"]
 	path = web-api
 	url = git@github.com:thoughtworks-academy/recruiting-system-express-api.git
+[submodule "automated-test"]
+	path = automated-test
+	url = git@github.com:thoughtworks-academy/thoughtworks-academy-recruiting-system-automated-test.git
