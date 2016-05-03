@@ -62,6 +62,8 @@ nginx:
   image: nginx:1.9
   ports:
     - "8888:80"
+  links:
+    - ambassador:web-api
   volumes:
     - ./nginx/conf.d:/etc/nginx/conf.d
     - ./nginx/files:/var/fs
