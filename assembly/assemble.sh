@@ -14,8 +14,8 @@ function section() {
 section "Assembling paper-api"
 
 cd paper-api
-./gradle clean
-./gradle war
+./gradlew clean
+./gradlew war
 cd -
 
 cp paper-api/build/libs/paper-api.war assembly/.release
