@@ -66,5 +66,5 @@ nginx:
     - ambassador:web-api
   volumes:
     - ./nginx/conf.d:/etc/nginx/conf.d
-    - /home/ubuntu/works/docker-cached/nginx_fs:/var/fs
+    - /home/ubuntu/twars/quiz-resource:/var/fs
     - /home/ubuntu/twars/assets:/var/twars/web
