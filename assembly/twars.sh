@@ -4,9 +4,11 @@ set -eo pipefail
 
 JENKINS_ADDR=192.168.99.100:8088
 
+BASE_DIR=$(dirname $0)
+
 function logo() {
   echo -e "\033[35m"
-  cat assembly/logo
+  cat $BASE_DIR/logo
   echo -e "\033[0m"
 }
 
@@ -39,15 +41,15 @@ function initAllService() {
   git submodule init
   git submodule update
 
-  updateApi "paper-api";
-  updateNodeApp "web-api";
-  updateNodeApp "task-queue";
-  updateNodeApp "web";
-  updateNodeApp "web" ./node_modules/.bin/webpack;
+  updateApi "$BASE_DIR/../paper-api";
+  updateNodeApp "$BASE_DIR/../web-api";
+  updateNodeApp "$BASE_DIR/../task-queue";
+  updateNodeApp "$BASE_DIR/../web";
+  updateNodeApp "$BASE_DIR/../web" ./node_modules/.bin/webpack;
 
   eval $(docker-machine env default)
-  docker-compose -f assembly/docker-compose.yml kill
-  docker-compose -f assembly/docker-compose.yml up -d
+  docker-compose -f $BASE_DIR/docker-compose.yml kill
+  docker-compose -f $BASE_DIR/docker-compose.yml up -d
 }
 
 function initializeJenkins() {
@@ -62,7 +64,7 @@ function initializeJenkins() {
 function initMysql() {
   eval $(docker-machine env default)
   echo "the password of root:"
-  sql=$(cat assembly/mysql-init.sql)
+  sql=$(cat $BASE_DIR/mysql-init.sql)
   read -s password
   docker exec -it assembly_mysql_1 mysql -u root -p$password -e "$sql"
 }
@@ -83,7 +85,7 @@ case $action in
     ;;
   *)
     logo
-    echo "用法：在项目根目录执行assmebly/twars.sh <commadn>"
+    echo "用法：(jk|my|rs)"
     echo "- command："
     echo "jk 初始化jenkins"
     echo "my 初始化数据库和用户"
