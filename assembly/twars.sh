@@ -60,6 +60,10 @@ function initializeJenkins() {
   deployJenkins
 }
 
+function backupJenkins() {
+  curl -X GET http://$JENKINS_ADDR/job/HOMEWORK-SCORING/config.xml --user twars:twars > "$BASE_DIR/.data/jenkins/config.xml"
+}
+
 function deployJenkins() {
   curl -XPOST http://$JENKINS_ADDR/createItem?name\=HOMEWORK-SCORING --user twars:twars --data-binary "@$BASE_DIR/.data/jenkins/config.xml" -H "Content-Type:text/xml"
 }
@@ -83,6 +87,9 @@ case $action in
   rjk)
     deployJenkins
     ;;
+  bkjk)
+    backupJenkins
+    ;;
   rs)
     initAllService
     ;;
@@ -91,12 +98,13 @@ case $action in
     ;;
   *)
     logo
-    echo "用法：(jk|rjk|my|rs)"
+    echo "用法：(jk|rjk|bkjk|my|rs)"
     echo "- command："
     echo "jk 初始化jenkins"
     echo "rjk 更新jenkins"
     echo "my 初始化数据库和用户"
     echo "rs 重启所有服务"
+    echo "bkjk 备份jenkins"
     echo ""
     ;;
 esac
