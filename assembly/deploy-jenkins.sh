@@ -13,7 +13,5 @@ cat > remote_script << EOM
   curl -X POST http://localhost:8088/createItem?name\=HOMEWORK-SCORING --data-binary "@/home/ubuntu/twars/config.xml" -H "Content-Type:text/xml"
 EOM
 
-# echo $remote_script > remote_script
-
-ssh 54.222.141.204 'bash -s' < remote_script
+ssh $REMOTE_SERVER_IP 'bash -s' < remote_script
 rm remote_script
