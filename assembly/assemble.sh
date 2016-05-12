@@ -2,9 +2,8 @@
 
 set -eo pipefail
 
-if [ "$CONFIG_FILE_DIR" ] && [ -d "$CONFIG_FILE_DIR" ]; then
-	cp $CONFIG_FILE_DIR/config.properties paper-api/src/main/resources/config.properties
-fi
+
+cp $CONFIG_FILE_DIR/config.properties paper-api/src/main/resources/config.properties
 
 function section() {
 	printf "\e[32m $1"
@@ -14,8 +13,8 @@ function section() {
 section "Assembling paper-api"
 
 cd paper-api
-gradle clean
-gradle war
+./gradlew clean
+./gradlew war
 cd -
 
 cp paper-api/build/libs/paper-api.war assembly/.release
