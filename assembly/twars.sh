@@ -53,12 +53,15 @@ function initAllService() {
 }
 
 function initializeJenkins() {
-  docker exec -it assembly_jenkins_1 mkdir -p /var/jenkins_home/jobs/TASK-RUNNER
-  docker exec -it assembly_jenkins_1 cp /tmp/data/config.xml /var/jenkins_home/jobs/TASK-RUNNER
-  curl -XPOST http://$JENKINS_ADDR/pluginManager/installNecessaryPlugins -d '<install plugin="git@current" />'
-  curl -XPOST http://$JENKINS_ADDR/pluginManager/installNecessaryPlugins -d '<install plugin="EnvInject@current" />'
-  curl -XPOST http://$JENKINS_ADDR/pluginManager/installNecessaryPlugins -d '<install plugin="flexible-publish@current" />'
-  curl -XPOST http://$JENKINS_ADDR/pluginManager/installNecessaryPlugins -d '<install plugin="PostBuildScript@current" />'
+  curl -XPOST http://$JENKINS_ADDR/pluginManager/installNecessaryPlugins --user twars:twars -d '<install plugin="git@current" />'
+  curl -XPOST http://$JENKINS_ADDR/pluginManager/installNecessaryPlugins --user twars:twars -d '<install plugin="EnvInject@current" />'
+  curl -XPOST http://$JENKINS_ADDR/pluginManager/installNecessaryPlugins --user twars:twars -d '<install plugin="flexible-publish@current" />'
+  curl -XPOST http://$JENKINS_ADDR/pluginManager/installNecessaryPlugins --user twars:twars -d '<install plugin="PostBuildScript@current" />'
+  deployJenkins
+}
+
+function deployJenkins() {
+  curl -XPOST http://$JENKINS_ADDR/createItem?name\=HOMEWORK-SCORING --user twars:twars --data-binary "@$BASE_DIR/.data/jenkins/config.xml" -H "Content-Type:text/xml"
 }
 
 function initMysql() {
@@ -77,17 +80,21 @@ case $action in
     echo "jenkins启动过程缓慢,此过程可能需要一定时间"
     echo "请查看 http://$JENKINS_ADDR/updateCenter/"
     ;;
+  rjk)
+    deployJenkins
+    ;;
   rs)
-    initAllService;
+    initAllService
     ;;
   my)
     initMysql;
     ;;
   *)
     logo
-    echo "用法：(jk|my|rs)"
+    echo "用法：(jk|rjk|my|rs)"
     echo "- command："
     echo "jk 初始化jenkins"
+    echo "rjk 更新jenkins"
     echo "my 初始化数据库和用户"
     echo "rs 重启所有服务"
     echo ""
