@@ -46,7 +46,7 @@ function initAllService() {
   updateNodeApp "$BASE_DIR/../web";
   updateNodeApp "$BASE_DIR/../web" ./node_modules/.bin/webpack;
 
-  eval $(docker-machine env default)
+  eval $(docker-machine env default --shell bash)
   docker-compose -f $BASE_DIR/docker-compose.yml kill
   docker-compose -f $BASE_DIR/docker-compose.yml up -d
 }
@@ -68,7 +68,7 @@ function deployJenkins() {
 }
 
 function initMysql() {
-  eval $(docker-machine env default)
+  eval $(docker-machine env default --shell bash)
   echo "the password of root:"
   sql=$(cat $BASE_DIR/mysql-init.sql)
   read -s password
