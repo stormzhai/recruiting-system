@@ -15,8 +15,7 @@ Use a cable can save lots of time.
 ```
 ./twars.sh my
 ```
-
-![](./_image/2016-06-29 15-16-28.jpg)
+![](http://ww1.sinaimg.cn/large/61412e43jw1f5c5hoccqjj20xw03sjsk.jpg)
 Input password:'thoughtworks'.(Find it from `test.env`)
 ```
 ./twars.sh jk
