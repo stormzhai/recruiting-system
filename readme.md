@@ -12,6 +12,7 @@ docker-compose up -d
 ```
 >It takes a long time to pull images from docker registry.
 Use a cable can save lots of time.
+
 ```
 ./twars.sh my
 ```
