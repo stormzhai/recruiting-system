@@ -2,7 +2,7 @@
 
 set -eo pipefail
 
-JENKINS_ADDR=192.168.99.100:8088
+JENKINS_ADDR=local.twars:8088
 
 BASE_DIR=$(dirname $0)
 
