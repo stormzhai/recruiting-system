@@ -1,3 +1,5 @@
+# ThoughtWorks Recruiting System
+
 ## Fully clone the project
 ```
 git clone git@github.com:thoughtworks-academy/recruiting-system.git
@@ -48,7 +50,7 @@ Exit the shell, uncomment the TWO lines of code.
 Restart the `web-api` container.
 
 ## Check result
-<http://192.168.99.100:8888/api/inspector>
+visit <http://localhost:8888/api/inspector>
 The response should look like below:
 ```
 {
@@ -67,5 +69,6 @@ The response should look like below:
 }
 ```
 > Ignore the `task-queue` part. It is the OLD architect and should be removed from the response.
-## Visit
-Visit <http://192.168.99.100:8888>[](http://)
+
+## Visit Homepage
+Visit <http://localhost:8888>[](http://)
