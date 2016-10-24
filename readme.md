@@ -6,29 +6,44 @@ git clone git@github.com:thoughtworks-academy/recruiting-system.git
 git submodule init
 git submodule update
 ```
+## Add host config
+### For Linux 
+add `127.0.0.1  local.twars` into `/etc/hosts`
 
-### Setup containers
+### For Mac
+add `192.168.99.100  local.twars` into `/etc/hosts`
+
+
+## Setup containers
 ```
 cd assembly
 docker-compose up -d
 ```
->It takes a long time to pull images from docker registry.
+> It takes a long time to pull images from docker registry.
 Use a cable can save lots of time.
 
+In `assembly` directory, run command `./twars.sh`, your'll see help information 
 ```
-./twars.sh my
-```
-![](http://ww1.sinaimg.cn/large/61412e43jw1f5c5hoccqjj20xw03sjsk.jpg)
-Input password:'thoughtworks'.(Find it from `test.env`)
-```
-./twars.sh jk
-```
-It will initialize Jenkins by install plugins and create jobs.
+========= TWARS ===========
 
+  0--0^^^^^^^^^^^^\________
+  \__/||-------||---------~
+      ``       ``
+
+用法：(jk|rjk|bkjk|my|rs)
+- command：
+jk 初始化jenkins
+rjk 更新jenkins
+my 初始化数据库和用户
+rs 重启所有服务
+bkjk 备份jenkins
 ```
-./twars.sh rs
-```
-It will install tools on local machine and restart containers.
+
+Firstly, run command  `./twars.sh my` and then input password: `thoughtworks` to initial database. (database configuration is local in `test.env`)
+
+Secondly, run command `./twars.sh jk` to initialize **Jenkins** by install plugins and create jobs.
+
+Finally,  run command `./twars.sh rs` to install tools on local machine and restart containers.
 
 ## The tricky part
 Edit `web-api/app.js`:
@@ -71,4 +86,4 @@ The response should look like below:
 > Ignore the `task-queue` part. It is the OLD architect and should be removed from the response.
 
 ## Visit Homepage
-Visit <http://localhost:8888>[](http://)
+Visit <http://localhost:8888>[](http://localhost:8888)
