@@ -42,6 +42,7 @@ function initAllService() {
   git submodule update
 
   updateApi "$BASE_DIR/../paper-api";
+  updateApi "$BASE_DIR/../user-api";
   #updateNodeApp "$BASE_DIR/../web-api";
   updateNodeApp "$BASE_DIR/../web";
   updateNodeApp "$BASE_DIR/../web" ./node_modules/.bin/webpack;
