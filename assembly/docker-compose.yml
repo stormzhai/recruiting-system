@@ -35,11 +35,10 @@ web-api:
     - "3000:3000"
   volumes:
     - ../web-api:/var/app
-  command: bash -c "cd /var/app && node app"
+  command: bash -c "cd /var/app && npm start"
   links:
     - mongo:mongo
     - paper-api:paper-api
-    - nginx:nginx
     - ambassador:jenkins
   env_file:
     - ./test.env
