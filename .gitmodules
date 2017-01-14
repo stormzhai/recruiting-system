@@ -13,6 +13,3 @@
 [submodule "teacher-admin-web"]
 	path = teacher-admin-web
 	url = git@github.com:thoughtworks-academy/recruiting-system-teacher-web.git
-[submodule "user-api"]
-	path = user-api
-	url = git@github.com:thoughtworks-academy/recruiting-system-user-api.git
