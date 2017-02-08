@@ -2,14 +2,11 @@
 
 server {
     listen 443 ssl;
-    listen 80;
-    server_name  learn.thoughtworks.school;
+    server_name  local.thoughtworks.school;
 
     ssl on;
     ssl_certificate     /usr/local/etc/nginx/ssl/learn.thoughtworks.school.crt;
     ssl_certificate_key /usr/local/etc/nginx/ssl/learn.thoughtworks.school.key;
-
-    root /Users/wjlin/works/coach/056-recruiting-system/web/public/assets/;
 
     server_name_in_redirect off;
 
@@ -21,23 +18,11 @@ server {
     # ssl_prefer_server_ciphers  on;
 
     location / {
-        try_files $uri $uri/ @htmlext;
-    }
-
-    location ~ \.html$ {
-        try_files $uri =404;
-    }
-
-    location @htmlext {
-        rewrite ^(.*)$ $1.html last;
-    }
-
-    if (!-e $request_filename ) {
-        rewrite ^/(.*)$ index.html last;
+        alias /Users/wjlin/works/coach/056-recruiting-system/web/public/assets/;
     }
 
     location /api {
-        proxy_pass http://localhost:3000;
         rewrite /api/(.+)$ /$1 break;
+        proxy_pass http://localhost:3000;
     }
 }
