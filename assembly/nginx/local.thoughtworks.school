@@ -5,8 +5,10 @@ server {
     server_name  local.thoughtworks.school;
 
     ssl on;
-    ssl_certificate     /usr/local/etc/nginx/ssl/learn.thoughtworks.school.crt;
-    ssl_certificate_key /usr/local/etc/nginx/ssl/learn.thoughtworks.school.key;
+	# 修改为你的 ssl 文件夹地址
+    ssl_certificate     /usr/local/etc/nginx/ssl/learn.thoughtworks.school.crt;  
+    ssl_certificate_key /usr/local/etc/nginx/ssl/learn.thoughtworks.school.key;  
+
 
     server_name_in_redirect off;
 
@@ -18,7 +20,8 @@ server {
     # ssl_prefer_server_ciphers  on;
 
     location / {
-        alias /Users/wjlin/works/coach/056-recruiting-system/web/public/assets/;
+		# 修改为你的项目地址
+        alias /Users/wjlin/works/coach/056-recruiting-system/web/public/assets/;	
     }
 
     location /api {
@@ -27,12 +30,14 @@ server {
     }
 
     location /admin {
-        root /Users/wjlin/works/coach/056-recruiting-system/teacher-admin-web/public/assets/;
-    rewrite "^(.*)$" "/index.html" break;
+		# 修改为你的项目地址
+        root /Users/wjlin/works/coach/056-recruiting-system/teacher-admin-web/public/assets/;   	
+	    rewrite "^(.*)$" "/index.html" break;
     }
 
     location ~ "^/admin(.*)\.(js|css|map|png|woff2|ttf)$" {
-        root /Users/wjlin/works/coach/056-recruiting-system/teacher-admin-web/public/assets/;
-    rewrite ^/admin/(.*)$ /$1 break;
+		# 修改为你的项目地址
+        root /Users/wjlin/works/coach/056-recruiting-system/teacher-admin-web/public/assets/;      	
+		rewrite ^/admin/(.*)$ /$1 break;
     }
 }
