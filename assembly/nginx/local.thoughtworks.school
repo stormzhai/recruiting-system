@@ -25,4 +25,14 @@ server {
         rewrite /api/(.+)$ /$1 break;
         proxy_pass http://localhost:3000;
     }
+
+    location /admin {
+        root /Users/wjlin/works/coach/056-recruiting-system/teacher-admin-web/public/assets/;
+    rewrite "^(.*)$" "/index.html" break;
+    }
+
+    location ~ "^/admin(.*)\.(js|css|map|png|woff2|ttf)$" {
+        root /Users/wjlin/works/coach/056-recruiting-system/teacher-admin-web/public/assets/;
+    rewrite ^/admin/(.*)$ /$1 break;
+    }
 }
