@@ -1,5 +1,25 @@
 version: '2'
 services:
+  mysql:
+    image: mysql:5.7
+    ports:
+      - 3306:3306
+    env_file:
+      - ./test.env
+    networks:
+      main:
+        aliases:
+          - mysql
+  paper-api:
+    image: jetty:9.3
+    volumes:
+      - ../paper-api/build/libs:/var/lib/jetty/webapps
+    ports:
+      - "8080:8080"
+    networks:
+      main:
+        aliases:
+          - paper-api
   web-api:
     image: node:5.8
     ports:
@@ -7,8 +27,6 @@ services:
     volumes:
       - ../web-api:/var/app
     command: bash -c "cd /var/app && npm start"
-    links:
-      - mongo:mongo
     networks:
       main:
         aliases:
@@ -17,6 +35,10 @@ services:
     image: mongo:3.2
     ports:
       - "27017:27017"        
+    networks:
+      main:
+        aliases:
+          - mongo
   jenkins:
     build: ./twars-jenkins
     env_file:
@@ -29,5 +51,18 @@ services:
       main:
         aliases:
           - jenkins
+  nginx:
+    image: nginx:1.9
+    ports:
+      - "8888:80"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/files:/var/fs
+      - ../web/public/assets:/var/twars/web
+      - ../teacher-admin-web/public/assets:/var/twars/teacher-admin-web
+    networks:
+      main:
+        aliases:
+          - nginx
 networks: 
   main:
