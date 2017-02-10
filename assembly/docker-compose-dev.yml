@@ -1,0 +1,33 @@
+version: '2'
+services:
+  web-api:
+    image: node:5.8
+    ports:
+      - "3000:3000"
+    volumes:
+      - ../web-api:/var/app
+    command: bash -c "cd /var/app && npm start"
+    links:
+      - mongo:mongo
+    networks:
+      main:
+        aliases:
+          - web-api
+  mongo:
+    image: mongo:3.2
+    ports:
+      - "27017:27017"        
+  jenkins:
+    build: ./twars-jenkins
+    env_file:
+      - ./test.env
+    ports:
+      - "8088:8080"
+    volumes:
+      - .data/jenkins:/tmp/data
+    networks:
+      main:
+        aliases:
+          - jenkins
+networks: 
+  main:
