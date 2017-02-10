@@ -1,9 +1,6 @@
 [submodule "paper-api"]
 	path = paper-api
 	url = git@github.com:thoughtworks-academy/recruiting-system-paper-api.git
-[submodule "task-queue"]
-	path = task-queue
-	url = git@github.com:thoughtworks-academy/recruiting-system-task-queue.git
 [submodule "web"]
 	path = web
 	url = git@github.com:thoughtworks-academy/recruiting-system-web.git
@@ -13,3 +10,6 @@
 [submodule "automated-test"]
 	path = automated-test
 	url = git@github.com:thoughtworks-academy/thoughtworks-academy-recruiting-system-automated-test.git
+[submodule "teacher-admin-web"]
+	path = teacher-admin-web
+	url = git@github.com:thoughtworks-academy/recruiting-system-teacher-web.git
