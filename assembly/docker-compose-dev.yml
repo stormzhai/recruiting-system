@@ -21,7 +21,7 @@ services:
         aliases:
           - paper-api
   web-api:
-    image: node:5.8
+    image: node:6.9.5
     ports:
       - "3000:3000"
     volumes:
