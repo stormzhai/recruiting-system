@@ -1,65 +1,66 @@
-ambassador:
-  image: cpuguy83/docker-grand-ambassador
-  volumes:
-    - "/var/run/docker.sock:/var/run/docker.sock"
-  command: "-name assembly_web-api_1 -name assembly_jenkins_1"
-mysql:
-  image: mysql:5.7
-  ports:
-    - 3306:3306
-  env_file:
-    - ./test.env
-paper-api:
-  image: jetty:9.3
-  volumes:
-    - ../paper-api/build/libs:/var/lib/jetty/webapps
-  links:
-    - mysql:mysql
-  ports:
-    - "8080:8080"
-user-api:
-  image: jetty:9.3
-  volumes:
-    - ../user-api/build/libs:/var/lib/jetty/webapps
-  links:
-    - mysql:mysql
-  ports:
-    - "8081:8080"
-mongo:
-  image: mongo:3.2
-  ports:
-    - "27017:27017"
-web-api:
-  image: node:5.8
-  ports:
-    - "3000:3000"
-  volumes:
-    - ../web-api:/var/app
-  command: bash -c "cd /var/app && npm start"
-  links:
-    - mongo:mongo
-    - paper-api:paper-api
-    - ambassador:jenkins
-  env_file:
-    - ./test.env
-jenkins:
-  build: ./twars-jenkins
-  links:
-    - ambassador:web-api
-  env_file:
-    - ./test.env
-  ports:
-    - "8088:8080"
-  volumes:
-    - .data/jenkins:/tmp/data
-nginx:
-  image: nginx:1.9
-  ports:
-    - "8888:80"
-  links:
-    - ambassador:web-api
-  volumes:
-    - ./nginx/conf.d:/etc/nginx/conf.d
-    - ./nginx/files:/var/fs
-    - ../web/public/assets:/var/twars/web
-    - ../teacher-admin-web/public/assets:/var/twars/teacher-admin-web
+version: '2'
+services:
+  mysql:
+    image: mysql:5.7
+    ports:
+      - 3306:3306
+    env_file:
+      - ./test.env
+    networks:
+      main:
+        aliases:
+          - mysql
+  paper-api:
+    image: jetty:9.3
+    volumes:
+      - ../paper-api/build/libs:/var/lib/jetty/webapps
+    ports:
+      - "8080:8080"
+    networks:
+      main:
+        aliases:
+          - paper-api
+  web-api:
+    image: node:6.9.5
+    ports:
+      - "3000:3000"
+    volumes:
+      - ../web-api:/var/app
+    command: bash -c "cd /var/app && npm start"
+    networks:
+      main:
+        aliases:
+          - web-api
+  mongo:
+    image: mongo:3.2
+    ports:
+      - "27017:27017"        
+    networks:
+      main:
+        aliases:
+          - mongo
+  jenkins:
+    build: ./twars-jenkins
+    env_file:
+      - ./test.env
+    ports:
+      - "8088:8080"
+    networks:
+      main:
+        aliases:
+          - jenkins
+  nginx:
+    image: nginx:1.9
+    ports:
+      - "8888:80"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/files:/var/fs
+      - ../web/public/assets:/var/twars/web
+      - ../teacher-admin-web/public/assets:/var/twars/teacher-admin-web
+    networks:
+      main:
+        aliases:
+          - nginx
+networks: 
+  main:
