@@ -6,6 +6,13 @@ services:
       - 3306:3306
     env_file:
       - ./test.env
+    environment:  
+      - LANG=C.UTF-8
+      - TERM=dumb
+      - MYSQL_ROOT_PASSWORD=thoughtworks
+      - MYSQL_DATABASE=BronzeSword
+      - MYSQL_PASSWORD=12345678
+      - MYSQL_USER=BronzeSword
     networks:
       main:
         aliases:
