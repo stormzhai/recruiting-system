@@ -46,7 +46,7 @@
     <hudson.tasks.Shell>
       <command>status=2
 description=&quot;README.md&quot;
-timeString=&quot;$(date +%Y-%m-%d-%H-%M-%S-%N)&quot;
+timeString=&quot;$(gdate +%Y-%m-%d-%H-%M-%S-%N)&quot;
 if [ -f $description ]
 then
 	git checkout answer
@@ -54,7 +54,7 @@ then
    	then
     	git checkout master
         git checkout --orphan newBranch 
-        curl -u &apos;recruiting-system:33cdb21d2a245d67fac935228d6504f185d08a42&apos; https://api.github.com/user/repos -d &apos;{&quot;name&quot;:&quot;&apos;&quot;$timeString&quot;&apos;&quot;}&apos;
+        curl -u &apos;recruiting-system:35ab8fb95e4e76d679df93a7147c2986795d630f&apos; https://api.github.com/user/repos -d &apos;{&quot;name&quot;:&quot;&apos;&quot;$timeString&quot;&apos;&quot;}&apos;
         git remote add newRepo git@github.com:recruiting-system/$timeString.git
         git add .
         git commit -m &apos;first commit&apos;
