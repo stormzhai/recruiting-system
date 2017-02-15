@@ -4,35 +4,48 @@
   <description></description>
   <keepDependencies>false</keepDependencies>
   <properties>
-    <de.pellepelster.jenkins.walldisplay.WallDisplayJobProperty plugin="jenkinswalldisplay@0.6.33"/>
     <hudson.model.ParametersDefinitionProperty>
       <parameterDefinitions>
         <hudson.model.StringParameterDefinition>
-          <name>git</name>
-          <description></description>
+          <name>user_answer_repo</name>
+          <description>用户提交作业的repo地址</description>
           <defaultValue></defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
+          <name>branch</name>
+          <description>用户提交作业的repo分支</description>
+          <defaultValue>master</defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.TextParameterDefinition>
+          <name>script</name>
+          <description>用来测试用户作业的脚本文本,此项必须为Text Parameter</description>
+          <defaultValue></defaultValue>
+        </hudson.model.TextParameterDefinition>
+        <hudson.model.StringParameterDefinition>
           <name>callback_url</name>
-          <description></description>
+          <description>脚本结束后，用来写入结果的回调地址</description>
           <defaultValue></defaultValue>
         </hudson.model.StringParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
+    <de.pellepelster.jenkins.walldisplay.WallDisplayJobProperty plugin="jenkinswalldisplay@0.6.33"/>
   </properties>
   <scm class="hudson.plugins.git.GitSCM" plugin="git@2.4.4">
     <configVersion>2</configVersion>
     <userRemoteConfigs>
       <hudson.plugins.git.UserRemoteConfig>
-        <url>$git</url>
+        <url>$user_answer_repo</url>
       </hudson.plugins.git.UserRemoteConfig>
     </userRemoteConfigs>
     <branches>
       <hudson.plugins.git.BranchSpec>
-        <name>*/master</name>
+        <name>$branch</name>
       </hudson.plugins.git.BranchSpec>
     </branches>
     <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+    <browser class="hudson.plugins.git.browser.AssemblaWeb">
+      <url></url>
+    </browser>
     <submoduleCfg class="list"/>
     <extensions/>
   </scm>
@@ -44,28 +57,48 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>file=&quot;readme.md&quot;
-script=&quot;script.sh&quot;
-if [ -f &quot;$file&quot; -a -f &quot;$script&quot; ]
-then
-   curl -X PUT  \
-    -F &quot;script=@script.sh&quot; -F &quot;description=$(cat README.md)&quot; -F &quot;status=2&quot; -F &quot;result=试题创建成功&quot;  $callback_url
-else
-   curl \
-   -H &quot;Content-Type: application/json&quot; -X PUT -d &apos;{&quot;description&quot;:&quot;&quot;,&quot;status&quot;:&quot;0&quot;,&quot;result&quot;:&quot;仓库内容不合法&quot;}&apos;  $callback_url 
-fi
+      <command>#!/bin/sh
+echo $script &gt; evaluate-script-$BUILD_NUMBER.sh
+chmod +x evaluate-script-$BUILD_NUMBER.sh
+./evaluate-script-$BUILD_NUMBER.sh &gt; /tmp/result_detail_$BUILD_NUMBER 2&gt;&amp;1
 
-
- 
-    
-  
-  
 </command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
     <org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher plugin="flexible-publish@0.15.2">
       <publishers>
+        <org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher>
+          <condition class="org.jenkins_ci.plugins.run_condition.core.StatusCondition" plugin="run-condition@1.0">
+            <worstResult>
+              <name>SUCCESS</name>
+              <ordinal>0</ordinal>
+              <color>BLUE</color>
+              <completeBuild>true</completeBuild>
+            </worstResult>
+            <bestResult>
+              <name>SUCCESS</name>
+              <ordinal>0</ordinal>
+              <color>BLUE</color>
+              <completeBuild>true</completeBuild>
+            </bestResult>
+          </condition>
+          <publisherList>
+            <org.jenkinsci.plugins.postbuildscript.PostBuildScript plugin="postbuildscript@0.17">
+              <buildSteps>
+                <hudson.tasks.Shell>
+                  <command>result=$(openssl base64 -A &lt; /tmp/result_detail_$BUILD_NUMBER)
+curl -H Content-Type:application/json -X PUT -d &quot;{\&quot;status\&quot;:4,\&quot;result\&quot;:\&quot;$result\&quot;}&quot; $callback_url</command>
+                </hudson.tasks.Shell>
+              </buildSteps>
+              <scriptOnlyIfSuccess>true</scriptOnlyIfSuccess>
+              <scriptOnlyIfFailure>false</scriptOnlyIfFailure>
+              <markBuildUnstable>false</markBuildUnstable>
+            </org.jenkinsci.plugins.postbuildscript.PostBuildScript>
+          </publisherList>
+          <runner class="org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail" plugin="run-condition@1.0"/>
+          <executionStrategy class="org.jenkins_ci.plugins.flexible_publish.strategy.FailAtEndExecutionStrategy"/>
+        </org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher>
         <org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher>
           <condition class="org.jenkins_ci.plugins.run_condition.core.StatusCondition" plugin="run-condition@1.0">
             <worstResult>
@@ -85,8 +118,13 @@ fi
             <org.jenkinsci.plugins.postbuildscript.PostBuildScript plugin="postbuildscript@0.17">
               <buildSteps>
                 <hudson.tasks.Shell>
-                  <command> curl \
-   -H &quot;Content-Type: application/json&quot; -X PUT -d &apos;{&quot;description&quot;:&quot;&quot;,&quot;status&quot;:&quot;0&quot;,&quot;result&quot;:&quot;仓库不存在&quot;}&apos;  $callback_url</command>
+                  <command>file=&quot;/tmp/result_detail_$BUILD_NUMBER&quot;
+if [ -f &quot;!$file&quot; ]
+then
+echo  &quot;仓库不存在，请重新填写仓库地址！&quot; &gt; /tmp/result_detail_$BUILD_NUMBER 2&gt;&amp;1
+fi
+result=$(openssl base64 -A &lt; /tmp/result_detail_$BUILD_NUMBER)
+curl -H Content-Type:application/json -X PUT -d &quot;{\&quot;status\&quot;:5,\&quot;result\&quot;:\&quot;$result\&quot;}&quot; $callback_url</command>
                 </hudson.tasks.Shell>
               </buildSteps>
               <scriptOnlyIfSuccess>false</scriptOnlyIfSuccess>
