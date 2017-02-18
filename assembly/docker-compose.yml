@@ -33,7 +33,7 @@ services:
       - "3000:3000"
     volumes:
       - ../web-api:/var/app
-    command: bash -c "cd /var/app && npm start"
+    command: bash -c "cd /var/app && export NODE_ENV=show-case && npm start"
     networks:
       main:
         aliases:
