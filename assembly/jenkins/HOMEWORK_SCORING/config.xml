@@ -26,11 +26,15 @@
           <description>脚本结束后，用来写入结果的回调地址</description>
           <defaultValue></defaultValue>
         </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>stack</name>
+          <description>表明用户使用的是哪个【技术栈】</description>
+          <defaultValue>javascript</defaultValue>
+        </hudson.model.StringParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
-    <de.pellepelster.jenkins.walldisplay.WallDisplayJobProperty plugin="jenkinswalldisplay@0.6.33"/>
   </properties>
-  <scm class="hudson.plugins.git.GitSCM" plugin="git@2.4.4">
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@3.0.5">
     <configVersion>2</configVersion>
     <userRemoteConfigs>
       <hudson.plugins.git.UserRemoteConfig>
@@ -57,11 +61,17 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>#!/bin/sh
-echo $script &gt; evaluate-script-$BUILD_NUMBER.sh
-chmod +x evaluate-script-$BUILD_NUMBER.sh
-./evaluate-script-$BUILD_NUMBER.sh &gt; /tmp/result_detail_$BUILD_NUMBER 2&gt;&amp;1
+      <command>CONTAINER=&quot;${stack}_${BUILD_NUMBER}&quot;
+SCRIPT=&quot;evaluate-script-${BUILD_NUMBER}.sh&quot;
+IMAGE=&apos;node:5.8&apos;
 
+echo $script &gt; $SCRIPT    # save script content to file
+
+docker run --name $CONTAINER --detach $IMAGE /bin/bash -xc &quot;tail -f /dev/null&quot;         # just to hold container running
+docker cp . $CONTAINER:/var # copy directory
+docker exec -i $CONTAINER bash -c &quot;cd /var &amp;&amp; chmod +x $SCRIPT &amp;&amp;./$SCRIPT&quot; &gt; /tmp/result_detail_$BUILD_NUMBER 2&gt;&amp;1  # evaluate in container
+
+docker rm --force $CONTAINER
 </command>
     </hudson.tasks.Shell>
   </builders>
@@ -139,7 +149,7 @@ curl -H Content-Type:application/json -X PUT -d &quot;{\&quot;status\&quot;:5,\&
     </org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher>
   </publishers>
   <buildWrappers>
-    <EnvInjectBuildWrapper plugin="envinject@1.92.1">
+    <EnvInjectBuildWrapper plugin="envinject@1.93.1">
       <info>
         <propertiesContent>PATH=/usr/local/bin/:$PATH</propertiesContent>
         <loadFilesFromMaster>false</loadFilesFromMaster>
