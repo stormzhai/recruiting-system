@@ -54,10 +54,17 @@ function initAllService() {
 
 function initJenkins() {
   
+<<<<<<< HEAD
   docker-compose up -d jenkins
   sleep 5s # 容器第一次创建时，即使开始运行了，也需要时间创建目录结构，不 sleep 会导致下面 mkdir 失败
 
   jenkins='assembly_jenkins_1'
+=======
+  docker-compose up -d jenkins-docker
+  sleep 5s # 容器第一次创建时，即使开始运行了，也需要时间创建目录结构，不 sleep 会导致下面 mkdir 失败
+
+  jenkins='assembly_jenkins-docker_1'
+>>>>>>> 5c610a4f170a38fcb025586d4ddaadd73c389fac
 
   # job copy
   docker exec $jenkins mkdir '/var/jenkins_home/jobs/HOMEWORK_SCORING'
