@@ -2,7 +2,7 @@
 
 set -eo pipefail
 
-JENKINS_ADDR=192.168.99.100:8088
+JENKINS_ADDR=local.twars:8888
 
 BASE_DIR=$(dirname $0)
 
@@ -42,33 +42,34 @@ function initAllService() {
   git submodule update
 
   updateApi "$BASE_DIR/../paper-api";
+  updateApi "$BASE_DIR/../user-api";
   #updateNodeApp "$BASE_DIR/../web-api";
   updateNodeApp "$BASE_DIR/../web";
   updateNodeApp "$BASE_DIR/../web" ./node_modules/.bin/webpack;
 
-  eval $(docker-machine env default)
+  eval $(docker-machine env default --shell bash)
   docker-compose -f $BASE_DIR/docker-compose.yml kill
   docker-compose -f $BASE_DIR/docker-compose.yml up -d
 }
 
 function initializeJenkins() {
-  curl -XPOST http://$JENKINS_ADDR/pluginManager/installNecessaryPlugins --user twars:twars -d '<install plugin="git@current" />'
-  curl -XPOST http://$JENKINS_ADDR/pluginManager/installNecessaryPlugins --user twars:twars -d '<install plugin="EnvInject@current" />'
-  curl -XPOST http://$JENKINS_ADDR/pluginManager/installNecessaryPlugins --user twars:twars -d '<install plugin="flexible-publish@current" />'
-  curl -XPOST http://$JENKINS_ADDR/pluginManager/installNecessaryPlugins --user twars:twars -d '<install plugin="PostBuildScript@current" />'
+  curl -X POST http://$JENKINS_ADDR/pluginManager/installNecessaryPlugins?token=4ae89c95673627619782d95bcd57e283 -d '<install plugin="git@current" />'
+  curl -X POST http://$JENKINS_ADDR/pluginManager/installNecessaryPlugins --user admin:admin -d '<install plugin="EnvInject@current" />'
+  curl -X POST http://$JENKINS_ADDR/pluginManager/installNecessaryPlugins --user admin:admin -d '<install plugin="flexible-publish@current" />'
+  curl -X POST http://$JENKINS_ADDR/pluginManager/installNecessaryPlugins --user admin:admin -d '<install plugin="PostBuildScript@current" />'
   deployJenkins
 }
 
 function backupJenkins() {
-  curl -X GET http://$JENKINS_ADDR/job/HOMEWORK-SCORING/config.xml --user twars:twars > "$BASE_DIR/.data/jenkins/config.xml"
+  curl -X GET http://$JENKINS_ADDR/job/HOMEWORK-SCORING/config.xml --user admin:admin > "$BASE_DIR/.data/jenkins/config.xml"
 }
 
 function deployJenkins() {
-  curl -XPOST http://$JENKINS_ADDR/createItem?name\=HOMEWORK-SCORING --user twars:twars --data-binary "@$BASE_DIR/.data/jenkins/config.xml" -H "Content-Type:text/xml"
+  curl -X POST http://$JENKINS_ADDR/createItem?name\=HOMEWORK-SCORING --user admin:admin --data-binary "@$BASE_DIR/.data/jenkins/config.xml" -H "Content-Type:text/xml"
 }
 
 function initMysql() {
-  eval $(docker-machine env default)
+  eval $(docker-machine env default --shell bash)
   echo "the password of root:"
   sql=$(cat $BASE_DIR/mysql-init.sql)
   read -s password
