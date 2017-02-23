@@ -33,7 +33,7 @@ services:
       - "3000:3000"
     volumes:
       - ../web-api:/var/app
-   command: bash -c "cd /var/app && export NODE_ENV=show-case && npm start"
+    command: bash -c "cd /var/app && export NODE_ENV=show-case && npm start"
     networks:
       main:
         aliases:
@@ -46,13 +46,13 @@ services:
       main:
         aliases:
           - mongo
- jenkins-docker:
+  jenkins-docker:
     build: ./jenkins-docker
     env_file:
       - ./test.env
     ports:
       - "8088:8080"
-   volumes:
+    volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /usr/bin/docker:/usr/bin/docker
     networks:
