@@ -60,6 +60,9 @@ function initJenkins() {
   jenkins='assembly_jenkins-docker_1'
 
   # job copy
+  docker exec $jenkins mkdir '/var/jenkins_home/jobs/ADD_IMAGE'
+  docker cp $BASE_DIR/jenkins/ADD_IMAGE/config.xml $jenkins:/var/jenkins_home/jobs/ADD_IMAGE/
+
   docker exec $jenkins mkdir '/var/jenkins_home/jobs/HOMEWORK_SCORING'
   docker cp $BASE_DIR/jenkins/HOMEWORK_SCORING/config.xml $jenkins:/var/jenkins_home/jobs/HOMEWORK_SCORING/
 
