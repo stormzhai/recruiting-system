@@ -6,7 +6,7 @@ services:
       - 3306:3306
     env_file:
       - ./test.env
-    environment:  
+    environment:
       - LANG=C.UTF-8
       - TERM=dumb
       - MYSQL_ROOT_PASSWORD=thoughtworks
@@ -41,20 +41,23 @@ services:
   mongo:
     image: mongo:3.2
     ports:
-      - "27017:27017"        
+      - "27017:27017"
     networks:
       main:
         aliases:
           - mongo
-  jenkins-docker:
+  jenkins-dind:
     build: ./jenkins-docker
     env_file:
       - ./test.env
     ports:
       - "8088:8080"
     volumes:
+      - ./jenkins/.ssh/id_rsa:/var/jenkins_home/.ssh/id_rsa
+      - ./jenkins/.ssh/id_rsa.pub:/var/jenkins_home/.ssh/id_rsa.pub
       - /var/run/docker.sock:/var/run/docker.sock
       - /usr/bin/docker:/usr/bin/docker
+      - ./jenkins/.ssh/known_hosts:/var/jenkins_home/.ssh/known_hosts
     networks:
       main:
         aliases:
@@ -72,5 +75,5 @@ services:
       main:
         aliases:
           - nginx
-networks: 
+networks:
   main:

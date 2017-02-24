@@ -54,10 +54,10 @@ function initAllService() {
 
 function initJenkins() {
   
-  docker-compose up -d jenkins-docker
+  docker-compose up -d jenkins-dind
   sleep 5s # 容器第一次创建时，即使开始运行了，也需要时间创建目录结构，不 sleep 会导致下面 mkdir 失败
 
-  jenkins='assembly_jenkins-docker_1'
+  jenkins='assembly_jenkins-dind_1'
 
   # job copy
   docker exec $jenkins mkdir '/var/jenkins_home/jobs/ADD_IMAGE'
