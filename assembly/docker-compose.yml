@@ -53,8 +53,8 @@ services:
     ports:
       - "8088:8080"
     volumes:
-      - ./jenkins/.ssh/id_rsa:/var/jenkins_home/.ssh/id_rsa
       - ./jenkins/.ssh/id_rsa.pub:/var/jenkins_home/.ssh/id_rsa.pub
+      - ./jenkins/.ssh/id_rsa:/var/jenkins_home/.ssh/id_rsa
       - /var/run/docker.sock:/var/run/docker.sock
       - /usr/bin/docker:/usr/bin/docker
       - ./jenkins/.ssh/known_hosts:/var/jenkins_home/.ssh/known_hosts
