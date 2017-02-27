@@ -6,13 +6,6 @@ git clone git@github.com:thoughtworks-academy/recruiting-system.git
 git submodule init
 git submodule update
 ```
-## Add host config
-### For Linux 
-add `127.0.0.1  local.twars` into `/etc/hosts`
-
-### For Mac
-add `192.168.99.100  local.twars` into `/etc/hosts`
-
 
 ## Setup containers
 ```
