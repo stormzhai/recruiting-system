@@ -16,6 +16,7 @@ function updateApi() {
 
   if [[ -d $dir ]]; then
     cd $dir
+	./gradlew clean
     ./gradlew flywaymigrate
     ./gradlew war
     cd -
@@ -89,9 +90,8 @@ case $action in
 	;;
   *)
     logo
-    echo "用法：(my|rs|jk)"
+    echo "用法：(rs|jk)"
     echo "- command："
-    echo "my 初始化数据库和用户"
     echo "rs 重启所有服务"
 	echo "jk 初始化 Jenkins"
     echo ""
