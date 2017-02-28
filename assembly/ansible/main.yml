@@ -23,7 +23,7 @@
       chdir: "{{ project_root }}paper-api/"
 
   - name: install dependencies for web-api
-    shell: docker exec -d assembly_web-api_1 cd /var/app && yarn
+    shell: docker exec -d assembly_web-api_1 sh -c "cd /var/app; npm i -g yarn; yarn"
     notify:
     - restart web-api container
 
