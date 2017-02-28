@@ -67,11 +67,11 @@ IMAGE=&apos;node:5.8&apos;
 
 echo $script &gt; $SCRIPT    # save script content to file
 
-docker run --name $CONTAINER --detach $IMAGE /bin/bash -xc &quot;tail -f /dev/null&quot;         # just to hold container running
-docker cp . $CONTAINER:/var # copy directory
-docker exec -i $CONTAINER bash -c &quot;cd /var &amp;&amp; chmod +x $SCRIPT &amp;&amp;./$SCRIPT&quot; &gt; /tmp/result_detail_$BUILD_NUMBER 2&gt;&amp;1  # evaluate in container
+sudo docker run --name $CONTAINER --detach $IMAGE /bin/bash -xc &quot;tail -f /dev/null&quot;         # just to hold container running
+sudo docker cp . $CONTAINER:/var # copy directory
+sudo docker exec -i $CONTAINER bash -c &quot;cd /var &amp;&amp; chmod +x $SCRIPT &amp;&amp;./$SCRIPT&quot; &gt; /tmp/result_detail_$BUILD_NUMBER 2&gt;&amp;1  # evaluate in container
 
-docker rm --force $CONTAINER
+sudo docker rm --force $CONTAINER
 </command>
     </hudson.tasks.Shell>
   </builders>
