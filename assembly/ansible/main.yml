@@ -6,7 +6,7 @@
 
   tasks:
   - name: pull code
-    shell: git pull origin master & git submodule update
+    shell: git pull origin master && git submodule update
     args:
       chdir: "{{ project_root }}"
 
@@ -23,17 +23,17 @@
       chdir: "{{ project_root }}paper-api/"
 
   - name: install dependencies for web-api
-    shell: docker exec -d assembly_web-api_1 cd /var/app & yarn
+    shell: docker exec -d assembly_web-api_1 cd /var/app && yarn
     notify:
     - restart web-api container
 
   - name: package the web
-    shell: yarn & npm run webpack
+    shell: yarn && npm run webpack
     args:
       chdir: "{{ project_root }}web/"
 
   - name: package the admin-web
-    shell: yarn & npm run webpack
+    shell: yarn && npm run webpack
     args:
       chdir: "{{ project_root }}teacher-admin-web/"
 
