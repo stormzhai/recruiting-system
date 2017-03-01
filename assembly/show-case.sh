@@ -16,6 +16,7 @@ function updateApi() {
 
   if [[ -d $dir ]]; then
     cd $dir
+	./gradlew clean
     ./gradlew flywaymigrate
     ./gradlew war
     cd -
@@ -54,19 +55,15 @@ function initAllService() {
 
 function initJenkins() {
   
-<<<<<<< HEAD
-  docker-compose up -d jenkins
+  docker-compose up -d jenkins-dind
   sleep 5s # 容器第一次创建时，即使开始运行了，也需要时间创建目录结构，不 sleep 会导致下面 mkdir 失败
 
-  jenkins='assembly_jenkins_1'
-=======
-  docker-compose up -d jenkins-docker
-  sleep 5s # 容器第一次创建时，即使开始运行了，也需要时间创建目录结构，不 sleep 会导致下面 mkdir 失败
-
-  jenkins='assembly_jenkins-docker_1'
->>>>>>> 5c610a4f170a38fcb025586d4ddaadd73c389fac
+  jenkins='assembly_jenkins-dind_1'
 
   # job copy
+  docker exec $jenkins mkdir '/var/jenkins_home/jobs/ADD_IMAGE'
+  docker cp $BASE_DIR/jenkins/ADD_IMAGE/config.xml $jenkins:/var/jenkins_home/jobs/ADD_IMAGE/
+
   docker exec $jenkins mkdir '/var/jenkins_home/jobs/HOMEWORK_SCORING'
   docker cp $BASE_DIR/jenkins/HOMEWORK_SCORING/config.xml $jenkins:/var/jenkins_home/jobs/HOMEWORK_SCORING/
 
@@ -93,9 +90,8 @@ case $action in
 	;;
   *)
     logo
-    echo "用法：(my|rs|jk)"
+    echo "用法：(rs|jk)"
     echo "- command："
-    echo "my 初始化数据库和用户"
     echo "rs 重启所有服务"
 	echo "jk 初始化 Jenkins"
     echo ""
