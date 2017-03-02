@@ -61,10 +61,6 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>#!/bin/sh
-echo $script &gt; evaluate-script-$BUILD_NUMBER.sh
-chmod +x evaluate-script-$BUILD_NUMBER.sh
-./evaluate-script-$BUILD_NUMBER.sh &gt; /tmp/result_detail_$BUILD_NUMBER 2&gt;&amp;1
 
       <command>CONTAINER=&quot;${stack}_${BUILD_NUMBER}&quot;
 SCRIPT=&quot;evaluate-script-${BUILD_NUMBER}.sh&quot;
