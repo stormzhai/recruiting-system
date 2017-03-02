@@ -28,7 +28,7 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>docker pull $image &gt; /tmp/result_detail_$BUILD_NUMBER 2&gt;&amp;1 </command>
+      <command>sudo docker pull $image &gt; /tmp/result_detail_$BUILD_NUMBER 2&gt;&amp;1 </command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
