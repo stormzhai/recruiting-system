@@ -1,0 +1,44 @@
+---
+- hosts: docker_host
+
+  vars:
+    project_root: /Users/Thoughtworks/works/recruiting-system/
+
+  tasks:
+  - name: pull code
+    shell: git pull origin master && git submodule update
+    args:
+      chdir: "{{ project_root }}"
+
+  - name: assemble war for paper-api
+    shell: ./gradlew war
+    args:
+      chdir: "{{ project_root }}paper-api/"
+    notify:
+    - restart paper-api container
+
+  - name: migrate mysql
+    shell: ./gradlew flywaymigrate
+    args:
+      chdir: "{{ project_root }}paper-api/"
+
+  - name: install dependencies for web-api
+    shell: docker exec -d assembly_web-api_1 sh -c "cd /var/app; npm i -g yarn; yarn"
+    notify:
+    - restart web-api container
+
+  - name: package the web
+    shell: yarn && npm run webpack
+    args:
+      chdir: "{{ project_root }}web/"
+
+  - name: package the admin-web
+    shell: yarn && npm run webpack
+    args:
+      chdir: "{{ project_root }}teacher-admin-web/"
+
+  handlers:
+    - name: restart paper-api container
+      shell: docker restart assembly_paper-api_1
+    - name: restart web-api container
+      shell: docker restart assembly_web-api_1

@@ -2,3 +2,5 @@
 .release/*.war
 .data/jenkins_home
 /jenkins/jenkins.war
+jenkins/.ssh/
+ansible/local-inventory
