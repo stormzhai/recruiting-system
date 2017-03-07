@@ -37,8 +37,19 @@
     args:
       chdir: "{{ project_root }}teacher-admin-web/"
 
+  - name: back up jenkins configration
+    shell: curl http://localhost:8088/job/{{item.name}}/config.xml > "{{ project_root }}assembly/jenkins/{{ item.name }}/config.xml"
+    with_items:
+    - { name: ADD_HOMEWORK }
+    - { name: ADD_IMAGE }
+    - { name: HOMEWORK_SCORING }
+#    notify:
+#    - restart jenkins container
+
   handlers:
     - name: restart paper-api container
       shell: docker restart assembly_paper-api_1
     - name: restart web-api container
       shell: docker restart assembly_web-api_1
+    - name: restart jenkins container
+      shell: java -jar /var/cache/jenkins/war/WEB-INF/jenkins-cli.jar -s http://localhost:8088/ safe-restart
