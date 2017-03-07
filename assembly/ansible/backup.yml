@@ -1,0 +1,16 @@
+---
+- hosts: docker_host
+
+  tasks:
+  - name: back up jenkins configration
+    shell: curl http://localhost:8088/job/{{item.name}}/config.xml > "{{ project_root }}assembly/jenkins/{{ item.name }}/config.xml"
+    with_items:
+    - { name: ADD_HOMEWORK }
+    - { name: ADD_IMAGE }
+    - { name: HOMEWORK_SCORING }
+    notify:
+    - restart jenkins container
+
+  handlers:
+  - name: restart jenkins container
+    shell: docker restart assembly_jenkins-dind_1

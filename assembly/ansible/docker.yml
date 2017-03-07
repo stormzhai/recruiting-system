@@ -1,0 +1,9 @@
+---
+- hosts: tws-staging
+  remote_user: ubuntu
+
+  tasks:
+  - name: copy the image tar to the server
+    copy: 
+      src: /Users/wjlin/works/coach/056-recruiting-system/assembly/ansible/files/xxx
+      dest: /home/ubuntu/backup/docker-images

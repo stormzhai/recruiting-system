@@ -1,2 +1,3 @@
 [docker_host]
-localhost ansible_connection=local project_root=/Users/Thoughtworks/works/recruiting-system/
+localhost ansible_connection=local project_root=/Users/Zhangpei/ThoughtWorks/recruiting-system/
+
