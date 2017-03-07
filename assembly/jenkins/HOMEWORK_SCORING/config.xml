@@ -31,6 +31,11 @@
           <description>表明用户使用的是哪个【技术栈】</description>
           <defaultValue>javascript</defaultValue>
         </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>image</name>
+          <description>用来测试题目的镜像名</description>
+          <defaultValue></defaultValue>
+        </hudson.model.StringParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
   </properties>
@@ -61,17 +66,15 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>CONTAINER=&quot;${stack}_${BUILD_NUMBER}&quot;
-SCRIPT=&quot;evaluate-script-${BUILD_NUMBER}.sh&quot;
-IMAGE=&apos;node:5.8&apos;
+      <command>SCRIPT=&quot;evaluate-script-${BUILD_NUMBER}.sh&quot;
+IMAGE=&quot;$image&quot;
 
 echo $script &gt; $SCRIPT    # save script content to file
 
-docker run --name $CONTAINER --detach $IMAGE /bin/bash -xc &quot;tail -f /dev/null&quot;         # just to hold container running
-docker cp . $CONTAINER:/var # copy directory
-docker exec -i $CONTAINER bash -c &quot;cd /var &amp;&amp; chmod +x $SCRIPT &amp;&amp;./$SCRIPT&quot; &gt; /tmp/result_detail_$BUILD_NUMBER 2&gt;&amp;1  # evaluate in container
+sudo docker run --name $CONTAINER --detach $IMAGE /bin/bash -xc &quot;tail -f /dev/null&quot;         # just to hold container running
+sudo docker cp . $CONTAINER:/var # copy directory
+sudo docker exec -i $CONTAINER bash -c &quot;cd /var &amp;&amp; chmod +x $SCRIPT &amp;&amp;./$SCRIPT&quot; &gt; /tmp/result_detail_$BUILD_NUMBER 2&gt;&amp;1  # evaluate in container
 
-docker rm --force $CONTAINER
 </command>
     </hudson.tasks.Shell>
   </builders>
@@ -145,13 +148,31 @@ curl -H Content-Type:application/json -X PUT -d &quot;{\&quot;status\&quot;:5,\&
           <runner class="org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail" plugin="run-condition@1.0"/>
           <executionStrategy class="org.jenkins_ci.plugins.flexible_publish.strategy.FailAtEndExecutionStrategy"/>
         </org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher>
+        <org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher>
+          <condition class="org.jenkins_ci.plugins.run_condition.core.AlwaysRun" plugin="run-condition@1.0"/>
+          <publisherList>
+            <org.jenkinsci.plugins.postbuildscript.PostBuildScript plugin="postbuildscript@0.17">
+              <buildSteps>
+                <hudson.tasks.Shell>
+                  <command>sudo docker rm --force $CONTAINER</command>
+                </hudson.tasks.Shell>
+              </buildSteps>
+              <scriptOnlyIfSuccess>false</scriptOnlyIfSuccess>
+              <scriptOnlyIfFailure>false</scriptOnlyIfFailure>
+              <markBuildUnstable>false</markBuildUnstable>
+            </org.jenkinsci.plugins.postbuildscript.PostBuildScript>
+          </publisherList>
+          <runner class="org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail" plugin="run-condition@1.0"/>
+          <executionStrategy class="org.jenkins_ci.plugins.flexible_publish.strategy.FailAtEndExecutionStrategy"/>
+        </org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher>
       </publishers>
     </org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher>
   </publishers>
   <buildWrappers>
     <EnvInjectBuildWrapper plugin="envinject@1.93.1">
       <info>
-        <propertiesContent>PATH=/usr/local/bin/:$PATH</propertiesContent>
+        <propertiesContent>PATH=/usr/local/bin/:$PATH
+CONTAINER=${stack}_${BUILD_NUMBER}</propertiesContent>
         <loadFilesFromMaster>false</loadFilesFromMaster>
       </info>
     </EnvInjectBuildWrapper>
