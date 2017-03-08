@@ -51,8 +51,11 @@
     tags:
       - jenkins
 
-  - name: create .ssh symbolicLink
+  - name: create .ssh directory
     shell: cd "{{ project_root }}assembly/jenkins" && rm -rf .ssh && mkdir .ssh && echo ppp
+    tags:
+      - create
+
   - file:
       src: "~/.sshForSymbolicLink/{{ item.name }}"
       dest: "{{ project_root }}assembly/jenkins/.ssh/{{ item.name }}"
