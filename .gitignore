@@ -138,6 +138,6 @@ app/.gitignore
 mongodb.conf
 app/config/github-user.json
 task-queue/config/config.yml
-assembly/jenkins/.ssh/
+assembly/jenkins/.ssh/*
 
 .tmp/
