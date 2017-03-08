@@ -42,7 +42,6 @@
       - { name: ADD_IMAGE }
       - { name: HOMEWORK_SCORING }
 
-
   - name: restore jenkins plugins
     shell: docker cp {{ item }} "assembly_jenkins-dind_1:/var/jenkins_home/plugins/"
     with_fileglob:
@@ -52,6 +51,19 @@
     tags:
       - jenkins
 
+  - name: create .ssh symbolicLink
+    shell: cd "{{ project_root }}assembly/jenkins" && rm -rf .ssh && mkdir .ssh && echo ppp
+  - file:
+      src: "~/.sshForSymbolicLink/{{ item.name }}"
+      dest: "{{ project_root }}assembly/jenkins/.ssh/{{ item.name }}"
+      state: link
+      mode: "{{ item.mode }}"
+    with_items:
+      - { name: 'id_rsa', mode: 400 }
+      - { name: 'id_rsa.pub', mode: 755 }
+      - { name: 'known_hosts', mode: 666 }
+    tags:
+      - ssh
 
   handlers:
     - name: restart paper-api container
