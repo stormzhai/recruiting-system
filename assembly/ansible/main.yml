@@ -51,22 +51,22 @@
     tags:
       - jenkins
 
-  - name: create .ssh directory
-    shell: cd "{{ project_root }}assembly/jenkins" && rm -rf .ssh && mkdir .ssh && echo ppp
+  - template:
+      src: "{{ project_root }}assembly/ansible/vars/config.properties"
+      dest: "{{ item.url }}"
+    with_items:
+      - { url: "{{ project_root }}paper-api/build/resources/main/config.properties" }
+      - { url: "{{ project_root }}paper-api/src/main/resources/config.properties" }
     tags:
-      - create
+      - config
 
   - file:
-      src: "~/.sshForSymbolicLink/{{ item.name }}"
-      dest: "{{ project_root }}assembly/jenkins/.ssh/{{ item.name }}"
-      state: link
+      path: "~/.sshForSymbolicLink/{{ item.name }}"
       mode: "{{ item.mode }}"
     with_items:
       - { name: 'id_rsa', mode: 400 }
       - { name: 'id_rsa.pub', mode: 755 }
       - { name: 'known_hosts', mode: 666 }
-    tags:
-      - ssh
 
   handlers:
     - name: restart paper-api container
