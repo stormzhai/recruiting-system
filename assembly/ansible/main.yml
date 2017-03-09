@@ -57,9 +57,7 @@
       - create
 
   - file:
-      src: "~/.sshForSymbolicLink/{{ item.name }}"
-      dest: "{{ project_root }}assembly/jenkins/.ssh/{{ item.name }}"
-      state: link
+      path: "~/.sshForSymbolicLink/{{ item.name }}"
       mode: "{{ item.mode }}"
     with_items:
       - { name: 'id_rsa', mode: 400 }
