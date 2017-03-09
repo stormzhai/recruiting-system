@@ -1,9 +1,6 @@
 ---
 - hosts: docker_host
 
-  vars:
-    project_root: /Users/Thoughtworks/works/recruiting-system/
-
   tasks:
   - name: pull code
     shell: git pull origin master && git submodule update
@@ -37,14 +34,39 @@
     args:
       chdir: "{{ project_root }}teacher-admin-web/"
 
-  - name: back up jenkins configration
-    shell: curl http://localhost:8088/job/{{item.name}}/config.xml > "{{ project_root }}assembly/jenkins/{{ item.name }}/config.xml"
+  - name: restore jenkins configration
+    shell: docker exec -d assembly_jenkins-dind_1 sh -c " rm -rf /var/jenkins_home/jobs/{{ item.name }}; mkdir /var/jenkins_home/jobs/{{ item.name }}; "
+          && docker cp "{{ project_root }}assembly/jenkins/{{ item.name }}/config.xml" "assembly_jenkins-dind_1:/var/jenkins_home/jobs/{{ item.name }}"
     with_items:
-    - { name: ADD_HOMEWORK }
-    - { name: ADD_IMAGE }
-    - { name: HOMEWORK_SCORING }
-#    notify:
-#    - restart jenkins container
+      - { name: ADD_HOMEWORK }
+      - { name: ADD_IMAGE }
+      - { name: HOMEWORK_SCORING }
+
+  - name: restore jenkins plugins
+    shell: docker cp {{ item }} "assembly_jenkins-dind_1:/var/jenkins_home/plugins/"
+    with_fileglob:
+      - "{{ project_root }}assembly/jenkins/plugins/*.hpi"
+    notify:
+      - restart jenkins container
+    tags:
+      - jenkins
+
+  - name: create .ssh directory
+    shell: cd "{{ project_root }}assembly/jenkins" && rm -rf .ssh && mkdir .ssh && echo ppp
+    tags:
+      - create
+
+  - file:
+      src: "~/.sshForSymbolicLink/{{ item.name }}"
+      dest: "{{ project_root }}assembly/jenkins/.ssh/{{ item.name }}"
+      state: link
+      mode: "{{ item.mode }}"
+    with_items:
+      - { name: 'id_rsa', mode: 400 }
+      - { name: 'id_rsa.pub', mode: 755 }
+      - { name: 'known_hosts', mode: 666 }
+    tags:
+      - ssh
 
   handlers:
     - name: restart paper-api container
@@ -52,4 +74,4 @@
     - name: restart web-api container
       shell: docker restart assembly_web-api_1
     - name: restart jenkins container
-      shell: java -jar /var/cache/jenkins/war/WEB-INF/jenkins-cli.jar -s http://localhost:8088/ safe-restart
+      shell: docker restart assembly_jenkins-dind_1
