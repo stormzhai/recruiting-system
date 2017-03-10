@@ -1,5 +1,13 @@
 ---
 - hosts: docker_host
+  vars:
+    jdbcurl: jdbc:mysql://mysql:3306/BronzeSword?useUnicode=yes&characterEncoding=UTF-8
+    jdbcciurl: jdbc:mysql://mysql:3308/BronzeSword?useUnicode=yes&characterEncoding=UTF-8
+    jdbcuser: BronzeSword
+    jdbcpassword: 12345678
+    flywayurl: jdbc:mysql://mysql:3306/BronzeSword?useUnicode=yes&characterEncoding=UTF-8
+    flywayuser: BronzeSword
+    flywaypassword: 12345678
 
   tasks:
   - name: pull code
@@ -41,7 +49,8 @@
       - { name: ADD_HOMEWORK }
       - { name: ADD_IMAGE }
       - { name: HOMEWORK_SCORING }
-
+    tags:
+      - restore
 
   - name: restore jenkins plugins
     shell: docker cp {{ item }} "assembly_jenkins-dind_1:/var/jenkins_home/plugins/"
@@ -52,6 +61,25 @@
     tags:
       - jenkins
 
+  - template:
+      src: "{{ project_root }}assembly/ansible/templates/config.properties.j2"
+      dest: "{{ project_root }}paper-api/src/main/resources/config.properties"
+    tags:
+      - config
+
+  - template:
+      src: "{{ project_root }}assembly/ansible/templates/gradle.properties.j2"
+      dest: "{{ project_root }}paper-api/gradle.properties"
+    tags:
+      - gradle
+
+  - file:
+      path: "~/.sshForSymbolicLink/{{ item.name }}"
+      mode: "{{ item.mode }}"
+    with_items:
+      - { name: 'id_rsa', mode: 400 }
+      - { name: 'id_rsa.pub', mode: 755 }
+      - { name: 'known_hosts', mode: 666 }
 
   handlers:
     - name: restart paper-api container
