@@ -54,8 +54,8 @@
     shell: tar zcf ~/recruiting-system/{{ item }}.tar.gz "{{ item }}"
     with_items:
       - "assembly"
-      - "web/public"
-      - "teacher-admin-web/public"
+      - "web"
+      - "teacher-admin-web"
       - "web-api"
       - "paper-api"
     args:
