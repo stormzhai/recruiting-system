@@ -14,16 +14,35 @@
     MYSQL_USER: BronzeSword
 
   tasks:
-  - name: pull code
-    shell: git pull origin master && git submodule update
-    args:
-      chdir: "{{ project_root }}"
+#  - name: pull code
+#    shell: git pull origin master && git submodule update
+#    args:
+#      chdir: "{{ project_root }}"
 
-  - name: webpack web && webpack admin-web
-    shell: cd "{{ item }}" && npm run webpack
+  - name: create recruiting-system directory
+    shell: cd ~ && rm -rf recruiting-system && mkdir recruiting-system recruiting-system/web recruiting-system/teacher-admin-web
+    tags:
+      - create
+
+  - name: install dependencies admin-web && web
+    shell: cd {{ item }} && npm i
     with_items:
       - "{{ project_root }}web"
       - "{{ project_root }}teacher-admin-web"
+
+  - name: webpack web && webpack admin-web
+    shell: cd {{ item }} && npm run webpack
+    with_items:
+      - "{{ project_root }}web"
+      - "{{ project_root }}teacher-admin-web"
+
+  - name: copy admin-web && web public
+    shell: cd {{ item }} && cp -r ./public ~/recruiting-system/{{ item }}
+    with_items:
+      - "web"
+      - "teacher-admin-web"
+    args:
+      chdir: "{{ project_root }}"
 
   - name: modify config.properties
     template:
@@ -45,20 +64,21 @@
     args:
       chdir: "{{ project_root }}paper-api"
 
-  - name: create recruiting-system directory
-    shell: cd ~ && rm -rf recruiting-system && mkdir recruiting-system
-    tags:
-      - create
-
-  - name: zip all files
-    shell: tar zcf ~/recruiting-system/{{ item }}.tar.gz "{{ item }}"
+  - name: zip assembly web-api paper-api files
+    shell: tar zcf ~/recruiting-system/{{ item }}.tar.gz {{ item }}
     with_items:
       - "assembly"
-      - "web"
-      - "teacher-admin-web"
       - "web-api"
       - "paper-api"
     args:
       chdir: "{{ project_root }}"
     tags:
       - zip
+
+  - name: zip web && admin-web
+    shell: cd ~/recruiting-system && tar zcf ./{{ item }}.tar.gz ./{{ item }} && rm -rf {{ item }}
+    with_items:
+      - "web"
+      - "teacher-admin-web"
+    tags:
+      - zip1
