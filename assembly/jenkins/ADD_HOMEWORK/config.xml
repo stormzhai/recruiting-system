@@ -57,12 +57,12 @@ fi
 
 if [ -f &quot;script.sh&quot; ]
 then
-  curl -u &apos;recruiting-system:d4e693f230c6d72a711ea432fef145d1196b4045&apos; https://api.github.com/user/repos -d &apos;{&quot;name&quot;:&quot;&apos;&quot;$timeString&quot;&apos;&quot;}&apos;
+  curl -u &apos;recruiting-system:9657b0ca68b267b956c3330232abd01f256801d4&apos; https://api.github.com/user/repos -d &apos;{&quot;name&quot;:&quot;&apos;&quot;$timeString&quot;&apos;&quot;}&apos;
   git remote add newRepo git@github.com:recruiting-system/$timeString.git
   git push -u  newRepo newBranch:master 
   zip -r answer.zip ./*
   curl -X PUT  \
-  -F &quot;script=@script.sh&quot; -F &quot;answer=@answer.zip&quot; -F &quot;description=$(cat $description)&quot; -F &quot;status=2&quot; -F &quot;result=试题创建成功&quot; -F &quot;templateRepository=https://github.com/recruiting-system/$timeString.git&quot; $callback_url
+  -F &quot;script=@script.sh&quot; -F &quot;answer=@answer.zip&quot; -F &quot;description=$description&quot; -F &quot;status=2&quot; -F &quot;result=试题创建成功&quot; -F &quot;templateRepository=https://github.com/recruiting-system/$timeString.git&quot; $callback_url
 else
   exit 1
 fi
