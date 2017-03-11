@@ -1,0 +1,67 @@
+---
+- hosts: local_server
+  vars:
+    jdbcurl: jdbc:mysql://mysql:3306/BronzeSword?useUnicode=yes&characterEncoding=UTF-8
+    jdbcciurl: jdbc:mysql://mysql:3308/BronzeSword?useUnicode=yes&characterEncoding=UTF-8
+    jdbcuser: BronzeSword
+    jdbcpassword: 12345678
+    flywayurl: jdbc:mysql://mysql:3306/BronzeSword?useUnicode=yes&characterEncoding=UTF-8
+    flywayuser: BronzeSword
+    flywaypassword: 12345678
+    MYSQL_ROOT_PASSWORD: thoughtworks
+    MYSQL_DATABASE: BronzeSword
+    MYSQL_PASSWORD: 12345678
+    MYSQL_USER: BronzeSword
+
+  tasks:
+  - name: pull code
+    shell: git pull origin master && git submodule update
+    args:
+      chdir: "{{ project_root }}"
+
+  - name: install dependencies for web-api
+    shell: npm i
+    args:
+      chdir: "{{ project_root }}web-api"
+
+  - name: webpack web && webpack admin-web
+    shell: cd "{{ item }}" && npm run webpack
+    with_items:
+      - "{{ project_root }}web"
+      - "{{ project_root }}teacher-admin-web"
+
+  - name: modify config.properties
+    template:
+      src: "{{ project_root }}assembly/ansible/templates/config.properties.j2"
+      dest: "{{ project_root }}paper-api/src/main/resources/config.properties"
+
+  - name: modify gradle.properties
+    template:
+      src: "{{ project_root }}assembly/ansible/templates/config.properties.j2"
+      dest: "{{ project_root }}paper-api/src/main/resources/config.properties"
+
+  - name: modify docker-compose.yml
+    template:
+      src: "{{ project_root }}assembly/ansible/templates/docker-compose.yml.j2"
+      dest: "{{ project_root }}assembly/docker-compose.yml"
+
+  - name: gradle war for paper-api
+    shell: ./gradlew war
+    args:
+      chdir: "{{ project_root }}paper-api"
+
+  - name: create recruiting-system directory
+    shell: cd ~ && rm -rf recruiting-system && mkdir recruiting-system
+    tags:
+      - create
+
+  - name: zip all files
+    shell: zip -r ~/recruiting-system/{{ item }}.zip . -i "{{ project_root }}{{ item }}/*"
+    with_items:
+      - "assembly"
+      - "web"
+      - "teacher-admin-web"
+      - "web-api"
+      - "paper-api"
+    tags:
+      - zip
