@@ -66,7 +66,8 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>SCRIPT=&quot;evaluate-script-${BUILD_NUMBER}.sh&quot;
+      <command>curl -H Content-Type:application/json -X PUT -d &quot;{\&quot;buildNumber\&quot;:${BUILD_NUMBER}}&quot; $callback_url
+SCRIPT=&quot;evaluate-script-${BUILD_NUMBER}.sh&quot;
 IMAGE=&quot;$image&quot;
 
 echo $script &gt; $SCRIPT    # save script content to file
