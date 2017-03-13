@@ -14,10 +14,10 @@
     MYSQL_USER: BronzeSword
 
   tasks:
-#  - name: pull code
-#    shell: git pull origin master && git submodule update
-#    args:
-#      chdir: "{{ project_root }}"
+  - name: pull code
+    shell: git pull origin master && git submodule update
+    args:
+      chdir: "{{ project_root }}"
 
   - name: create recruiting-system directory
     shell: cd ~ && rm -rf recruiting-system && mkdir recruiting-system recruiting-system/web recruiting-system/teacher-admin-web
