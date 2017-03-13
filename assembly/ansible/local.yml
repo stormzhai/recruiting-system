@@ -12,6 +12,7 @@
     MYSQL_DATABASE: BronzeSword
     MYSQL_PASSWORD: 12345678
     MYSQL_USER: BronzeSword
+    command: bash -c "cd /var/app && npm i canvas && export NODE_ENV=show-case && npm start"
 
   tasks:
   - name: pull code
@@ -24,11 +25,12 @@
     tags:
       - create
 
-  - name: install dependencies admin-web && web
-    shell: cd {{ item }} && npm i
+  - name: install dependencies admin-web && web && web-api
+    shell: cd {{ item }} && npm i -g yarn && yarn
     with_items:
       - "{{ project_root }}web"
       - "{{ project_root }}teacher-admin-web"
+      - "{{ project_root }}web-api"
 
   - name: webpack web && webpack admin-web
     shell: cd {{ item }} && npm run webpack
@@ -80,5 +82,3 @@
     with_items:
       - "web"
       - "teacher-admin-web"
-    tags:
-      - zip1
