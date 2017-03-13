@@ -1,0 +1,84 @@
+---
+- hosts: local_server
+  vars:
+    jdbcurl: jdbc:mysql://mysql:3306/BronzeSword?useUnicode=yes&characterEncoding=UTF-8
+    jdbcciurl: jdbc:mysql://mysql:3308/BronzeSword?useUnicode=yes&characterEncoding=UTF-8
+    jdbcuser: BronzeSword
+    jdbcpassword: 12345678
+    flywayurl: jdbc:mysql://mysql:3306/BronzeSword?useUnicode=yes&characterEncoding=UTF-8
+    flywayuser: BronzeSword
+    flywaypassword: 12345678
+    MYSQL_ROOT_PASSWORD: thoughtworks
+    MYSQL_DATABASE: BronzeSword
+    MYSQL_PASSWORD: 12345678
+    MYSQL_USER: BronzeSword
+
+  tasks:
+  - name: pull code
+    shell: git pull origin master && git submodule update
+    args:
+      chdir: "{{ project_root }}"
+
+  - name: create recruiting-system directory
+    shell: cd ~ && rm -rf recruiting-system && mkdir recruiting-system recruiting-system/web recruiting-system/teacher-admin-web
+    tags:
+      - create
+
+  - name: install dependencies admin-web && web
+    shell: cd {{ item }} && npm i
+    with_items:
+      - "{{ project_root }}web"
+      - "{{ project_root }}teacher-admin-web"
+
+  - name: webpack web && webpack admin-web
+    shell: cd {{ item }} && npm run webpack
+    with_items:
+      - "{{ project_root }}web"
+      - "{{ project_root }}teacher-admin-web"
+
+  - name: copy admin-web && web public
+    shell: cd {{ item }} && cp -r ./public ~/recruiting-system/{{ item }}
+    with_items:
+      - "web"
+      - "teacher-admin-web"
+    args:
+      chdir: "{{ project_root }}"
+
+  - name: modify config.properties
+    template:
+      src: "{{ project_root }}assembly/ansible/templates/config.properties.j2"
+      dest: "{{ project_root }}paper-api/src/main/resources/config.properties"
+
+  - name: modify gradle.properties
+    template:
+      src: "{{ project_root }}assembly/ansible/templates/config.properties.j2"
+      dest: "{{ project_root }}paper-api/src/main/resources/config.properties"
+
+  - name: modify docker-compose.yml
+    template:
+      src: "{{ project_root }}assembly/ansible/templates/docker-compose.yml.j2"
+      dest: "{{ project_root }}assembly/docker-compose.yml"
+
+  - name: gradle war for paper-api
+    shell: ./gradlew war
+    args:
+      chdir: "{{ project_root }}paper-api"
+
+  - name: zip assembly web-api paper-api files
+    shell: tar zcf ~/recruiting-system/{{ item }}.tar.gz {{ item }}
+    with_items:
+      - "assembly"
+      - "web-api"
+      - "paper-api"
+    args:
+      chdir: "{{ project_root }}"
+    tags:
+      - zip
+
+  - name: zip web && admin-web
+    shell: cd ~/recruiting-system && tar zcf ./{{ item }}.tar.gz ./{{ item }} && rm -rf {{ item }}
+    with_items:
+      - "web"
+      - "teacher-admin-web"
+    tags:
+      - zip1
