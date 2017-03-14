@@ -43,7 +43,8 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>description=$(cat readme.md)
+      <command>curl -H Content-Type:application/json -X PUT -d &quot;{\&quot;buildNumber\&quot;:${BUILD_NUMBER}}&quot; $callback_url
+description=$(cat readme.md)
 timeString=$(date +%Y-%m-%d-%H-%M-%S-%s)
 git checkout --orphan newBranch 
 git add .
@@ -57,7 +58,7 @@ fi
 
 if [ -f &quot;script.sh&quot; ]
 then
-  curl -u &apos;recruiting-system:9657b0ca68b267b956c3330232abd01f256801d4&apos; https://api.github.com/user/repos -d &apos;{&quot;name&quot;:&quot;&apos;&quot;$timeString&quot;&apos;&quot;}&apos;
+  curl -u &apos;recruiting-system:d388e3e37dfc6e39467850513224fc604b3eb95b&apos; https://api.github.com/user/repos -d &apos;{&quot;name&quot;:&quot;&apos;&quot;$timeString&quot;&apos;&quot;}&apos;
   git remote add newRepo git@github.com:recruiting-system/$timeString.git
   git push -u  newRepo newBranch:master 
   zip -r answer.zip ./*
