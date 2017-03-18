@@ -28,7 +28,8 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>sudo docker pull $image &gt; /tmp/result_detail_$BUILD_NUMBER 2&gt;&amp;1 </command>
+      <command>curl -H Content-Type:application/json -X PUT -d &quot;{\&quot;buildNumber\&quot;:${BUILD_NUMBER}}&quot; $callback_url
+sudo docker pull $image &gt; /tmp/result_detail_$BUILD_NUMBER 2&gt;&amp;1 </command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>

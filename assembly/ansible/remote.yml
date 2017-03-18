@@ -7,8 +7,10 @@
       path: "{{ project_root }}web-api/node_modules"
       state: absent
     become: true
-    become_user: ubuntu
-    become_method: sudo
+    # sudo: yes
+    # become: true
+    # become_user: ubuntu
+    # become_method: sudo
     tags:
       - rm
 
@@ -24,12 +26,12 @@
     args:
       chdir: "{{ project_root }}assembly"
 
-  # - name: gradle migrate for paper-api
-  #   shell: ./gradlew flywaymigrate
-  #   args:
-  #     chdir: "{{ project_root }}paper-api"
-  #   notify:
-  #     - restart paper-api
+  - name: gradle migrate for paper-api
+    shell: ./gradlew flywaymigrate
+    args:
+      chdir: "{{ project_root }}paper-api"
+    notify:
+      - restart paper-api
 
   - name: restore jenkins configration
     shell: docker exec -d assembly_jenkins-dind_1 sh -c " rm -rf /var/jenkins_home/jobs/{{ item.name }}; mkdir /var/jenkins_home/jobs/{{ item.name }}; "
@@ -61,6 +63,9 @@
     - restart jenkins-dind
     tags:
       - restore
+
+  - name: restart web-api 
+    shell: docker restart assembly_web-api_1
 
   handlers:
     - name: restart paper-api
