@@ -1,0 +1,8 @@
+---
+- hosts: local_server
+
+  tasks:
+  - name: git submodule update
+  - shell: git pull origin master && git submodule update && git checkout . && git submodule foreach git checkout .
+  - args:
+      chdir: "{{ project_root }}"

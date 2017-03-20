@@ -1,4 +1,4 @@
-jdbc.url={{ jdbcurl }}
-jdbc.ci.url={{ jdbcciurl }}
-jdbc.user={{ jdbcuser }}
-jdbc.password={{ jdbcpassword }}
+jdbc.url=jdbc:mysql://mysql:3306/{{ MYSQL_DATABASE }}?useUnicode=yes&characterEncoding=UTF-8
+jdbc.ci.url=jdbc:mysql://mysql:3306/{{ MYSQL_DATABASE }}?useUnicode=yes&characterEncoding=UTF-8
+jdbc.user={{ MYSQL_USER }}
+jdbc.password={{ MYSQL_PASSWORD }}
