@@ -86,7 +86,7 @@ curl -H Content-Type:application/json -X PUT -d &quot;{\&quot;status\&quot;:\&qu
               <buildSteps>
                 <hudson.tasks.Shell>
                   <command>message=$(openssl base64 -A &lt; /tmp/result_detail_$BUILD_NUMBER)
-curl -H Content-Type:application/json -X PUT -d &quot;{\&quot;status\&quot;: \&quot;FAIL\&quot;, \&quot;message\&quot;:\&quot;$message\&quot;}&quot; $callback_url</command>
+curl -H Content-Type:application/json -X PUT -d &quot;{\&quot;status\&quot;: \&quot;FAIL\&quot;, \&quot;message\&quot;:\&quot;$message\&quot;}&quot; $callbackUrl</command>
                 </hudson.tasks.Shell>
               </buildSteps>
               <scriptOnlyIfSuccess>false</scriptOnlyIfSuccess>
