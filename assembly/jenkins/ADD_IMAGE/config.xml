@@ -12,7 +12,7 @@
           <defaultValue></defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
-          <name>callbackUrl</name>
+          <name>callback_url</name>
           <description>脚本结束后，用来写入结果的回调地址</description>
           <defaultValue></defaultValue>
         </hudson.model.StringParameterDefinition>
@@ -28,7 +28,7 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>curl -H Content-Type:application/json -X PUT -d &quot;{\&quot;buildNumber\&quot;:${BUILD_NUMBER}}&quot; $callbackUrl
+      <command>curl -H Content-Type:application/json -X PUT -d &quot;{\&quot;buildNumber\&quot;:${BUILD_NUMBER}}&quot; $callback_url
 sudo docker pull $image &gt; /tmp/result_detail_$BUILD_NUMBER 2&gt;&amp;1 </command>
     </hudson.tasks.Shell>
   </builders>
@@ -55,7 +55,7 @@ sudo docker pull $image &gt; /tmp/result_detail_$BUILD_NUMBER 2&gt;&amp;1 </comm
               <buildSteps>
                 <hudson.tasks.Shell>
                   <command>message=$(openssl base64 -A &lt; /tmp/result_detail_$BUILD_NUMBER)
-curl -H Content-Type:application/json -X PUT -d &quot;{\&quot;status\&quot;:\&quot;SUCCESS\&quot;,\&quot;message\&quot;:\&quot;$message\&quot;}&quot; $callbackUrl</command>
+curl -H Content-Type:application/json -X PUT -d &quot;{\&quot;status\&quot;:\&quot;SUCCESS\&quot;,\&quot;message\&quot;:\&quot;$message\&quot;}&quot; $callback_url</command>
                 </hudson.tasks.Shell>
               </buildSteps>
               <scriptOnlyIfSuccess>true</scriptOnlyIfSuccess>
