@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-rm local-inventory
+#rm local-inventory
 cd ../../
 root=$(pwd)
 echo -e "[docker_host] \nlocalhost ansible_connection=local project_root=${root}/\n" >> './assembly/ansible/local-inventory'
