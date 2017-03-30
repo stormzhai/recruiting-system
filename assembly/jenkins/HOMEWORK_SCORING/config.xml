@@ -74,7 +74,7 @@ echo $script &gt; $SCRIPT    # save script content to file
 
 sudo docker run --name $CONTAINER --detach $IMAGE /bin/bash -xc &quot;tail -f /dev/null&quot;         # just to hold container running
 sudo docker cp . $CONTAINER:/var # copy directory
-sudo docker exec -i $CONTAINER bash -c &quot;cd /var &amp;&amp; chmod +x $SCRIPT &amp;&amp;./$SCRIPT&quot; &gt; /tmp/result_detail_$BUILD_NUMBER 2&gt;&amp;1  # evaluate in container
+sudo docker exec -i $CONTAINER bash -c &quot;cd /var &amp;&amp; chmod +x $SCRIPT &amp;&amp;./$SCRIPT&quot; &gt; /tmp/result_detail_${BUILD_NUMBER} 2&gt;&amp;1  # evaluate in container
 
 </command>
     </hudson.tasks.Shell>
@@ -134,11 +134,11 @@ curl -H Content-Type:application/json -X PUT -d &quot;{\&quot;status\&quot;:4,\&
               <buildSteps>
                 <hudson.tasks.Shell>
                   <command>file=&quot;/tmp/result_detail_$BUILD_NUMBER&quot;
-if [ -f &quot;!$file&quot; ]
+if [ ! -f $file ]
 then
-echo  &quot;仓库不存在，请重新填写仓库地址！&quot; &gt; /tmp/result_detail_$BUILD_NUMBER 2&gt;&amp;1
+echo  &quot;仓库不存在，请重新填写仓库地址！&quot; &gt; /tmp/result_detail_${BUILD_NUMBER} 2&gt;&amp;1
 fi
-result=$(openssl base64 -A &lt; /tmp/result_detail_$BUILD_NUMBER)
+result=$(openssl base64 -A &lt; /tmp/result_detail_${BUILD_NUMBER})
 version=${GIT_COMMIT}
 curl -H Content-Type:application/json -X PUT -d &quot;{\&quot;status\&quot;:5,\&quot;result\&quot;:\&quot;$result\&quot;,\&quot;version\&quot;:\&quot;$version\&quot;}&quot; $callback_url</command>
                 </hudson.tasks.Shell>
@@ -157,7 +157,9 @@ curl -H Content-Type:application/json -X PUT -d &quot;{\&quot;status\&quot;:5,\&
             <org.jenkinsci.plugins.postbuildscript.PostBuildScript plugin="postbuildscript@0.17">
               <buildSteps>
                 <hudson.tasks.Shell>
-                  <command>sudo docker rm --force $CONTAINER</command>
+                  <command>[ -f /tmp/result_detail_${BUILD_NUMBER} ] &amp;&amp; rm /tmp/result_detail_${BUILD_NUMBER} 
+sudo docker rm --force ${stack}_${BUILD_NUMBER}
+</command>
                 </hudson.tasks.Shell>
               </buildSteps>
               <scriptOnlyIfSuccess>false</scriptOnlyIfSuccess>
@@ -175,7 +177,8 @@ curl -H Content-Type:application/json -X PUT -d &quot;{\&quot;status\&quot;:5,\&
     <EnvInjectBuildWrapper plugin="envinject@1.93.1">
       <info>
         <propertiesContent>PATH=/usr/local/bin/:$PATH
-CONTAINER=${stack}_${BUILD_NUMBER}</propertiesContent>
+CONTAINER=${stack}_${BUILD_NUMBER}
+</propertiesContent>
         <loadFilesFromMaster>false</loadFilesFromMaster>
       </info>
     </EnvInjectBuildWrapper>
