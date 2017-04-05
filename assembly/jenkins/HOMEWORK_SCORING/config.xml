@@ -101,9 +101,13 @@ sudo docker exec -i $CONTAINER bash -c &quot;cd /var &amp;&amp; chmod +x $SCRIPT
             <org.jenkinsci.plugins.postbuildscript.PostBuildScript plugin="postbuildscript@0.17">
               <buildSteps>
                 <hudson.tasks.Shell>
-                  <command>result=$(openssl base64 -A &lt; /tmp/result_detail_$BUILD_NUMBER)
+                  <command>echo &apos;&apos; &gt; result
+cat /tmp/result_detail_$BUILD_NUMBER &gt; result 
+cat result
 version=${GIT_COMMIT}
-curl -H Content-Type:application/json -X PUT -d &quot;{\&quot;status\&quot;:4,\&quot;result\&quot;:\&quot;$result\&quot;,\&quot;version\&quot;:\&quot;$version\&quot;}&quot; $callback_url</command>
+curl -X PUT -F &quot;status=4&quot; \
+-F &quot;version=$version&quot; \
+-F &quot;result=@result&quot; $callback_url</command>
                 </hudson.tasks.Shell>
               </buildSteps>
               <scriptOnlyIfSuccess>true</scriptOnlyIfSuccess>
