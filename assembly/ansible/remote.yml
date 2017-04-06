@@ -4,9 +4,8 @@
   tasks:
   - name: delete node_modules
     file:
-      path: "{{ project_root }}web-api/node_modules"
+      path: "{{ project_root }}"
       state: absent
-    become: true
     tags:
       - rm
 
@@ -16,11 +15,19 @@
       dest: "{{ project_root }}"
     with_fileglob:
       - ~/recruiting-system/*.7z
+    tags:
+      - copy
 
   - name: unzip
-    shell: 7z x {{ item }} ./
-    with_fileglob:
-      - "{{ project_root }}*.7z"
+    shell: 7z x {{ item }} -o./
+    with_items:
+      - "assembly.7z"
+      - "web-api.7z"
+      - "teacher-admin-web.7z"
+      - "web.7z"
+      - "paper-api.7z"
+    args:
+      chdir: "{{ project_root }}"
 
   # - name: unarchive all files
   #   unarchive:
@@ -33,6 +40,8 @@
     shell: docker-compose up -d
     args:
       chdir: "{{ project_root }}assembly"
+    tags:
+      - docker
 
   - name: gradle migrate for paper-api
     shell: ./gradlew flywaymigrate
@@ -40,6 +49,8 @@
       chdir: "{{ project_root }}paper-api"
     notify:
       - restart paper-api
+    tags:
+      - paper
 
   - name: restore jenkins configration
     shell: docker exec -d assembly_jenkins-dind_1 sh -c " rm -rf /var/jenkins_home/jobs/{{ item.name }}; mkdir /var/jenkins_home/jobs/{{ item.name }}; "
@@ -74,6 +85,8 @@
 
   - name: restart web-api 
     shell: docker restart assembly_web-api_1
+    tags:
+      - web
 
   handlers:
     - name: restart paper-api
