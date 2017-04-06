@@ -10,12 +10,24 @@
     tags:
       - rm
 
-  - name: unarchive all files
-    unarchive:
+  - name: copy
+    copy:
       src: "{{ item }}"
       dest: "{{ project_root }}"
     with_fileglob:
-      - ~/recruiting-system/*.tar.gz
+      - ~/recruiting-system/*.7z
+
+  - name: unzip
+    shell: 7z x {{ item }} ./
+    with_fileglob:
+      - "{{ project_root }}*.7z"
+
+  # - name: unarchive all files
+  #   unarchive:
+  #     src: "{{ item }}"
+  #     dest: "{{ project_root }}"
+  #   with_fileglob:
+  #     - ~/recruiting-system/*.tar.gz
 
   - name: run docker-compose up -d
     shell: docker-compose up -d

@@ -27,7 +27,7 @@
       - create
 
   - name: install dependencies admin-web && web && web-api
-    shell: cd {{ item }} && brew install yarn && yarn
+    shell: cd {{ item }} && yarn
     with_items:
       - "{{ project_root }}web"
       - "{{ project_root }}teacher-admin-web"
@@ -77,7 +77,7 @@
       chdir: "{{ project_root }}paper-api"
 
   - name: zip assembly web-api paper-api files
-    shell: tar zcf ~/recruiting-system/{{ item }}.tar.gz {{ item }}
+    shell: 7z a -t7z ~/recruiting-system/{{ item }}.7z {{ item }}
     with_items:
       - "assembly"
       - "web-api"
@@ -88,7 +88,7 @@
       - zip
 
   - name: zip web && admin-web
-    shell: cd ~/recruiting-system && tar zcf ./{{ item }}.tar.gz ./{{ item }} && rm -rf {{ item }}
+    shell: cd ~/recruiting-system && 7z a -t7z ./{{ item }}.7z ./{{ item }} && rm -rf {{ item }}
     with_items:
       - "web"
       - "teacher-admin-web"
