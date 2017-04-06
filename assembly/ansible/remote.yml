@@ -7,10 +7,6 @@
       path: "{{ project_root }}web-api/node_modules"
       state: absent
     become: true
-    # sudo: yes
-    # become: true
-    # become_user: ubuntu
-    # become_method: sudo
     tags:
       - rm
 
