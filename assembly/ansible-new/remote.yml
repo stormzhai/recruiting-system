@@ -1,5 +1,5 @@
 ---
-- hosts: remote_server
+- hosts: "{{ variable_host }}"
 
   tasks:
   - name: delete all files
@@ -97,3 +97,5 @@
       shell: /usr/bin/docker restart assembly_paper-api_1
     - name: restart jenkins-dind
       shell: /usr/bin/docker restart assembly_jenkins-dind_1
+
+      
