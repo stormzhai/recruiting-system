@@ -27,14 +27,14 @@
       - create
 
   - name: install dependencies admin-web && web && web-api
-    shell: cd {{ item }} && yarn
+    shell: cd {{ item }} && /usr/bin/brew install yarn && yarn
     with_items:
       - "{{ project_root }}web"
       - "{{ project_root }}teacher-admin-web"
       - "{{ project_root }}web-api"
 
   - name: webpack web && webpack admin-web
-    shell: cd {{ item }} && npm run webpack
+    shell: cd {{ item }} && /usr/bin/npm run webpack
     with_items:
       - "{{ project_root }}web"
       - "{{ project_root }}teacher-admin-web"
@@ -77,7 +77,7 @@
       chdir: "{{ project_root }}paper-api"
 
   - name: zip assembly web-api paper-api files
-    shell: 7z a -t7z ~/recruiting-system/{{ item }}.7z {{ item }}
+    shell: /usr/bin/7z a -t7z ~/recruiting-system/{{ item }}.7z {{ item }}
     with_items:
       - "assembly"
       - "web-api"
@@ -88,7 +88,7 @@
       - zip
 
   - name: zip web && admin-web
-    shell: cd ~/recruiting-system && 7z a -t7z ./{{ item }}.7z ./{{ item }} && rm -rf {{ item }}
+    shell: cd ~/recruiting-system && /usr/bin/7z a -t7z ./{{ item }}.7z ./{{ item }} && rm -rf {{ item }}
     with_items:
       - "web"
       - "teacher-admin-web"

@@ -19,7 +19,7 @@
       - copy
 
   - name: unzip
-    shell: 7z x {{ item }} -o./
+    shell: /usr/bin/7z x {{ item }} -o./
     with_items:
       - "assembly.7z"
       - "web-api.7z"
@@ -37,7 +37,7 @@
   #     - ~/recruiting-system/*.tar.gz
 
   - name: run docker-compose up -d
-    shell: docker-compose up -d
+    shell: /usr/bin/docker-compose up -d
     args:
       chdir: "{{ project_root }}assembly"
     tags:
@@ -53,8 +53,8 @@
       - paper
 
   - name: restore jenkins configration
-    shell: docker exec -d assembly_jenkins-dind_1 sh -c " rm -rf /var/jenkins_home/jobs/{{ item.name }}; mkdir /var/jenkins_home/jobs/{{ item.name }}; "
-          && docker cp "{{ project_root }}assembly/jenkins/{{ item.name }}/config.xml" "assembly_jenkins-dind_1:/var/jenkins_home/jobs/{{ item.name }}"
+    shell: /usr/bin/docker exec -d assembly_jenkins-dind_1 sh -c " rm -rf /var/jenkins_home/jobs/{{ item.name }}; mkdir /var/jenkins_home/jobs/{{ item.name }}; "
+          && /usr/bin/docker cp "{{ project_root }}assembly/jenkins/{{ item.name }}/config.xml" "assembly_jenkins-dind_1:/var/jenkins_home/jobs/{{ item.name }}"
     with_items:
       - { name: ADD_HOMEWORK }
       - { name: ADD_IMAGE }
@@ -63,7 +63,7 @@
       - config
 
   - name: restore jenkins plugins
-    shell: docker cp "{{ project_root }}assembly/jenkins/plugins/{{ item }}" "assembly_jenkins-dind_1:/var/jenkins_home/plugins/"
+    shell: /usr/bin/docker cp "{{ project_root }}assembly/jenkins/plugins/{{ item }}" "assembly_jenkins-dind_1:/var/jenkins_home/plugins/"
     with_items:
       - envinject.hpi
       - git.hpi
@@ -84,12 +84,12 @@
       - restore
 
   - name: restart web-api 
-    shell: docker restart assembly_web-api_1
+    shell: /usr/bin/docker restart assembly_web-api_1
     tags:
       - web
 
   handlers:
     - name: restart paper-api
-      shell: docker restart assembly_paper-api_1
+      shell: /usr/bin/docker restart assembly_paper-api_1
     - name: restart jenkins-dind
-      shell: docker restart assembly_jenkins-dind_1
+      shell: /usr/bin/docker restart assembly_jenkins-dind_1
