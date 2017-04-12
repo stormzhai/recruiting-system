@@ -1,8 +1,0 @@
-ansible_connection: local 
-project_root: /Users/ci/works/recruiting-system/
-MYSQL_ROOT_PASSWORD: thoughtworks
-MYSQL_DATABASE: BronzeSword
-MYSQL_PASSWORD: 1234567899999
-MYSQL_USER: BronzeSword
-command: bash -c "cd /var/app && npm i canvas && export NODE_ENV=show-case && npm start"
-github_token: 992dc6bac373a9a3992694c565e5df51a3b203f7
