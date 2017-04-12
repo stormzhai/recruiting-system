@@ -13,14 +13,14 @@
       - create
 
   - name: install dependencies admin-web && web && web-api
-    shell: cd {{ item }} && /usr/local/bin/yarn
+    shell: cd {{ item }} && yarn
     with_items:
       - "{{ project_root }}web"
       - "{{ project_root }}teacher-admin-web"
       - "{{ project_root }}web-api"
 
   - name: webpack web && webpack admin-web
-    shell: cd {{ item }} && /usr/local/bin/npm run webpack
+    shell: cd {{ item }} && npm run webpack
     with_items:
       - "{{ project_root }}web"
       - "{{ project_root }}teacher-admin-web"
@@ -76,7 +76,7 @@
       - zip
 
   - name: zip web && admin-web
-    shell: cd ~/recruiting-system && /usr/local/bin/7z a -t7z ./{{ item }}.7z ./{{ item }} && rm -rf {{ item }}
+    shell: cd ~/recruiting-system && 7z a -t7z ./{{ item }}.7z ./{{ item }} && rm -rf {{ item }}
     with_items:
       - "web"
       - "teacher-admin-web"
