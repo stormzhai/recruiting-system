@@ -94,6 +94,11 @@
     tags:
       - web
 
+  - name: restart nginx
+    shell: /usr/bin/docker restart assembly_nginx_1
+    tags:
+      - nginx
+
   handlers:
     - name: restart paper-api
       shell: /usr/bin/docker restart assembly_paper-api_1
