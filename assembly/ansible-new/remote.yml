@@ -6,8 +6,10 @@
     file:
       path: "{{ project_root }}"
       state: absent
+    become: true
     tags:
       - rm
+
 
   - name: copy
     copy:
