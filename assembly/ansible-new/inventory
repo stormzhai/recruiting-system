@@ -1,14 +1,8 @@
 [local-server-for-staging]
 local-server-for-staging
 
-[local-server-for-show-case]
-local-server-for-show-case
-
 [staging]
 54.222.191.27
-
-[show-case]
-10.22.64.4
 
 
 
