@@ -1,0 +1,15 @@
+---
+- hosts: local
+
+  tasks:
+  - name: pull code
+    shell: pwd
+    args:
+      chdir: "{{ project_root }}"
+
+- hosts: show-case
+  tasks:
+  - name: pull code
+    shell: pwd
+    args:
+      chdir: "{{ project_root }}"    

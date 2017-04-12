@@ -1,14 +1,7 @@
 ---
-- hosts: remote_server
+- hosts: "{{ variable_host }}"
 
   tasks:
-  - name: delete all files
-    file:
-      path: "{{ project_root }}"
-      state: absent
-    tags:
-      - rm
-
   - name: copy
     copy:
       src: "{{ item }}"
@@ -19,15 +12,19 @@
       - copy
 
   - name: unzip
-    shell: /usr/bin/7z x {{ item }} -o./
+    shell: /usr/bin/7z x -y  {{ item }} -o./ && chown -R ubuntu:ubuntu .
     with_items:
       - "assembly.7z"
       - "web-api.7z"
       - "teacher-admin-web.7z"
       - "web.7z"
       - "paper-api.7z"
+    become: true
     args:
       chdir: "{{ project_root }}"
+    tags:
+      - unzip
+
 
   - name: delete zip
     shell: rm {{ item }}
@@ -92,8 +89,15 @@
     tags:
       - web
 
+  - name: restart nginx
+    shell: /usr/bin/docker restart assembly_nginx_1
+    tags:
+      - nginx
+
   handlers:
     - name: restart paper-api
       shell: /usr/bin/docker restart assembly_paper-api_1
     - name: restart jenkins-dind
       shell: /usr/bin/docker restart assembly_jenkins-dind_1
+
+      
