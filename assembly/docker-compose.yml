@@ -75,19 +75,19 @@ services:
       main:
         aliases:
           - nginx
-  che:
-    image: eclipse/che-server:5.5.0
-    ports:
-      - "9999:8080"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock 
-      - $HOME/che_data:/data
-    environment:
-      - CHE_HOST=10.22.64.22
-    networks:
-      main: 
-       aliases:
-         - che    
+#  che:
+#    image: eclipse/che-server:5.5.0
+#    ports:
+#      - "9999:8080"
+#    volumes:
+#      - /var/run/docker.sock:/var/run/docker.sock
+#      - $HOME/che_data:/data
+#    environment:
+#      - CHE_HOST=10.22.64.22
+#    networks:
+#      main:
+#       aliases:
+#         - che
 networks:
   main:
 

@@ -1,1 +1,3 @@
-./group_vars
+/group_vars/staging
+/group_vars/local-server-for-staging
+/remote.retry
