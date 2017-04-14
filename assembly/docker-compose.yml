@@ -75,7 +75,6 @@ services:
       main:
         aliases:
           - nginx
-
 #  che:
 #    image: eclipse/che-server:5.5.0
 #    ports:
