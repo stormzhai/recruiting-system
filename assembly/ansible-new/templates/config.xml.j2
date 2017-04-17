@@ -57,7 +57,7 @@ fi
 
 if [ -f &quot;script.sh&quot; ]
 then
-  curl -u &apos;recruiting-system:5e846d97b0a0964128d904c604be91f00dd60c32&apos; https://api.github.com/user/repos -d &apos;{&quot;name&quot;:&quot;&apos;&quot;$timeString&quot;&apos;&quot;}&apos;
+  curl -u &apos;recruiting-system:{{ github_token }}&apos; https://api.github.com/user/repos -d &apos;{&quot;name&quot;:&quot;&apos;&quot;$timeString&quot;&apos;&quot;}&apos;
   git remote add newRepo git@github.com:recruiting-system/$timeString.git
   git push -u  newRepo newBranch:master 
   zip -r answer.zip ./*
