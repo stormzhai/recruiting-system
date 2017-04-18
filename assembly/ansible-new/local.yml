@@ -19,11 +19,11 @@
       - "{{ project_root }}teacher-admin-web"
       - "{{ project_root }}web-api"
 
-  - name: webpack web && webpack admin-web
-    shell: cd {{ item }} && npm run webpack
-    with_items:
-      - "{{ project_root }}web"
-      - "{{ project_root }}teacher-admin-web"
+  - name: webpack admin-web
+    shell: cd {{ project_root }}teacher-admin-web && npm run webpack
+
+  - name: package web
+    shell: cd {{ project_root }}web && npm run package
 
   - name: copy admin-web && web public
     shell: cd {{ item }} && cp -r ./public ~/recruiting-system/{{ item }}
@@ -46,13 +46,6 @@
       dest: "{{ project_root }}paper-api/gradle.properties"
     tags:
       - gradle
-
-  - name: modify ADD_HOMEWORK config.xml
-    template:
-      src: "config.xml.j2"
-      dest: "{{ project_root }}assembly/jenkins/ADD_HOMEWORK/config.xml"
-    tags:
-      - github_token
 
   - name: modify docker-compose.yml
     template:
