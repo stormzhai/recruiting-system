@@ -11,7 +11,7 @@ services:
       - TERM=dumb
       - MYSQL_ROOT_PASSWORD=thoughtworks
       - MYSQL_DATABASE=BronzeSword
-      - MYSQL_PASSWORD=12345678
+      - MYSQL_PASSWORD=1234567899999
       - MYSQL_USER=BronzeSword
     networks:
       main:
@@ -75,6 +75,23 @@ services:
       main:
         aliases:
           - nginx
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:4.7.0-1
+    environment:
+      - PMA_ARBITRARY=1
+      - PMA_ABSOLUTE_URI=http://localhost/phpmyadmin/
+    external_links:
+      - mysql:db
+    restart: always
+    ports:
+      - 8090:80
+    volumes:
+      - /sessions
+    networks:
+      main:
+        aliases:
+          - phpmyadmin
 #  che:
 #    image: eclipse/che-server:5.5.0
 #    ports:
