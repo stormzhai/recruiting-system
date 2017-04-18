@@ -47,13 +47,6 @@
     tags:
       - gradle
 
-  - name: modify ADD_HOMEWORK config.xml
-    template:
-      src: "config.xml.j2"
-      dest: "{{ project_root }}assembly/jenkins/ADD_HOMEWORK/config.xml"
-    tags:
-      - github_token
-
   - name: modify docker-compose.yml
     template:
       src: "docker-compose.yml.j2"
