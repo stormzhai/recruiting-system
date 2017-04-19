@@ -82,7 +82,7 @@ function initJenkins() {
 action=$1
 
 case $action in
-  rs)
+  init)
     initAllService
     ;;
   jk)
@@ -90,9 +90,9 @@ case $action in
 	;;
   *)
     logo
-    echo "用法：(rs|jk)"
+    echo "用法：(init|jk)"
     echo "- command："
-    echo "rs 重启所有服务"
+    echo "init 初始化所有服务"
 	echo "jk 初始化 Jenkins"
     echo ""
     ;;
