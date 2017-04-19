@@ -56,7 +56,7 @@ function initAllService() {
 function initJenkins() {
   
   docker-compose up -d jenkins-dind
-  sleep 5s # 容器第一次创建时，即使开始运行了，也需要时间创建目录结构，不 sleep 会导致下面 mkdir 失败
+  sleep 5s # 创建容器时，即使开始运行了，也需要时间创建目录结构，不 sleep 会导致下面 mkdir 失败
 
   jenkins='assembly_jenkins-dind_1'
 
