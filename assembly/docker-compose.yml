@@ -11,7 +11,7 @@ services:
       - TERM=dumb
       - MYSQL_ROOT_PASSWORD=thoughtworks
       - MYSQL_DATABASE=BronzeSword
-      - MYSQL_PASSWORD=12345678
+      - MYSQL_PASSWORD=1234567899999
       - MYSQL_USER=BronzeSword
     networks:
       main:
@@ -92,6 +92,22 @@ services:
       main:
         aliases:
           - phpmyadmin
+
+  mongo-express:
+    image: mongo-express:0.38
+    environment:
+      - ME_CONFIG_MONGODB_SERVER=
+    external_links:
+      - mongo:mongo
+    restart: always
+    ports:
+      - 8091:8081
+    volumes:
+      - /sessions
+    networks:
+      main:
+        aliases:
+          - mongo-express
 #  che:
 #    image: eclipse/che-server:5.5.0
 #    ports:
