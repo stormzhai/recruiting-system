@@ -13,7 +13,7 @@
       - create
 
   - name: install dependencies admin-web && web && web-api
-    shell: cd {{ item }} && npm i
+    shell: cd {{ item }} && yarn
     with_items:
       - "{{ project_root }}web"
       - "{{ project_root }}teacher-admin-web"
