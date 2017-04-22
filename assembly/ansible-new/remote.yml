@@ -38,7 +38,7 @@
       chdir: "{{ project_root }}"
 
   - name: run docker-compose up -d
-    shell: /usr/bin/docker-compose up -d
+    shell: docker-compose up -d
     args:
       chdir: "{{ project_root }}assembly"
     tags:
