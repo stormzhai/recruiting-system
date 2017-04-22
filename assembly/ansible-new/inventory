@@ -7,7 +7,7 @@ local-server-for-production
 [staging]
 54.222.191.27
 
-[staging]
+[production]
 52.80.28.196
 
 
